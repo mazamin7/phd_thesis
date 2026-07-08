@@ -4454,6 +4454,7 @@ where $D(\Delta t)$ denotes the exact modal propagator and $K(\Delta t/2)$ repre
 
 The resulting stability limits reveal that the localized interface correction imposes only a mild restriction on the time step. Because the explicit penalty operator involves the projection of global spectral modes onto a localized interface stencil, the exact maximum eigenvalue of the amplification matrix exhibits a minor dependence on the grid resolution $N$. This mesh-dependency arises from discrete spatial resonances between the highest-frequency global modes and the fixed interface stencil. To establish rigorous, mesh-independent stability bounds, a comprehensive numerical sweep of the amplification matrix was performed across all grid resolutions up to $N=800$. The absolute global minimum (worst-case) admissible Courant numbers for second-, fourth-, sixth-, and eighth-order interface operators are strictly bounded by
 \[
+% These asymptotic worst-case bounds are computed using code/pstd/scripts/check_nx_trend.m
 \mathrm{CFL}_{\max}
 \approx
 1.117,\;
@@ -4469,6 +4470,7 @@ For each spatial order of the interface correction operator, we perform two simu
 
 The empirical results strongly corroborate the spectral analysis. For time steps slightly below the maximum theoretical limit, the higher-order solvers correctly propagate the wave without any spurious amplification, and the maximum wave amplitude remains physically bounded (with a relative amplitude identically equal to $0.99$ due to dispersion). We note a minor exception for the second-order operator, which over exceedingly long simulations exhibits a delayed exponential growth even slightly below the numerically derived threshold, highlighting the extreme sensitivity of its spectral radius near the unit circle.
 
+% The following empirical divergence amplitudes at T=250 are computed using code/pstd/scripts/verify_cfl_empirical.m
 Conversely, when the time step slightly exceeds the theoretical limit, the instability becomes completely destructive across all spatial orders. When integrated over the long $T=250$ timeframe, even the mildly unstable lower-order operators blow up: the fourth-order operator reaches an amplitude of $\approx 10^{50}$, and the second-order operator reaches $\approx 10^{126}$. The wider sixth- and eighth-order operators exhibit far more aggressive growth rates, with their numerical solutions exploding to the double-precision floating-point limit ($\approx 10^{303}$). This numerical evidence confirms that the method is strictly conditionally stable, and that while wider interface stencils impose marginally tighter time step restrictions, violating the stability boundary will invariably lead to exponential divergence.
 
 \subsubsection{Penalty Order Convergence}
