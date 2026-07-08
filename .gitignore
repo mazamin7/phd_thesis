@@ -34,3 +34,12 @@ __pycache__/
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# Images generated in code directory
+code/**/*.png
+code/**/*.jpg
+code/**/*.jpeg
+code/**/*.pdf
+code/**/*.eps
+code/**/*.fig
+code/**/*.svg
