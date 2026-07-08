@@ -1,0 +1,6 @@
+@echo off
+echo Activating conda environment...
+call C:\ProgramData\Anaconda3\Scripts\activate.bat C:\Users\gerar\.conda\envs\dpnn_env
+echo Opening Jupyter Notebook...
+jupyter notebook
+pause
