@@ -147,6 +147,7 @@ for exp_idx = 1:6
         fullfile(saveFolder,'nodal_error_vs_monolithic.png'),...
         'Resolution',300);
     close(h);
+addpath(genpath('../src'));
 end
 
 function T = modal_time(k,c,gamma,nu)

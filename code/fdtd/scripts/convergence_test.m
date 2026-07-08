@@ -1,4 +1,5 @@
 clear all; close all; clc;
+addpath(genpath('../src'));
 
 %% Parameters
 c = 1;

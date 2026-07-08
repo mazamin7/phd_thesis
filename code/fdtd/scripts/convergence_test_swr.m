@@ -1,4 +1,5 @@
-% clear all; close all; clc;
+clear all; close all; clc;
+addpath(genpath('../src'));
 
 %% Parameters
 c = 1;
@@ -6,11 +7,11 @@ c = 1;
 % dx = 0.001;
 % dt = 0.001;
 
-dx = 0.01;
-dt = 0.01;
+% dx = 0.01;
+% dt = 0.01;
 
-% dx = 0.05;
-% dt = 0.05;
+dx = 0.05;
+dt = 0.05;
 
 % bcType = 'dirichlet';
 % bcType = 'neumannGhost';
@@ -29,14 +30,13 @@ dt = 0.01;
 % experiment = 'triangleStandingWaveDirichlet'; T = 2; bcType = 'dirichlet'; gamma = 0.5; nu = 0.005;
 % experiment = 'triangleStandingWaveDirichlet'; T = 2; bcType = 'dirichlet'; gamma = 0.5; nu = 0.005;
 
-experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0.5;
+experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0.5; nu = 1;
 
 q = 1/c;
 r = 0;
 
-iterations = 5;
-iterationsToMeasure = 5;
-delta = L/5;
+iterations = 100;
+delta = L/10;
 
 a = (L-delta)/2;
 b = a + delta;
@@ -155,144 +155,89 @@ end
     @(t)0,@(t)0);
 
 %% ------------------------------------------------------------
-% Parameter grid
+% Classical Robin parameters
 % ------------------------------------------------------------
 
-qVals = linspace(0,1.5/c,21);
-rVals = linspace(0,2,21);
-
-Err = zeros(length(rVals),length(qVals));
-Rho = zeros(length(rVals),length(qVals));
-
-wmin = pi/T;
-wmax = pi/dt;
-omega = logspace(log10(wmin),log10(wmax),4000);
+qClassic = 1/c;
+rClassic = 0;
 
 %% ------------------------------------------------------------
-% Sweep
+% Optimized Robin parameters
 % ------------------------------------------------------------
 
-for iq = 1:length(qVals)
+[qOpt,rOpt,rhoOpt] = get_optimal_robin_params(c,gamma,nu,a,b,T,dx,dt);
 
-    fprintf('%d / %d\n',iq,length(qVals));
+fprintf('\n');
+fprintf('Classical Robin:\n');
+fprintf('q = %.12g\n',qClassic);
+fprintf('r = %.12g\n\n',rClassic);
 
-    for ir = 1:length(rVals)
+fprintf('Optimized Robin:\n');
+fprintf('q = %.12g\n',qOpt);
+fprintf('r = %.12g\n',rOpt);
+fprintf('Predicted convergence factor = %.6e\n\n',rhoOpt);
 
-        q = qVals(iq);
-        r = rVals(ir);
+%% ------------------------------------------------------------
+% Classical SWR
+% ------------------------------------------------------------
 
-        %-----------------------------------------
-        % Continuous convergence factor
-        %-----------------------------------------
+[~,~,u_iter_classic,~] = swr_solver( ...
+    u0_fun,v0_fun,f_fun,...
+    dx,dt,L,T,...
+    c,gamma,nu,...
+    qClassic,rClassic,...
+    delta,iterations);
 
-        k = sqrt((omega.^2-1i*gamma*omega) ...
-                ./(c^2+1i*nu*omega));
+%% ------------------------------------------------------------
+% Optimized SWR
+% ------------------------------------------------------------
 
-        Lambda = r + 1i*q*omega;
+[~,~,u_iter_opt,~] = swr_solver( ...
+    u0_fun,v0_fun,f_fun,...
+    dx,dt,L,T,...
+    c,gamma,nu,...
+    qOpt,rOpt,...
+    delta,iterations);
 
-        rho = abs((1i*k.*sinh(1i*k*a)-Lambda.*cosh(1i*k*a))./(1i*k.*sinh(1i*k*b)+Lambda.*cosh(1i*k*b))).^2 ...
-             .*exp(-2*imag(k)*delta);
+%% ------------------------------------------------------------
+% Errors versus monolithic solution
+% ------------------------------------------------------------
 
-        Rho(ir,iq) = max(rho);
+errClassic = zeros(iterations,1);
+errOpt     = zeros(iterations,1);
 
-        %-----------------------------------------
-        % SWR
-        %-----------------------------------------
+for k = 1:iterations
 
-        [~,~,u_iter,~] = swr_solver( ...
-            u0_fun,v0_fun,f_fun,...
-            dx,dt,L,T,...
-            c,gamma,nu,...
-            q,r,...
-            delta,iterationsToMeasure);
+    errClassic(k) = norm( ...
+        u_iter_classic(:,end,k)-u_mono(:,end),inf);
 
-        Err(ir,iq) = norm( ...
-            u_iter(:,end,iterationsToMeasure)-u_mono(:,end),inf);
-
-    end
+    errOpt(k) = norm( ...
+        u_iter_opt(:,end,k)-u_mono(:,end),inf);
 
 end
 
 %% ------------------------------------------------------------
-% Locate minima
+% Plot
 % ------------------------------------------------------------
 
-[minErr,idx] = min(Err(:));
-[irErr,iqErr] = ind2sub(size(Err),idx);
+figure('Color','w')
 
-[minRho,idx] = min(Rho(:));
-[irRho,iqRho] = ind2sub(size(Rho),idx);
-
-fprintf('\n');
-fprintf('Measured optimum\n');
-fprintf('q = %.6f\n',qVals(iqErr));
-fprintf('r = %.6f\n',rVals(irErr));
-
-fprintf('\n');
-fprintf('Continuous optimum\n');
-fprintf('q = %.6f\n',qVals(iqRho));
-fprintf('r = %.6f\n',rVals(irRho));
-
-%% ------------------------------------------------------------
-% Measured error
-% ------------------------------------------------------------
-
-figure
-
-imagesc(qVals,rVals,log10(Err))
-
-axis xy
-colorbar
-
-xlabel('q')
-ylabel('r')
-
-title(sprintf('log_{10} error after %d Schwarz iterations', ...
-    iterationsToMeasure))
-
+semilogy(0:iterations-1,errClassic,'o-','LineWidth',2)
 hold on
+semilogy(0:iterations-1,errOpt,'s-','LineWidth',2)
 
-plot(qVals(iqErr),rVals(irErr),...
-    'wo',...
-    'MarkerSize',12,...
-    'LineWidth',2)
+grid on
+box on
 
-plot(qVals(iqRho),rVals(irRho),...
-    'r+',...
-    'MarkerSize',14,...
-    'LineWidth',2)
+xlabel('Schwarz iteration')
+ylabel('L_\infty error')
 
-legend('Measured optimum','Continuous optimum')
+legend( ...
+    'Robin q=1/c, r=0',...
+    'Optimized Robin',...
+    'Location','southwest')
 
-%% ------------------------------------------------------------
-% Predicted convergence factor
-% ------------------------------------------------------------
-
-figure
-
-imagesc(qVals,rVals,Rho)
-
-axis xy
-colorbar
-
-xlabel('q')
-ylabel('r')
-
-title('Predicted max convergence factor')
-
-hold on
-
-plot(qVals(iqErr),rVals(irErr),...
-    'wo',...
-    'MarkerSize',12,...
-    'LineWidth',2)
-
-plot(qVals(iqRho),rVals(irRho),...
-    'r+',...
-    'MarkerSize',14,...
-    'LineWidth',2)
-
-legend('Measured optimum','Continuous optimum')
+title('SWR convergence')
 
 function T = modal_time(k,c,gamma,nu)
 

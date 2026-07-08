@@ -1,4 +1,5 @@
-clear all; close all; clc;
+addpath(genpath('../src'));
+% clear all; close all; clc;
 
 %% Parameters
 c = 1;
@@ -6,11 +7,11 @@ c = 1;
 % dx = 0.001;
 % dt = 0.001;
 
-% dx = 0.01;
-% dt = 0.01;
+dx = 0.01;
+dt = 0.01;
 
-dx = 0.05;
-dt = 0.05;
+% dx = 0.05;
+% dt = 0.05;
 
 % bcType = 'dirichlet';
 % bcType = 'neumannGhost';
@@ -29,12 +30,17 @@ dt = 0.05;
 % experiment = 'triangleStandingWaveDirichlet'; T = 2; bcType = 'dirichlet'; gamma = 0.5; nu = 0.005;
 % experiment = 'triangleStandingWaveDirichlet'; T = 2; bcType = 'dirichlet'; gamma = 0.5; nu = 0.005;
 
-experiment = 'trianglePulse'; L = 2; T = 2; bcType = 'robinGhost'; gamma = 0; nu = 0; exp_idx = 9;
-% experiment = 'trianglePulse'; L = 2; T = 2; bcType = 'neumannRobinGhost'; gamma = 0; nu = 0; exp_idx = 10;
-% experiment = 'trianglePulse'; L = 2; T = 2; bcType = 'robinNeumannGhost'; gamma = 0; nu = 0; exp_idx = 11;
+experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0.5;
 
 q = 1/c;
 r = 0;
+
+iterations = 5;
+iterationsToMeasure = 5;
+delta = L/5;
+
+a = (L-delta)/2;
+b = a + delta;
 
 %% Experiment
 
@@ -97,7 +103,7 @@ switch lower(experiment)
                      'valid for gamma = nu = 0.']);
         end
     
-        mu    = L/2;
+        mu    = L/4;
         sigma = L/20;
     
         % number of image cells (increase if T is larger)
@@ -120,7 +126,7 @@ switch lower(experiment)
                      'valid for gamma = nu = 0.']);
         end
     
-        mu    = L/2;
+        mu    = L/4;
         sigma = L/20;
     
         M = ceil(c*T/L) + 2;
@@ -137,93 +143,157 @@ switch lower(experiment)
 
 end
 
-%% Solve
+%% ------------------------------------------------------------
+% Monolithic reference
+% ------------------------------------------------------------
 
-[x_grid,t_grid,u_array,v_array] = solver( ...
+[~,~,u_mono,~,~,~] = solver( ...
     u0_fun,v0_fun,f_fun,...
     dx,dt,L,T,...
     c,gamma,nu,...
-    bcType,q,r);
+    bcType,...
+    1/c,0,...
+    @(t)0,@(t)0);
 
-Nt = length(t_grid);
-Nx = 10000;
-dx_fine = L/Nx;
+%% ------------------------------------------------------------
+% Parameter grid
+% ------------------------------------------------------------
 
-x_fine = ((0:Nx-1)+0.5)*dx_fine;
-u_array_fine = zeros(Nx,Nt);
+qVals = linspace(0,1.5/c,21);
+rVals = linspace(0,2,21);
 
-for n = 1:Nt
-    u_array_fine(:,n) = interp1( ...
-        x_grid, ...
-        u_array(:,n), ...
-        x_fine, ...
-        'linear');
+Err = zeros(length(rVals),length(qVals));
+Rho = zeros(length(rVals),length(qVals));
+
+wmin = pi/T;
+wmax = pi/dt;
+omega = logspace(log10(wmin),log10(wmax),4000);
+
+%% ------------------------------------------------------------
+% Sweep
+% ------------------------------------------------------------
+
+for iq = 1:length(qVals)
+
+    fprintf('%d / %d\n',iq,length(qVals));
+
+    for ir = 1:length(rVals)
+
+        q = qVals(iq);
+        r = rVals(ir);
+
+        %-----------------------------------------
+        % Continuous convergence factor
+        %-----------------------------------------
+
+        k = sqrt((omega.^2-1i*gamma*omega) ...
+                ./(c^2+1i*nu*omega));
+
+        Lambda = r + 1i*q*omega;
+
+        rho = abs((1i*k.*sinh(1i*k*a)-Lambda.*cosh(1i*k*a))./(1i*k.*sinh(1i*k*b)+Lambda.*cosh(1i*k*b))).^2 ...
+             .*exp(-2*imag(k)*delta);
+
+        Rho(ir,iq) = max(rho);
+
+        %-----------------------------------------
+        % SWR
+        %-----------------------------------------
+
+        [~,~,u_iter,~] = swr_solver( ...
+            u0_fun,v0_fun,f_fun,...
+            dx,dt,L,T,...
+            c,gamma,nu,...
+            q,r,...
+            delta,iterationsToMeasure);
+
+        Err(ir,iq) = norm( ...
+            u_iter(:,end,iterationsToMeasure)-u_mono(:,end),inf);
+
+    end
+
 end
 
-%% Animation and Snapshots
+%% ------------------------------------------------------------
+% Locate minima
+% ------------------------------------------------------------
 
-% Create a subfolder based on the experiment index
-saveFolder = sprintf('snapshots/experiment_%d', exp_idx);
-if ~exist(saveFolder, 'dir')
-    mkdir(saveFolder); 
-end
+[minErr,idx] = min(Err(:));
+[irErr,iqErr] = ind2sub(size(Err),idx);
 
-figure('Color', 'w');
+[minRho,idx] = min(Rho(:));
+[irRho,iqRho] = ind2sub(size(Rho),idx);
 
-snapshotTimes = [0.2, 0.5, 1.0];
+fprintf('\n');
+fprintf('Measured optimum\n');
+fprintf('q = %.6f\n',qVals(iqErr));
+fprintf('r = %.6f\n',rVals(irErr));
 
-% Plot the coarse node positions
-for i = 1:length(x_grid)
-    xline(x_grid(i), 'Color', [1, 0, 0, 0.3], 'LineWidth', 0.5);
-end
+fprintf('\n');
+fprintf('Continuous optimum\n');
+fprintf('q = %.6f\n',qVals(iqRho));
+fprintf('r = %.6f\n',rVals(irRho));
+
+%% ------------------------------------------------------------
+% Measured error
+% ------------------------------------------------------------
+
+figure
+
+imagesc(qVals,rVals,log10(Err))
+
+axis xy
+colorbar
+
+xlabel('q')
+ylabel('r')
+
+title(sprintf('log_{10} error after %d Schwarz iterations', ...
+    iterationsToMeasure))
+
 hold on
 
-% Plot the numerical and exact solutions
-hNum = plot(x_fine, u_array_fine(:,1), 'b', 'LineWidth', 2);
-hExact = plot(x_fine, uExact(x_fine, t_grid(1)), 'r--', 'LineWidth', 2);
+plot(qVals(iqErr),rVals(irErr),...
+    'wo',...
+    'MarkerSize',12,...
+    'LineWidth',2)
 
-% grid on;
-box on;
-xlabel('x'); ylabel('u');
-ylim([-1 1]);
-hDummy = plot(NaN, NaN, 'Color', [1, 0, 0, 0.5], 'LineWidth', 0.5);
-legend([hNum, hExact, hDummy], 'Numerical', 'Exact', 'Nodes', 'Location', 'best')
+plot(qVals(iqRho),rVals(irRho),...
+    'r+',...
+    'MarkerSize',14,...
+    'LineWidth',2)
 
-for n = 1:length(t_grid)
-    currentTime = t_grid(n);
-    
-    % Update the plots
-    set(hNum, 'YData', u_array_fine(:,n));
-    set(hExact, 'YData', uExact(x_fine, currentTime));
-    title(sprintf('t = %.4f', currentTime));
-    drawnow;
-    
-    % % Check if we need to save a snapshot
-    % for s = 1:length(snapshotTimes)
-    %     if abs(currentTime - snapshotTimes(s)) < (dt/2)
-    %         filename = fullfile(saveFolder, sprintf('snapshot_t_%.4f.png', currentTime));
-    %         exportgraphics(gcf, filename, 'Resolution', 300);
-    %         fprintf('Saved snapshot at t = %.4f\n', currentTime);
-    %     end
-    % end
-end
+legend('Measured optimum','Continuous optimum')
 
-%% Space-time plot
-hSpacetime = figure('Color', 'w');
-imagesc(t_grid,x_fine,u_array_fine);
-axis xy;
-xlabel('Time'); ylabel('Position');
-title(sprintf('Space-time solution (Exp %d)', exp_idx));
-colorbar;
-exportgraphics(hSpacetime, fullfile(saveFolder, 'spacetime_solution.png'), 'Resolution', 300);
+%% ------------------------------------------------------------
+% Predicted convergence factor
+% ------------------------------------------------------------
 
-%% Surface plot
-hSurf = figure('Color', 'w');
-surf(t_grid,x_fine,u_array_fine, 'EdgeColor', 'none');
-xlabel('Time'); ylabel('Position'); zlabel('u');
-title(sprintf('Space-time solution (Exp %d)', exp_idx));
-view(45,30); camlight; lighting gouraud;
-exportgraphics(hSurf, fullfile(saveFolder, 'surface_solution.png'), 'Resolution', 300);
+figure
+
+imagesc(qVals,rVals,Rho)
+
+axis xy
+colorbar
+
+xlabel('q')
+ylabel('r')
+
+title('Predicted max convergence factor')
+
+hold on
+
+plot(qVals(iqErr),rVals(irErr),...
+    'wo',...
+    'MarkerSize',12,...
+    'LineWidth',2)
+
+plot(qVals(iqRho),rVals(irRho),...
+    'r+',...
+    'MarkerSize',14,...
+    'LineWidth',2)
+
+legend('Measured optimum','Continuous optimum')
 
 function T = modal_time(k,c,gamma,nu)
 

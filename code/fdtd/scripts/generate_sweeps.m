@@ -44,6 +44,7 @@ if length(figs) >= 2
     saveas(figs(2), '../../latex/Images/fdtd_snapshots/swr_parameters/swr_predicted_rho.png');
 end
 close all;
+addpath(genpath('../src'));
 
 fprintf('All figures generated successfully.\n');
 end

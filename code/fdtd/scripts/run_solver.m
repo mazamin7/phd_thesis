@@ -1,4 +1,5 @@
 clear all; close all; clc;
+addpath(genpath('../src'));
 
 %% Parameters
 c = 1;
@@ -29,16 +30,12 @@ dt = 0.05;
 % experiment = 'triangleStandingWaveDirichlet'; T = 2; bcType = 'dirichlet'; gamma = 0.5; nu = 0.005;
 % experiment = 'triangleStandingWaveDirichlet'; T = 2; bcType = 'dirichlet'; gamma = 0.5; nu = 0.005;
 
-experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0.5; nu = 1;
+experiment = 'trianglePulse'; L = 2; T = 2; bcType = 'robinGhost'; gamma = 0; nu = 0; exp_idx = 9;
+% experiment = 'trianglePulse'; L = 2; T = 2; bcType = 'neumannRobinGhost'; gamma = 0; nu = 0; exp_idx = 10;
+% experiment = 'trianglePulse'; L = 2; T = 2; bcType = 'robinNeumannGhost'; gamma = 0; nu = 0; exp_idx = 11;
 
 q = 1/c;
 r = 0;
-
-iterations = 100;
-delta = L/10;
-
-a = (L-delta)/2;
-b = a + delta;
 
 %% Experiment
 
@@ -101,7 +98,7 @@ switch lower(experiment)
                      'valid for gamma = nu = 0.']);
         end
     
-        mu    = L/4;
+        mu    = L/2;
         sigma = L/20;
     
         % number of image cells (increase if T is larger)
@@ -124,7 +121,7 @@ switch lower(experiment)
                      'valid for gamma = nu = 0.']);
         end
     
-        mu    = L/4;
+        mu    = L/2;
         sigma = L/20;
     
         M = ceil(c*T/L) + 2;
@@ -141,102 +138,93 @@ switch lower(experiment)
 
 end
 
-%% ------------------------------------------------------------
-% Monolithic reference
-% ------------------------------------------------------------
+%% Solve
 
-[~,~,u_mono,~,~,~] = solver( ...
+[x_grid,t_grid,u_array,v_array] = solver( ...
     u0_fun,v0_fun,f_fun,...
     dx,dt,L,T,...
     c,gamma,nu,...
-    bcType,...
-    1/c,0,...
-    @(t)0,@(t)0);
+    bcType,q,r);
 
-%% ------------------------------------------------------------
-% Classical Robin parameters
-% ------------------------------------------------------------
+Nt = length(t_grid);
+Nx = 10000;
+dx_fine = L/Nx;
 
-qClassic = 1/c;
-rClassic = 0;
+x_fine = ((0:Nx-1)+0.5)*dx_fine;
+u_array_fine = zeros(Nx,Nt);
 
-%% ------------------------------------------------------------
-% Optimized Robin parameters
-% ------------------------------------------------------------
-
-[qOpt,rOpt,rhoOpt] = get_optimal_robin_params(c,gamma,nu,a,b,T,dx,dt);
-
-fprintf('\n');
-fprintf('Classical Robin:\n');
-fprintf('q = %.12g\n',qClassic);
-fprintf('r = %.12g\n\n',rClassic);
-
-fprintf('Optimized Robin:\n');
-fprintf('q = %.12g\n',qOpt);
-fprintf('r = %.12g\n',rOpt);
-fprintf('Predicted convergence factor = %.6e\n\n',rhoOpt);
-
-%% ------------------------------------------------------------
-% Classical SWR
-% ------------------------------------------------------------
-
-[~,~,u_iter_classic,~] = swr_solver( ...
-    u0_fun,v0_fun,f_fun,...
-    dx,dt,L,T,...
-    c,gamma,nu,...
-    qClassic,rClassic,...
-    delta,iterations);
-
-%% ------------------------------------------------------------
-% Optimized SWR
-% ------------------------------------------------------------
-
-[~,~,u_iter_opt,~] = swr_solver( ...
-    u0_fun,v0_fun,f_fun,...
-    dx,dt,L,T,...
-    c,gamma,nu,...
-    qOpt,rOpt,...
-    delta,iterations);
-
-%% ------------------------------------------------------------
-% Errors versus monolithic solution
-% ------------------------------------------------------------
-
-errClassic = zeros(iterations,1);
-errOpt     = zeros(iterations,1);
-
-for k = 1:iterations
-
-    errClassic(k) = norm( ...
-        u_iter_classic(:,end,k)-u_mono(:,end),inf);
-
-    errOpt(k) = norm( ...
-        u_iter_opt(:,end,k)-u_mono(:,end),inf);
-
+for n = 1:Nt
+    u_array_fine(:,n) = interp1( ...
+        x_grid, ...
+        u_array(:,n), ...
+        x_fine, ...
+        'linear');
 end
 
-%% ------------------------------------------------------------
-% Plot
-% ------------------------------------------------------------
+%% Animation and Snapshots
 
-figure('Color','w')
+% Create a subfolder based on the experiment index
+saveFolder = sprintf('snapshots/experiment_%d', exp_idx);
+if ~exist(saveFolder, 'dir')
+    mkdir(saveFolder); 
+end
 
-semilogy(0:iterations-1,errClassic,'o-','LineWidth',2)
+figure('Color', 'w');
+
+snapshotTimes = [0.2, 0.5, 1.0];
+
+% Plot the coarse node positions
+for i = 1:length(x_grid)
+    xline(x_grid(i), 'Color', [1, 0, 0, 0.3], 'LineWidth', 0.5);
+end
 hold on
-semilogy(0:iterations-1,errOpt,'s-','LineWidth',2)
 
-grid on
-box on
+% Plot the numerical and exact solutions
+hNum = plot(x_fine, u_array_fine(:,1), 'b', 'LineWidth', 2);
+hExact = plot(x_fine, uExact(x_fine, t_grid(1)), 'r--', 'LineWidth', 2);
 
-xlabel('Schwarz iteration')
-ylabel('L_\infty error')
+% grid on;
+box on;
+xlabel('x'); ylabel('u');
+ylim([-1 1]);
+hDummy = plot(NaN, NaN, 'Color', [1, 0, 0, 0.5], 'LineWidth', 0.5);
+legend([hNum, hExact, hDummy], 'Numerical', 'Exact', 'Nodes', 'Location', 'best')
 
-legend( ...
-    'Robin q=1/c, r=0',...
-    'Optimized Robin',...
-    'Location','southwest')
+for n = 1:length(t_grid)
+    currentTime = t_grid(n);
+    
+    % Update the plots
+    set(hNum, 'YData', u_array_fine(:,n));
+    set(hExact, 'YData', uExact(x_fine, currentTime));
+    title(sprintf('t = %.4f', currentTime));
+    drawnow;
+    
+    % % Check if we need to save a snapshot
+    % for s = 1:length(snapshotTimes)
+    %     if abs(currentTime - snapshotTimes(s)) < (dt/2)
+    %         filename = fullfile(saveFolder, sprintf('snapshot_t_%.4f.png', currentTime));
+    %         exportgraphics(gcf, filename, 'Resolution', 300);
+    %         fprintf('Saved snapshot at t = %.4f\n', currentTime);
+    %     end
+    % end
+end
 
-title('SWR convergence')
+%% Space-time plot
+hSpacetime = figure('Color', 'w');
+imagesc(t_grid,x_fine,u_array_fine);
+axis xy;
+xlabel('Time'); ylabel('Position');
+title(sprintf('Space-time solution (Exp %d)', exp_idx));
+colorbar;
+exportgraphics(hSpacetime, fullfile(saveFolder, 'spacetime_solution.png'), 'Resolution', 300);
+
+%% Surface plot
+hSurf = figure('Color', 'w');
+surf(t_grid,x_fine,u_array_fine, 'EdgeColor', 'none');
+xlabel('Time'); ylabel('Position'); zlabel('u');
+title(sprintf('Space-time solution (Exp %d)', exp_idx));
+view(45,30); camlight; lighting gouraud;
+exportgraphics(hSurf, fullfile(saveFolder, 'surface_solution.png'), 'Resolution', 300);
 
 function T = modal_time(k,c,gamma,nu)
 

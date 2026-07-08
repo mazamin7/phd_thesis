@@ -1,4 +1,5 @@
 clear all; close all; clc;
+addpath(genpath('../src'));
 q = 1;
 r = 0;
 iterations = 10;

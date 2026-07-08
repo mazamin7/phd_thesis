@@ -1,5 +1,6 @@
 % verify_cfl_empirical.m
 clear all; close all; clc;
+addpath(genpath('../src'));
 addpath('WASAbi1D/utils');
 
 orders = [2, 4, 6, 8];

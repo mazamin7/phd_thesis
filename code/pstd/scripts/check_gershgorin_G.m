@@ -1,5 +1,6 @@
 % check_gershgorin_G.m
 clear all; close all; clc;
+addpath(genpath('../src'));
 addpath('WASAbi1D/utils');
 
 Nx = 100;

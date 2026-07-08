@@ -1,5 +1,6 @@
 % check_nx_trend.m
 clear all; close all; clc;
+addpath(genpath('../src'));
 addpath('WASAbi1D/utils');
 
 orders = [2, 4, 6, 8];
