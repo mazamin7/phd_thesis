@@ -4071,6 +4071,37 @@ We compare the convergence of the SWR iteration using classical Robin transmissi
     \label{fig:oswr_convergence}
 \end{figure}
 
+\subsubsection{Parameter Optimization and Viscosity Sweep}
+
+To further characterize the performance of the Optimized Schwarz Waveform Relaxation method, we investigate the influence of the Kelvin--Voigt viscosity parameter $\nu$ on the optimized Robin parameters, and empirically verify the theoretical convergence factor through a direct parametric sweep.
+
+Figure~\ref{fig:oswr_nu_sweep} illustrates the behavior of the SWR convergence across varying levels of viscosity $\nu$. As the viscosity increases, the physical damping strictly bounds the high-frequency spectral components, significantly altering the optimal transmission parameters. The optimized Robin coefficients dynamically adapt to this increased damping, demonstrating robust error reduction rates even for highly viscous regimes where the classical Robin conditions ($q=1/c$, $r=0$) become increasingly suboptimal.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.9\textwidth]{Images/fdtd_snapshots/swr_parameters/swr_nu_sweep.png}
+    \caption{SWR convergence for classical versus optimized Robin parameters across different viscosity values $\nu$.}
+    \label{fig:oswr_nu_sweep}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=\textwidth]{Images/fdtd_snapshots/swr_parameters/swr_optimized_params.png}
+    \caption{Optimized Robin parameters $q^\ast$ and $r^\ast$, along with the predicted convergence factor $\rho_{\mathrm{opt}}$, as a function of the Kelvin--Voigt viscosity $\nu$.}
+    \label{fig:oswr_optimized_params}
+\end{figure}
+
+To definitively validate the theoretical min-max optimization problem (Equation~\ref{eq:minmax}), we perform an exhaustive numerical sweep over a 2D grid of Robin parameters $(q, r)$. For each configuration, we run the SWR iteration and extract the empirical maximum error after a fixed number of iterations. We then evaluate the analytical convergence factor $\rho$ over the same parameter space. Figure~\ref{fig:oswr_empirical_vs_theoretical} compares the empirically measured optimal parameters against the analytically predicted continuous optimum. The location of the minimum empirical error flawlessly coincides with the minimum of the continuous theoretical convergence factor, strictly confirming the validity of the analytical derivation and the resulting parameter optimization framework.
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=\textwidth]{Images/fdtd_snapshots/swr_parameters/swr_empirical_error.png} \caption{Measured empirical error.} \end{subfigure}
+    \hfill
+    \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=\textwidth]{Images/fdtd_snapshots/swr_parameters/swr_predicted_rho.png} \caption{Predicted max convergence factor.} \end{subfigure}
+    \caption{Comparison of the empirically measured optimum error versus the theoretical continuous optimum over the parameter space $(q,r)$. The theoretically predicted optimal parameters match the numerical optimum.}
+    \label{fig:oswr_empirical_vs_theoretical}
+\end{figure}
+
 \section{Adaptive Rectangular Decomposition}
 \label{sec:ard}
 

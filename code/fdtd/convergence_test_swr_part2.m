@@ -1,4 +1,4 @@
-clear all; close all; clc;
+% clear all; close all; clc;
 
 %% ================================================================
 % Sweep over Kelvin--Voigt viscosity nu: compare classical vs
