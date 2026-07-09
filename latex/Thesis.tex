@@ -3577,7 +3577,7 @@ The damping coefficients are
 \]
 The initial displacement is a Gaussian pulse centered at
 \[
-\mu=\frac{L}{2},
+\mu=\frac{L}{4},
 \]
 with width parameter $\sigma=L/50$,
 \[
@@ -3663,7 +3663,7 @@ The computational domain, boundary conditions and physical parameters coincide w
 \]
 The initial displacement is a triangular pulse centered at
 \[
-\mu=\frac{L}{2},
+\mu=\frac{L}{4},
 \]
 with support determined by $\sigma=L/50$, while
 \[
@@ -4055,18 +4055,17 @@ To validate the theoretical convergence rates of the Optimized Schwarz Waveform 
 We compare the convergence of the SWR iteration using classical Robin transmission conditions ($q=1/c$, $r=0$) against the optimized Robin parameters derived from the theoretical min-max problem (Equation~\ref{eq:minmax}). Figure~\ref{fig:oswr_convergence} illustrates the $L^\infty$ error over successive Schwarz iterations, measured against the monolithic FDTD reference solution. The theoretically optimized Robin conditions consistently and substantially accelerate the convergence rate across all wave profiles, accurately reflecting the theoretical predictions and significantly outperforming the classical Robin approach.
 
 \begin{figure}[H]
-    \centering
-    \begin{subfigure}{0.32\textwidth} \centering \includegraphics[width=\textwidth]{Images/fdtd_snapshots/experiment_1_swr/swr_convergence.png} \caption{Smooth, $\gamma=0$, $\nu=0$} \end{subfigure}
+     \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=\textwidth]{Images/fdtd_snapshots/experiment_1_swr/swr_convergence.png} \caption{Smooth standing wave (undamped)} \end{subfigure}
     \hfill
-    \begin{subfigure}{0.32\textwidth} \centering \includegraphics[width=\textwidth]{Images/fdtd_snapshots/experiment_3_swr/swr_convergence.png} \caption{Smooth, $\gamma=0.5$, $\nu=0.005$} \end{subfigure}
+    \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=\textwidth]{Images/fdtd_snapshots/experiment_3_swr/swr_convergence.png} \caption{Smooth standing wave (damped)} \end{subfigure} \\
+    \vspace{0.3cm}
+    \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=\textwidth]{Images/fdtd_snapshots/experiment_2_swr/swr_convergence.png} \caption{Non-smooth standing wave (undamped)} \end{subfigure}
     \hfill
-    \begin{subfigure}{0.32\textwidth} \centering \includegraphics[width=\textwidth]{Images/fdtd_snapshots/experiment_5_swr/swr_convergence.png} \caption{Pulse, $\gamma=0$, $\nu=0$} \end{subfigure} \\
-    \vspace{0.5cm}
-    \begin{subfigure}{0.32\textwidth} \centering \includegraphics[width=\textwidth]{Images/fdtd_snapshots/experiment_2_swr/swr_convergence.png} \caption{Non-smooth, $\gamma=0$, $\nu=0$} \end{subfigure}
+    \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=\textwidth]{Images/fdtd_snapshots/experiment_4_swr/swr_convergence.png} \caption{Non-smooth standing wave (damped)} \end{subfigure} \\
+    \vspace{0.3cm}
+    \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=\textwidth]{Images/fdtd_snapshots/experiment_5_swr/swr_convergence.png} \caption{Smooth propagating pulse (undamped)} \end{subfigure}
     \hfill
-    \begin{subfigure}{0.32\textwidth} \centering \includegraphics[width=\textwidth]{Images/fdtd_snapshots/experiment_4_swr/swr_convergence.png} \caption{Non-smooth, $\gamma=0.5$, $\nu=0.005$} \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.32\textwidth} \centering \includegraphics[width=\textwidth]{Images/fdtd_snapshots/experiment_6_swr/swr_convergence.png} \caption{Pulse, $\gamma=0$, $\nu=0$} \end{subfigure}
+    \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=\textwidth]{Images/fdtd_snapshots/experiment_6_swr/swr_convergence.png} \caption{Non-smooth propagating pulse (undamped)} \end{subfigure}
     \caption{Convergence of the SWR iteration for classical vs optimized Robin transmission conditions under six different initial conditions. In all configurations, the theoretically optimized parameters strictly bound the contraction rate and significantly outperform the classical approach.}
     \label{fig:oswr_convergence}
 \end{figure}
@@ -4481,17 +4480,17 @@ Figure~\ref{fig:ard_convergence} presents the $L^\infty$ domain decomposition er
 
 \begin{figure}[H]
     \centering
-    \begin{subfigure}{0.32\textwidth} \centering \includegraphics[width=\textwidth]{Images/pstd_snapshots/experiment_1_order/nodal_error_vs_monolithic_order.png} \caption{Smooth, $\gamma=0$, $\nu=0$} \end{subfigure}
+    \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=\textwidth]{Images/pstd_snapshots/experiment_1_order/nodal_error_vs_monolithic_order.png} \caption{Smooth standing wave (undamped)} \end{subfigure}
     \hfill
-    \begin{subfigure}{0.32\textwidth} \centering \includegraphics[width=\textwidth]{Images/pstd_snapshots/experiment_3_order/nodal_error_vs_monolithic_order.png} \caption{Smooth, $\gamma=0.5$, $\nu=0.005$} \end{subfigure}
+    \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=\textwidth]{Images/pstd_snapshots/experiment_3_order/nodal_error_vs_monolithic_order.png} \caption{Smooth standing wave (damped)} \end{subfigure} \\
+    \vspace{0.3cm}
+    \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=\textwidth]{Images/pstd_snapshots/experiment_2_order/nodal_error_vs_monolithic_order.png} \caption{Non-smooth standing wave (undamped)} \end{subfigure}
     \hfill
-    \begin{subfigure}{0.32\textwidth} \centering \includegraphics[width=\textwidth]{Images/pstd_snapshots/experiment_5_order/nodal_error_vs_monolithic_order.png} \caption{Pulse, $\gamma=0$, $\nu=0$} \end{subfigure} \\
-    \vspace{0.5cm}
-    \begin{subfigure}{0.32\textwidth} \centering \includegraphics[width=\textwidth]{Images/pstd_snapshots/experiment_2_order/nodal_error_vs_monolithic_order.png} \caption{Non-smooth, $\gamma=0$, $\nu=0$} \end{subfigure}
+    \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=\textwidth]{Images/pstd_snapshots/experiment_4_order/nodal_error_vs_monolithic_order.png} \caption{Non-smooth standing wave (damped)} \end{subfigure} \\
+    \vspace{0.3cm}
+    \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=\textwidth]{Images/pstd_snapshots/experiment_5_order/nodal_error_vs_monolithic_order.png} \caption{Smooth propagating pulse (undamped)} \end{subfigure}
     \hfill
-    \begin{subfigure}{0.32\textwidth} \centering \includegraphics[width=\textwidth]{Images/pstd_snapshots/experiment_4_order/nodal_error_vs_monolithic_order.png} \caption{Non-smooth, $\gamma=0.5$, $\nu=0.005$} \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.32\textwidth} \centering \includegraphics[width=\textwidth]{Images/pstd_snapshots/experiment_6_order/nodal_error_vs_monolithic_order.png} \caption{Pulse, $\gamma=0$, $\nu=0$} \end{subfigure}
+    \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=\textwidth]{Images/pstd_snapshots/experiment_6_order/nodal_error_vs_monolithic_order.png} \caption{Non-smooth propagating pulse (undamped)} \end{subfigure}
     \caption{Domain decomposition error versus spatial grid resolution $\Delta x$ for the ARD interface penalty operator, evaluated across spatial orders 2, 4, 6, and 8.}
     \label{fig:ard_convergence}
 \end{figure}

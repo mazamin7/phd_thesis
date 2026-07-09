@@ -24,7 +24,7 @@ dt = 0.05;
 % experiment = 'standingWave'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0.5; nu = 0.005; exp_idx = 3;
 % experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0.5; nu = 0.005; exp_idx = 4;
 % experiment = 'smoothPulse'; L = 2; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 5;
-% experiment = 'trianglePulse'; L = 2; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 6;
+experiment = 'trianglePulse'; L = 2; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 6;
 
 % unused
 % experiment = 'triangleStandingWaveDirichlet'; T = 2; bcType = 'dirichlet'; gamma = 0.5; nu = 0.005;
@@ -98,7 +98,7 @@ switch lower(experiment)
                      'valid for gamma = nu = 0.']);
         end
     
-        mu    = L/2;
+        mu    = L/4;
         sigma = L/20;
     
         % number of image cells (increase if T is larger)
@@ -121,7 +121,7 @@ switch lower(experiment)
                      'valid for gamma = nu = 0.']);
         end
     
-        mu    = L/2;
+        mu    = L/4;
         sigma = L/20;
     
         M = ceil(c*T/L) + 2;

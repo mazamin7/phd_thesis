@@ -85,7 +85,7 @@ switch lower(experiment)
                      'valid for gamma = nu = 0.']);
         end
     
-        mu    = L/2;
+        mu    = L/4;
         sigma = L/20;
     
         % number of image cells (increase if T is larger)
@@ -108,7 +108,7 @@ switch lower(experiment)
                      'valid for gamma = nu = 0.']);
         end
     
-        mu    = L/2;
+        mu    = L/4;
         sigma = L/20;
     
         M = ceil(c*T/L) + 2;

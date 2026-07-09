@@ -1,11 +1,12 @@
 clear all; close all; clc;
+addpath(genpath('../src'));
 
 %% Parameters
 c = 1;
 
 % bcType = 'neumannGhost';
 
-for exp_idx = 1:6
+for exp_idx = 5:6
 
     switch exp_idx
         case 1
