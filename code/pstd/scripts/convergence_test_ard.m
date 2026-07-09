@@ -1,6 +1,6 @@
 clear all; close all; clc;
 % addpath('WASAbi1D/utils');
-
+addpath(genpath('../src'));
 %% Parameters
 c = 1;
 
@@ -78,7 +78,7 @@ for exp_idx = 1:6
 
     %% Refinement study
 
-    N = [26 50 100 200 400];
+    N = [26 50 100 200 400 800];
     errNodal = zeros(size(N));
 
     for k = 1:length(N)
@@ -147,7 +147,6 @@ for exp_idx = 1:6
         fullfile(saveFolder,'nodal_error_vs_monolithic.png'),...
         'Resolution',300);
     close(h);
-addpath(genpath('../src'));
 end
 
 function T = modal_time(k,c,gamma,nu)

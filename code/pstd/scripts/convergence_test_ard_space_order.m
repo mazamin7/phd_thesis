@@ -1,6 +1,6 @@
 clear all; close all; clc;
 % addpath('WASAbi1D/utils');
-
+addpath(genpath('../src'));
 %% Parameters
 c = 1;
 
@@ -135,7 +135,6 @@ for exp_idx = 1:6
         fullfile(saveFolder,'nodal_error_vs_monolithic_order.png'),...
         'Resolution',300);
     close(h);
-addpath(genpath('../src'));
 end
 
 function T = modal_time(k,c,gamma,nu)
