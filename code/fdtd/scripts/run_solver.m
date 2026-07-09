@@ -23,8 +23,8 @@ dt = 0.05;
 % experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 2;
 % experiment = 'standingWave'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0.5; nu = 0.005; exp_idx = 3;
 % experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0.5; nu = 0.005; exp_idx = 4;
-% experiment = 'smoothPulse'; L = 2; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 5;
-experiment = 'trianglePulse'; L = 2; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 6;
+experiment = 'smoothPulse'; L = 2; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 5;
+% experiment = 'trianglePulse'; L = 2; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 6;
 
 % unused
 % experiment = 'triangleStandingWaveDirichlet'; T = 2; bcType = 'dirichlet'; gamma = 0.5; nu = 0.005;
@@ -199,14 +199,14 @@ for n = 1:length(t_grid)
     title(sprintf('t = %.4f', currentTime));
     drawnow;
     
-    % % Check if we need to save a snapshot
-    % for s = 1:length(snapshotTimes)
-    %     if abs(currentTime - snapshotTimes(s)) < (dt/2)
-    %         filename = fullfile(saveFolder, sprintf('snapshot_t_%.4f.png', currentTime));
-    %         exportgraphics(gcf, filename, 'Resolution', 300);
-    %         fprintf('Saved snapshot at t = %.4f\n', currentTime);
-    %     end
-    % end
+    % Check if we need to save a snapshot
+    for s = 1:length(snapshotTimes)
+        if abs(currentTime - snapshotTimes(s)) < (dt/2)
+            filename = fullfile(saveFolder, sprintf('snapshot_t_%.4f.png', currentTime));
+            exportgraphics(gcf, filename, 'Resolution', 300);
+            fprintf('Saved snapshot at t = %.4f\n', currentTime);
+        end
+    end
 end
 
 %% Space-time plot
