@@ -30,7 +30,7 @@ dt = 0.01;
 % experiment = 'triangleStandingWaveDirichlet'; T = 2; bcType = 'dirichlet'; gamma = 0.5; nu = 0.005;
 % experiment = 'triangleStandingWaveDirichlet'; T = 2; bcType = 'dirichlet'; gamma = 0.5; nu = 0.005;
 
-experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0.5;
+experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0.5; nu = 0.5;
 
 q = 1/c;
 r = 0;
@@ -238,7 +238,7 @@ fprintf('r = %.6f\n',rVals(irRho));
 % Measured error
 % ------------------------------------------------------------
 
-figure
+fig1 = figure('Color','w');
 
 imagesc(qVals,rVals,log10(Err))
 
@@ -265,11 +265,16 @@ plot(qVals(iqRho),rVals(irRho),...
 
 legend('Measured optimum','Continuous optimum')
 
+if ~exist('snapshots/swr_parameters', 'dir')
+    mkdir('snapshots/swr_parameters');
+end
+exportgraphics(fig1, 'snapshots/swr_parameters/swr_empirical_error.png', 'Resolution', 300);
+
 %% ------------------------------------------------------------
 % Predicted convergence factor
 % ------------------------------------------------------------
 
-figure
+fig2 = figure('Color','w');
 
 imagesc(qVals,rVals,Rho)
 
@@ -294,6 +299,8 @@ plot(qVals(iqRho),rVals(irRho),...
     'LineWidth',2)
 
 legend('Measured optimum','Continuous optimum')
+
+exportgraphics(fig2, 'snapshots/swr_parameters/swr_predicted_rho.png', 'Resolution', 300);
 
 function T = modal_time(k,c,gamma,nu)
 
