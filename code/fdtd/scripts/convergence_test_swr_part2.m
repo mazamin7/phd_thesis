@@ -2,7 +2,7 @@ addpath(genpath('../src'));
 % clear all; close all; clc;
 
 %% ================================================================
-% Sweep over Kelvin--Voigt viscosity nu: compare classical vs
+% Sweep over viscoelastic damping nu: compare classical vs
 % optimized Robin parameters, for a fixed experiment.
 % ================================================================
 
