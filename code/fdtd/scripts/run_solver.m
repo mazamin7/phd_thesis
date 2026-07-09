@@ -23,14 +23,14 @@ dt = 0.05;
 % experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 2;
 % experiment = 'standingWave'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0.5; nu = 0.005; exp_idx = 3;
 % experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0.5; nu = 0.005; exp_idx = 4;
-experiment = 'smoothPulse'; L = 2; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 5;
-% experiment = 'trianglePulse'; L = 2; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 6;
+% experiment = 'smoothPulse'; L = 2; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 5;
+experiment = 'trianglePulse'; L = 2; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 6;
 
 % unused
 % experiment = 'triangleStandingWaveDirichlet'; T = 2; bcType = 'dirichlet'; gamma = 0.5; nu = 0.005;
 % experiment = 'triangleStandingWaveDirichlet'; T = 2; bcType = 'dirichlet'; gamma = 0.5; nu = 0.005;
 
-experiment = 'trianglePulse'; L = 2; T = 2; bcType = 'robinGhost'; gamma = 0; nu = 0; exp_idx = 9;
+% experiment = 'trianglePulse'; L = 2; T = 2; bcType = 'robinGhost'; gamma = 0; nu = 0; exp_idx = 9;
 % experiment = 'trianglePulse'; L = 2; T = 2; bcType = 'neumannRobinGhost'; gamma = 0; nu = 0; exp_idx = 10;
 % experiment = 'trianglePulse'; L = 2; T = 2; bcType = 'robinNeumannGhost'; gamma = 0; nu = 0; exp_idx = 11;
 
