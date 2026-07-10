@@ -7,11 +7,11 @@ c = 1;
 % dx = 0.001;
 % dt = 0.001;
 
-dx = 0.01;
-dt = 0.01;
+% dx = 0.01;
+% dt = 0.01;
 
-% dx = 0.05;
-% dt = 0.05;
+dx = 0.05;
+dt = 0.05;
 
 % bcType = 'dirichlet';
 % bcType = 'neumannGhost';
@@ -30,14 +30,14 @@ dt = 0.01;
 % experiment = 'triangleStandingWaveDirichlet'; T = 2; bcType = 'dirichlet'; gamma = 0.5; nu = 0.005;
 % experiment = 'triangleStandingWaveDirichlet'; T = 2; bcType = 'dirichlet'; gamma = 0.5; nu = 0.005;
 
-experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0.5; nu = 0.5;
+experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0.5; nu = 2;
 
 q = 1/c;
 r = 0;
 
-iterations = 5;
-iterationsToMeasure = 5;
-delta = L/5;
+iterations = 30;
+iterationsToMeasure = 30;
+delta = L/10;
 
 a = (L-delta)/2;
 b = a + delta;

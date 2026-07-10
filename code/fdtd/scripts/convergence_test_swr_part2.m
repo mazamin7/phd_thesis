@@ -8,8 +8,8 @@ addpath(genpath('../src'));
 
 %% Fixed parameters
 c   = 1;
-dx  = 0.02;
-dt  = 0.02;
+dx  = 0.05;
+dt  = 0.05;
 
 experiment = 'trapezoidStandingWaveNeumann';
 bcType     = 'neumannGhost';
@@ -18,7 +18,8 @@ T = 2;
 gamma = 0.5;
 
 iterations = 30;
-delta = 2*dx;
+% delta = 2*dx;
+delta = L/10;
 assert(delta >= 2*dx)
 a = (L-delta)/2;
 b = a + delta;
@@ -161,6 +162,11 @@ for i = 1:nCases
 end
 
 sgtitle('SWR convergence: classical vs optimized Robin, across \nu')
+
+if ~exist('snapshots/swr_parameters', 'dir')
+    mkdir('snapshots/swr_parameters');
+end
+exportgraphics(gcf, 'snapshots/swr_parameters/swr_nu_sweep.png', 'Resolution', 300);
 
 %% ================================================================
 % Summary plot: predicted rho and optimized (q,r) vs nu

@@ -2,6 +2,12 @@
 echo Copying FDTD snapshots...
 xcopy "code\fdtd\scripts\snapshots\experiment_5\*" "latex\Images\fdtd_snapshots\experiment_5\" /Y /I /E
 xcopy "code\fdtd\scripts\snapshots\experiment_6\*" "latex\Images\fdtd_snapshots\experiment_6\" /Y /I /E
+xcopy "code\fdtd\scripts\snapshots\experiment_1_swr\*" "latex\Images\fdtd_snapshots\experiment_1_swr\" /Y /I /E
+xcopy "code\fdtd\scripts\snapshots\experiment_2_swr\*" "latex\Images\fdtd_snapshots\experiment_2_swr\" /Y /I /E
+xcopy "code\fdtd\scripts\snapshots\experiment_3_swr\*" "latex\Images\fdtd_snapshots\experiment_3_swr\" /Y /I /E
+xcopy "code\fdtd\scripts\snapshots\experiment_4_swr\*" "latex\Images\fdtd_snapshots\experiment_4_swr\" /Y /I /E
+xcopy "code\fdtd\scripts\snapshots\experiment_5_swr\*" "latex\Images\fdtd_snapshots\experiment_5_swr\" /Y /I /E
+xcopy "code\fdtd\scripts\snapshots\experiment_6_swr\*" "latex\Images\fdtd_snapshots\experiment_6_swr\" /Y /I /E
 xcopy "code\fdtd\scripts\snapshots\swr_parameters\*" "latex\Images\fdtd_snapshots\swr_parameters\" /Y /I /E
 
 echo Copying PSTD snapshots...

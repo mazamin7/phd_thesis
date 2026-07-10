@@ -4052,7 +4052,7 @@ are actually resolved: $\omega_{\min}$ reflects the coarsest mode that fits in t
 
 To validate the theoretical convergence rates of the Optimized Schwarz Waveform Relaxation (OSWR) method, we evaluate the domain decomposition error over successive Schwarz iterations across six distinct experiments with varying smoothness and physical damping parameters. The domain $\Omega=(0,L)$ is split into two overlapping subdomains with an overlap size $\delta=L/10$. The physical parameters vary across the configurations, including highly damped and undamped cases. The domain is discretized using a finite-difference spatial step $\Delta x=0.05$ and time step $\Delta t=0.05$. In all configurations, the simulations are run for a total time duration $T=2$. It is important to note that for spacetime domain decomposition methods like SWR, the total number of iterations required to reach convergence inherently depends on this simulation duration $T$, as boundary information must propagate back and forth across the entire spacetime interface.
 
-We compare the convergence of the SWR iteration using classical Robin transmission conditions ($q=1/c$, $r=0$) against the optimized Robin parameters derived from the theoretical min-max problem (Equation~\ref{eq:minmax}). Figure~\ref{fig:oswr_convergence} illustrates the $L^\infty$ error over successive Schwarz iterations, measured against the monolithic FDTD reference solution. The theoretically optimized Robin conditions consistently and substantially accelerate the convergence rate across all wave profiles, accurately reflecting the theoretical predictions and significantly outperforming the classical Robin approach.
+We compare the convergence of the SWR iteration using classical Robin transmission conditions ($q=1/c$, $r=0$) against the optimized Robin parameters derived from the theoretical min-max problem (Equation~\ref{eq:minmax}). Figure~\ref{fig:oswr_convergence} illustrates the $L^\infty$ error over successive Schwarz iterations, measured against the monolithic FDTD reference solution. The theoretically optimized Robin conditions do not substantially accelerate the convergence rate. As demonstrated in the subsequent experiments, this limited improvement occurs because a low viscoelastic damping coefficient was chosen for the current configurations.
 
 \begin{figure}[H]
      \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/fdtd_snapshots/experiment_1_swr/swr_convergence.png} \caption{Smooth standing wave (undamped)} \end{subfigure}
@@ -4070,11 +4070,9 @@ We compare the convergence of the SWR iteration using classical Robin transmissi
     \label{fig:oswr_convergence}
 \end{figure}
 
-\subsubsection{Parameter Optimization and Viscosity Sweep}
+To better characterize the performance of the Optimized Schwarz Waveform Relaxation method, we investigate the influence of the viscoelastic damping parameter $\nu$ on the optimized Robin parameters. For these evaluations, we consider the non-smooth standing wave configuration as our baseline setup. The simulation duration is set to $T=2$.
 
-To further characterize the performance of the Optimized Schwarz Waveform Relaxation method, we investigate the influence of the viscoelastic damping parameter $\nu$ on the optimized Robin parameters, and empirically verify the theoretical convergence factor through a direct parametric sweep. For these evaluations, we consider the non-smooth standing wave configuration as our baseline setup. The simulation duration is set to $T=2$.
-
-Figure~\ref{fig:oswr_nu_sweep} illustrates the behavior of the SWR convergence across varying levels of viscosity $\nu$. As the viscosity increases, the physical damping strictly bounds the high-frequency spectral components, significantly altering the optimal transmission parameters. The optimized Robin coefficients dynamically adapt to this increased damping, demonstrating robust error reduction rates even for highly viscous regimes where the classical Robin conditions ($q=1/c$, $r=0$) become increasingly suboptimal.
+Figure~\ref{fig:oswr_nu_sweep} illustrates the behavior of the SWR convergence across varying levels of viscosity $\nu$. As the viscosity increases, the optimal transmission parameters deviate more significantly from the classical Robin conditions ($q=1/c$, $r=0$).
 
 \begin{figure}[H]
     \centering
@@ -4090,7 +4088,7 @@ Figure~\ref{fig:oswr_nu_sweep} illustrates the behavior of the SWR convergence a
     \label{fig:oswr_optimized_params}
 \end{figure}
 
-To definitively validate the theoretical min-max optimization problem (Equation~\ref{eq:minmax}), we perform an exhaustive numerical sweep over a 2D grid of Robin parameters $(q, r)$. For each configuration, we run the SWR iteration and extract the empirical maximum error after a fixed number of iterations. We then evaluate the analytical convergence factor $\rho$ over the same parameter space. Figure~\ref{fig:oswr_empirical_vs_theoretical} compares the empirically measured optimal parameters against the analytically predicted continuous optimum. The location of the minimum empirical error flawlessly coincides with the minimum of the continuous theoretical convergence factor, strictly confirming the validity of the analytical derivation and the resulting parameter optimization framework.
+To definitively validate the theoretical min-max optimization problem (Equation~\ref{eq:minmax}), we perform an exhaustive numerical sweep over a 2D grid of Robin parameters $(q, r)$. For each configuration, we run the SWR iteration and extract the empirical maximum error after a fixed number of iterations. We then evaluate the analytical convergence factor $\rho$ over the same parameter space. Figure~\ref{fig:oswr_empirical_vs_theoretical} compares the empirically measured optimal parameters against the analytically predicted continuous optimum. The location of the minimum of the convergence factor lies in a region of minima of the empirical error, confirming the validity of the analytical derivation and the resulting parameter optimization framework.
 
 \begin{figure}[H]
     \centering
