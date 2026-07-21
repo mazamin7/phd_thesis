@@ -4149,6 +4149,7 @@ this simplifies to
 \overline{u_{xx}}
 +
 [u]\delta_\Gamma'.
+\label{eq:dist_deriv}
 \end{equation}
 
 Because the Neumann interface condition holds at all times, the temporal derivative also satisfies $[\partial_x\dot u]=0$, meaning the exact same distributional identity applies to the mixed viscous term:
@@ -4189,14 +4190,9 @@ L_h^{(\mathrm N)},
 \end{equation}
 where $L_h$ denotes the interior finite-difference Laplacian crossing the artificial interface, while $L_h^{(\mathrm N)}$ denotes the broken operator obtained by imposing homogeneous Neumann conditions on each subdomain (as introduced in \eqref{eq:boundary_corrected_laplacian}).
 
-This relationship can be directly justified through the theory of distributions. For a piecewise smooth function $u$ exhibiting a jump $[u]$ across the interface $\Gamma$ while preserving continuity of traction ($[u_x]=0$), its distributional second derivative is given by
+This relationship can be directly justified by recalling the distributional identity from \eqref{eq:dist_deriv}. In the discrete setting, applying the global finite-difference Laplacian $L_h \mathbf{u}$ natively evaluates the full distributional derivative $\bar{u}_{xx}$ by differencing across the interface. Conversely, the broken Neumann operator $L_h^{(\mathrm N)} \mathbf{u}$ acts entirely within the isolated subdomains, effectively evaluating only the piecewise classical derivative $\overline{u_{xx}}$. Taking the difference between these two discrete operators isolates the singular distribution:
 \[
-u_{xx} = \{u_{xx}\} + [u]\delta_\Gamma',
-\]
-where $\{u_{xx}\}$ denotes the classical piecewise second derivative evaluated strictly within the subdomains.
-In the discrete setting, applying the global finite-difference Laplacian $L_h \mathbf{u}$ natively evaluates the full distributional derivative $u_{xx}$ by differencing across the interface. Conversely, the broken Neumann operator $L_h^{(\mathrm N)} \mathbf{u}$ acts entirely within the isolated subdomains, effectively evaluating only the piecewise classical derivative $\{u_{xx}\}$. Taking the difference between these two discrete operators isolates the singular distribution:
-\[
-(L_h - L_h^{(\mathrm N)}) \mathbf{u} \approx u_{xx} - \{u_{xx}\} = [u]\delta_\Gamma'.
+(L_h - L_h^{(\mathrm N)}) \mathbf{u} \approx \bar{u}_{xx} - \overline{u_{xx}} = [u]\delta_\Gamma'.
 \]
 Consequently, the matrix $C_{\mathrm{res}}$ natively acts as the exact discrete analog of the singular dipole distribution. Applying this residual matrix to the state variables numerically reconstructs the required localized interface forces.
 
