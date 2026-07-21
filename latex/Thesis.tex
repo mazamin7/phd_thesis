@@ -4189,11 +4189,16 @@ L_h^{(\mathrm N)},
 \end{equation}
 where $L_h$ denotes the interior finite-difference Laplacian crossing the artificial interface, while $L_h^{(\mathrm N)}$ denotes the broken operator obtained by imposing homogeneous Neumann conditions on each subdomain (as introduced in \eqref{eq:boundary_corrected_laplacian}).
 
-By taking the difference between the fully coupled continuous physics and the locally decoupled Neumann physics, the matrix $C_{\mathrm{res}}$ natively acts as a discrete approximation of the continuous singular distribution
+This relationship can be directly justified through the theory of distributions. For a piecewise smooth function $u$ exhibiting a jump $[u]$ across the interface $\Gamma$ while preserving continuity of traction ($[u_x]=0$), its distributional second derivative is given by
 \[
-[u]\delta_\Gamma'.
+u_{xx} = \{u_{xx}\} + [u]\delta_\Gamma',
 \]
-Consequently, applying this residual matrix to the state variables numerically reconstructs the exact localized interface forces.
+where $\{u_{xx}\}$ denotes the classical piecewise second derivative evaluated strictly within the subdomains.
+In the discrete setting, applying the global finite-difference Laplacian $L_h \mathbf{u}$ natively evaluates the full distributional derivative $u_{xx}$ by differencing across the interface. Conversely, the broken Neumann operator $L_h^{(\mathrm N)} \mathbf{u}$ acts entirely within the isolated subdomains, effectively evaluating only the piecewise classical derivative $\{u_{xx}\}$. Taking the difference between these two discrete operators isolates the singular distribution:
+\[
+(L_h - L_h^{(\mathrm N)}) \mathbf{u} \approx u_{xx} - \{u_{xx}\} = [u]\delta_\Gamma'.
+\]
+Consequently, the matrix $C_{\mathrm{res}}$ natively acts as the exact discrete analog of the singular dipole distribution. Applying this residual matrix to the state variables numerically reconstructs the required localized interface forces.
 
 With this operator defined, we cast the governing PDE as a first-order system in time. Defining the global state vector $\mathbf Z=[\mathbf u;\mathbf v]^T$, the full viscoelastic wave equation can be separated into two distinct evolution operators:
 \begin{equation}
