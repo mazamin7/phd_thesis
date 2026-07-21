@@ -2392,7 +2392,7 @@ For each mode, introduce the modal velocity
 V_m(t)=U_m'(t),
 \end{equation}
 and define the state vector
-\begin{equation}
+\begin{equation} \label{eq:modal_state_def}
 \mathbf Z_m(t)
 =
 \begin{bmatrix}
@@ -2415,7 +2415,7 @@ c^2\lambda_mU_m
 F_m(t)
 \end{equation}
 can be written as the first-order system
-\begin{equation}
+\begin{equation} \label{eq:modal_ode_first_order}
 \frac{d\mathbf Z_m}{dt}
 =
 A_m\mathbf Z_m
@@ -4249,23 +4249,15 @@ F_{1,2,m}.
 
 Because every mode evolves independently, each modal system can be propagated analytically over every time step using the exact state-transition matrix derived in the previous section \eqref{eq:modal_general_update}. To incorporate the interface correction, we rewrite the second-order modal equation as a first-order system.
 
-Introducing the modal state
-\[
-Z_m=
-\begin{bmatrix}
-U_m\\
-V_m
-\end{bmatrix},
-\qquad
-V_m=U_m',
-\]
-the governing equation becomes
+Recalling the modal state vector $\mathbf Z_m$ and its uncoupled first-order evolution introduced in the pseudo-spectral discretization \eqref{eq:modal_ode_first_order}, the governing equation extended with the interface correction becomes
 \begin{equation}
-\frac{dZ_m}{dt}
+\frac{d\mathbf Z_m}{dt}
 =
 \underbrace{
 A_m
-Z_m
+\mathbf Z_m
++
+\mathbf W_m(t)
 }_{\text{Drift}}
 +
 \underbrace{
@@ -4276,9 +4268,9 @@ F_m(U)
 }_{\text{Kick}},
 \label{eq:first_order_split}
 \end{equation}
-where $A_m$ is the uncoupled damped modal oscillator matrix defined in \eqref{eq:modal_ODE_matrix_A}, and $F_m(U)$ denotes the modal representation of the interface correction.
+where $A_m$ is the uncoupled damped modal oscillator matrix defined in \eqref{eq:modal_ODE_matrix_A}, $\mathbf W_m(t)$ is the external physical forcing term, and $F_m(U)$ denotes the modal representation of the interface correction.
 
-The matrix $A_m$ represents the uncoupled damped modal oscillators, whose flow is known analytically through the exact state-transition matrix \eqref{eq:modal_general_update}. The Kick operator contains only the interface forcing. During the evolution under the Kick, the modal positions remain fixed,
+The Drift operator represents the uncoupled damped modal oscillators driven by the external physical source, whose flow is known analytically through the exact state-transition matrix \eqref{eq:modal_general_update}. The Kick operator contains only the interface forcing. During the evolution under the Kick, the modal positions remain fixed,
 \[
 \dot U_m=0,
 \]
@@ -4357,7 +4349,7 @@ F_{1,2,m}^{\,n}.
 
 \item
 \textbf{Exact drift.}
-Using the updated modal velocities, the uncoupled modal equations are propagated analytically over a full time step with the exact state-transition matrix, yielding the updated modal positions
+Using the updated modal velocities, the uncoupled modal equations are propagated analytically over a full time step with the exact state-transition matrix (including the exact application of the external physical forcing), yielding the updated modal positions
 \[
 U_{1,2,m}^{\,n+1}
 \]
