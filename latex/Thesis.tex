@@ -4343,6 +4343,21 @@ The resulting stability limits reveal that the localized interface correction im
 \]
 respectively. The monotonic decrease reflects the increasing spectral radius of the higher-order interface operators: wider interface stencils strengthen the explicit coupling between neighboring subdomains and therefore produce a slightly more restrictive stability condition. Remarkably, the eighth-order interface correction asymptotically locks into a worst-case limit of $0.991$, remaining exceptionally close to the classical FDTD stability limit while providing substantially higher spatial accuracy at the interface.
 
+When the medium incorporates viscoelastic damping ($\nu > 0$), the stability criteria shift fundamentally. The exact explicit evaluation of the viscous interface forces strictly bounds the numerical scheme by a parabolic dimensionless limit
+\[
+S_{\max} = \frac{\nu \Delta t}{\Delta x^2}.
+\]
+A spectral analysis identical to the hyperbolic case isolates this purely diffusive stability restriction. For second-, fourth-, sixth-, and eighth-order interface operators, the maximum allowable diffusion numbers are rigorously bounded by
+\[
+S_{\max}
+=
+2.000,\;
+1.487,\;
+1.318,\;
+1.233,
+\]
+respectively. Notably, the second-order operator perfectly recovers the exact theoretical maximum of $2.0$ expected from an explicit integration of a discrete diffusion equation, while the wider higher-order stencils systematically lower the maximum bound due to their expanded spatial support.
+
 To empirically validate the theoretical stability limits derived in the previous section, we simulate the one-dimensional propagation of a Gaussian pulse in a homogeneous medium. The domain length is set to $L=1$ with a wave speed of $c=1$. We discretize the domain using $N=100$ grid points and split it into two non-overlapping subdomains of $N_{\mathrm{sub}}=50$ points each. To fully expose any mild exponential growth, the numerical solution is advanced up to a very long final time of $T=250$ (corresponding to tens of thousands of time steps).
 
 For each spatial order of the interface correction operator, we perform two simulations: a conditionally stable run using a time step marginally below the theoretical stability threshold ($\Delta t = (\mathrm{CFL}_{\max} - \epsilon)\Delta x / c$), and an unstable run using a time step marginally above the threshold ($\Delta t = (\mathrm{CFL}_{\max} + \epsilon)\Delta x / c$), where we choose a uniform perturbation $\epsilon = 0.015$. We then inspect the maximum amplitude of the global wavefield at the end of the simulation.
