@@ -1,6 +1,6 @@
 clear all; close all; clc;
-% addpath('WASAbi1D/utils');
 addpath(genpath('../src'));
+
 %% Parameters
 c = 1;
 
@@ -85,8 +85,11 @@ for exp_idx = 1:6
         space_order = Orders(k);
         
         dx = L/N;
-        CFL = 0.9;
-        dt = CFL*dx/c;
+        if nu == 0
+            dt = 0.9*dx/c;
+        else
+            dt = min(0.9*dx/c, 0.1*dx^2/nu);
+        end
         [x_grid,t_grid,u_array,v_array,U_array,V_array] = solver_wrapper_ard( ...
             u0_fun,v0_fun,f_fun,...
             dx,dt,L,T,...

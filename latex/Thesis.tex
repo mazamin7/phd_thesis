@@ -4151,20 +4151,35 @@ this simplifies to
 [u]\delta_\Gamma'.
 \end{equation}
 
-Consequently, the wave equation over the decomposed domain becomes
+Because the Neumann interface condition holds at all times, the temporal derivative also satisfies $[\partial_x\dot u]=0$, meaning the exact same distributional identity applies to the mixed viscous term:
+\begin{equation}
+\bar u_{txx}
+=
+\overline{u_{txx}}
++
+[\dot u]\delta_\Gamma'.
+\end{equation}
+
+Consequently, the full viscoelastic wave equation over the decomposed domain becomes
 \begin{equation}
 \bar u_{tt}
++
+\gamma\bar u_t
+-
+\nu\overline{u_{txx}}
 =
 c^2\overline{u_{xx}}
 +
-c^2[u]\delta_\Gamma'.
+c^2[u]\delta_\Gamma'
++
+\nu[\dot u]\delta_\Gamma'.
 \end{equation}
 
-Therefore, the independent Neumann subdomain solutions satisfy the original wave equation everywhere except at the artificial interface, where the missing coupling appears as a dipole distribution. Recovering the monolithic solution is therefore equivalent to restoring this singular interface source.
+Therefore, the independent Neumann subdomain solutions satisfy the original wave equation everywhere except at the artificial interface, where the missing physical coupling appears as a sum of two singular dipole distributions: a stiffness jump ($c^2[u]$) and a viscous jump ($\nu[\dot u]$). Recovering the exact monolithic solution is therefore equivalent to explicitly restoring this combined singular interface source.
 
-\subsection{Application to FDTD}
+\subsection{A General Strang Splitting Formulation}
 
-Within the FDTD framework, the singular dipole source is approximated algebraically through a residual correction operator. We define the residual matrix
+To implement the ARD coupling efficiently, we must first translate the continuous singular dipole sources into a discrete algebraic operator. We define the residual matrix
 \begin{equation}
 C_{\mathrm{res}}
 =
@@ -4172,127 +4187,35 @@ L_h
 -
 L_h^{(\mathrm N)},
 \end{equation}
-where $L_h$ denotes the interior finite-difference Laplacian crossing the interface, while $L_h^{(\mathrm N)}$ denotes the broken operator obtained by imposing homogeneous Neumann conditions on each subdomain (as defined in \eqref{eq:boundary_corrected_laplacian}).
+where $L_h$ denotes the interior finite-difference Laplacian crossing the artificial interface, while $L_h^{(\mathrm N)}$ denotes the broken operator obtained by imposing homogeneous Neumann conditions on each subdomain (as introduced in \eqref{eq:boundary_corrected_laplacian}).
 
-The matrix $C_{\mathrm{res}}$ is therefore a discrete approximation of the singular distribution
+By taking the difference between the fully coupled continuous physics and the locally decoupled Neumann physics, the matrix $C_{\mathrm{res}}$ natively acts as a discrete approximation of the continuous singular distribution
 \[
-[u]\delta_\Gamma',
+[u]\delta_\Gamma'.
 \]
-and its action produces the localized interface force required to recover the monolithic discretization.
+Consequently, applying this residual matrix to the state variables numerically reconstructs the exact localized interface forces.
 
-The ARD algorithm proceeds as follows.
-
-First, each subdomain is evolved independently according to
+With this operator defined, we cast the governing PDE as a first-order system in time. Defining the global state vector $\mathbf Z=[\mathbf u;\mathbf v]^T$, the full viscoelastic wave equation can be separated into two distinct evolution operators:
 \begin{equation}
-\mathbf{\ddot u}_{1,2}
-+
-\gamma\mathbf{\dot u}_{1,2}
-=
-c^2L_h^{(\mathrm N)}\mathbf u_{1,2}.
-\end{equation}
-
-At every time step the global vector is assembled,
-\begin{equation}
-\mathbf u^n
-=
-\begin{bmatrix}
-\mathbf u_1^n\\
-\mathbf u_2^n
-\end{bmatrix},
-\end{equation}
-and the interface correction is computed as
-\begin{equation}
-\mathbf f_{\mathrm{corr}}^n
-=
-c^2C_{\mathrm{res}}\mathbf u^n.
-\end{equation}
-
-The correction is then partitioned back onto the two subdomains and explicitly added to the time-stepping scheme,
-\begin{equation}
-\mathbf u_{1,2}^{n+1}
-=
-2\mathbf u_{1,2}^n
--
-\mathbf u_{1,2}^{n-1}
-+
-\Delta t^2
-\left(
-c^2L_h^{(\mathrm N)}\mathbf u_{1,2}^n
-+
-\mathbf f_{\mathrm{corr},1,2}^n
-\right)
--
-\gamma\Delta t
-\left(
-\mathbf u_{1,2}^n
--
-\mathbf u_{1,2}^{n-1}
-\right).
-\end{equation}
-
-Since $C_{\mathrm{res}}$ is supported only on the interface stencil, the correction remains strictly localized while restoring the action of the missing global finite-difference operator.
-
-Notice that the viscoelastic damping term $\nu u_{txx}$ has been intentionally omitted from this FDTD formulation. In a finite-difference setting, resolving the mixed spatio-temporal derivative $u_{txx}$ requires an implicit or semi-implicit time-stepping scheme to maintain numerical stability. Advancing such an implicit scheme requires the global inversion of the spatial Laplacian matrix at every time step. Because matrix inversion transforms a sparse, local operator into a dense, globally coupled one, the localized interface perturbation generated by $C_{\mathrm{res}}$ would instantaneously propagate across all degrees of freedom in the computational domain. This dense global coupling intrinsically destroys the locality of the correction, meaning that the ARD methodology---which relies entirely on the explicit localization of interface forces---cannot be applied to implicitly damped FDTD schemes without losing its fundamental efficiency.
-
-\subsection{Application to PSTD}
-
-The ARD construction extends naturally to the pseudo-spectral discretization. The principal advantage is that the interface operator is completely independent of the bulk discretization and can therefore be chosen at any desired finite-difference order (second, fourth, sixth, eighth order, or higher), while the interior of each subdomain is still solved spectrally.
-
-For each subdomain, the solution is expanded in the DCT basis, yielding the modal coefficients $U_{1,m}$ and $U_{2,m}$. The governing equation for every mode is exactly the one derived in the pseudo-spectral discretization \eqref{eq:modal_ode}, but extended with the subdomain index:
-\begin{equation}
-U_{1,2,m}''
-+
-(\gamma-\nu \lambda_m)U_{1,2,m}'
--
-c^2\lambda_mU_{1,2,m}
-=
-F_{1,2,m}.
-\end{equation}
-
-Because every mode evolves independently, each modal system can be propagated analytically over every time step using the exact state-transition matrix derived in the previous section \eqref{eq:modal_general_update}. To incorporate the interface correction, we rewrite the second-order modal equation as a first-order system.
-
-Recalling the modal state vector $\mathbf Z_m$ and its uncoupled first-order evolution introduced in the pseudo-spectral discretization \eqref{eq:modal_ode_first_order}, the governing equation extended with the interface correction becomes
-\begin{equation}
-\frac{d\mathbf Z_m}{dt}
+\frac{d\mathbf Z}{dt}
 =
 \underbrace{
-A_m
-\mathbf Z_m
-+
-\mathbf W_m(t)
-}_{\text{Drift}}
+\mathcal{F}_{\mathrm{local}}(\mathbf Z)
+}_{\text{Drift (Local Subdomains)}}
 +
 \underbrace{
 \begin{bmatrix}
 0\\
-F_m(U)
+c^2C_{\mathrm{res}}\mathbf u+\nu C_{\mathrm{res}}\mathbf v
 \end{bmatrix}
-}_{\text{Kick}},
+}_{\text{Kick (Interface Correction)}}.
 \label{eq:first_order_split}
 \end{equation}
-where $A_m$ is the uncoupled damped modal oscillator matrix defined in \eqref{eq:modal_ODE_matrix_A}, $\mathbf W_m(t)$ is the external physical forcing term, and $F_m(U)$ denotes the modal representation of the interface correction.
 
-The Drift operator represents the uncoupled damped modal oscillators driven by the external physical source, whose flow is known analytically through the exact state-transition matrix \eqref{eq:modal_general_update}. The Kick operator contains only the interface forcing. During the evolution under the Kick, the modal positions remain fixed,
-\[
-\dot U_m=0,
-\]
-while the modal velocities satisfy
-\[
-\dot V_m=F_m(U).
-\]
-Since $U_m$ is constant during this substep, the interface force is also constant, and the exact solution over a time interval $\tau$ is simply
-\begin{equation}
-U_m(t+\tau)=U_m(t),
-\qquad
-V_m(t+\tau)
-=
-V_m(t)
-+
-\tau F_m(U(t)).
-\label{eq:kick_flow}
-\end{equation}
+The Drift operator $\mathcal{F}_{\mathrm{local}}(\mathbf Z)$ abstractly governs the uncoupled physics of the isolated subdomains under homogeneous Neumann boundary conditions, driven by the external physical source. We can treat the time integration of this local evolution as a generic black-box solver $\mathcal S_{\mathrm{local}}(\Delta t)$. 
+The Kick operator exclusively applies the localized interface correction forces required to restore the global monolithic solution.
 
-Although the exact modal propagator admits constant forcing through the force-to-state matrix $T$, the interface correction depends on the instantaneous solution and therefore varies continuously during the timestep. Treating it as a constant forcing term would only approximate this time-dependent forcing. Instead, we regard the interface correction as a separate evolution operator and integrate it using the symmetric Kick-Drift-Kick composition of Strang splitting~\cite{strang_construction_1968},
+Because the interface correction depends on the instantaneous state, we decouple the operators using the symmetric Kick-Drift-Kick composition of Strang splitting~\cite{strang_construction_1968},
 \begin{equation}
 e^{\Delta t(A+B)}
 =
@@ -4302,106 +4225,71 @@ e^{\frac{\Delta t}{2}B}
 +
 \mathcal O(\Delta t^3).
 \end{equation}
-This composes the exact flow of the interface operator with the exact propagation of the uncoupled modal oscillators. Applying~\eqref{eq:kick_flow} with $\tau=\frac{\Delta t}{2}$ immediately yields the half-kick update
-\begin{equation}
-V_m^{\,n+\frac12}
-=
-V_m^{\,n}
-+
-\frac{\Delta t}{2}
-F_m^{\,n},
-\label{eq:half_kick}
-\end{equation}
-while the modal positions remain unchanged during the kick.
 
-In practice, this evaluates the interface correction at both the beginning and the end of the timestep while preserving the exact analytical propagation of the uncoupled modal oscillators, thereby yielding a second-order accurate time integrator. At each time step $t_n$, the complete algorithm executes the following sequence:
+During the Drift step, the subdomains evolve independently using the black-box solver. During the Kick step, the positions $\mathbf u$ remain constant, while the velocities satisfy the localized interface ODE:
+\begin{equation}
+\mathbf{\dot v}
+=
+\nu C_{\mathrm{res}}\mathbf v
++
+c^2C_{\mathrm{res}}\mathbf u.
+\end{equation}
+
+Because $\mathbf u$ is constant during this substep, the interface force varies linearly with time only through $\mathbf v$. By evaluating the Kick step using an explicit forward Euler integration over a time interval $\tau$, we obtain the straightforward discrete update:
+\begin{equation}
+\mathbf u(t+\tau)=\mathbf u(t),
+\qquad
+\mathbf v(t+\tau)
+=
+\mathbf v(t)
++
+\tau c^2C_{\mathrm{res}}\mathbf u(t)
++
+\tau \nu C_{\mathrm{res}}\mathbf v(t).
+\label{eq:kick_flow}
+\end{equation}
+
+Because the residual matrix $C_{\mathrm{res}}$ acts as a localized spatial second derivative, the explicit evaluation of the viscous term $\nu C_{\mathrm{res}}\mathbf v$ introduces a strict parabolic stability limit ($\Delta t \lesssim \Delta x^2 / \nu$). Consequently, while this explicit viscous Kick fully restores the physical continuity at the boundary, it forces the numerical scheme to operate at a lower Courant-Friedrichs-Lewy (CFL) number compared to the purely undamped wave equation.
+
+\subsection{Application to FDTD}
+
+To particularize this general framework for the FDTD method, the implicit local solver must satisfy two essential requirements: it must natively enforce homogeneous Neumann boundaries, and it must operate on (or be mathematically equivalent to) the first-order state space $\mathbf Z$ to allow for the instantaneous velocity updates prescribed by the Kick operator.
+
+For the purely undamped wave equation, standard explicit leapfrog FDTD is mathematically equivalent to a first-order Velocity Verlet scheme, making the Strang-split ARD integration straightforward. However, for the viscoelastic wave equation, maintaining numerical stability necessitates an implicit or semi-implicit time-stepping scheme (such as Crank-Nicolson) for the mixed derivative $\mathbf u_{txx}$. While it is theoretically possible to construct a strictly localized, block-diagonal implicit FDTD Drift step, perfectly preserving the exact centered dispersion properties and stability limits of the monolithic FDTD scheme within a Strang-split, first-order framework introduces significant algorithmic complexity. Therefore, we omit the explicit FDTD particularization here and proceed directly to the pseudo-spectral discretization, where the state-space mapping is analytically exact.
+
+\subsection{Application to PSTD}
+
+The ARD construction extends naturally and optimally to the pseudo-spectral discretization. The principal advantage is that the interface operator is completely independent of the bulk discretization and can therefore be chosen at any desired finite-difference order, while the interior of each subdomain is solved spectrally.
+
+For each subdomain, the solution is expanded in the DCT basis, yielding the uncoupled modal state vectors $\mathbf Z_{1,m}$ and $\mathbf Z_{2,m}$. The local Drift operator is simply the exact state-transition matrix $S_m(\Delta t)$ derived in the previous section \eqref{eq:modal_general_update}, incorporating the analytical propagation of the damped modal oscillators and the external physical forcing via the $T_m$ matrix.
+
+The complete ARD-PSTD algorithm executes the following sequence at each time step $t_n$:
 
 \begin{enumerate}
 
 \item
 \textbf{Interface reconstruction.}
-The modal coefficients are transformed back to the physical domain using the inverse DCT to obtain the subdomain fields
-\[
-\mathbf u_1^n,\qquad
-\mathbf u_2^n.
-\]
-The global solution is assembled and the interface correction is evaluated,
-\[
-\mathbf f_{\mathrm{corr}}^n
-=
-c^2C_{\mathrm{res}}\mathbf u^n.
-\]
-The correction is then projected back into modal space to obtain the modal forcing terms
-\[
-F_{1,m}^n,\qquad
-F_{2,m}^n.
-\]
+The modal coefficients are transformed to the physical domain via the inverse DCT to obtain $\mathbf u^n$ and $\mathbf v^n$.
 
 \item
 \textbf{First half-kick.}
-The modal velocities are advanced over half a time step according to
-\[
-\dot U_{1,2,m}^{\,n+\frac12}
-=
-\dot U_{1,2,m}^{\,n}
-+
-\frac{\Delta t}{2}
-F_{1,2,m}^{\,n}.
-\]
+The physical velocities are advanced over $\tau = \Delta t/2$ using the explicit Kick update \eqref{eq:kick_flow}. Because $C_{\mathrm{res}}$ acts locally in the physical domain, this evaluation is performed directly on the physical grid. The updated velocities are then projected back into modal space via the forward DCT to obtain the intermediate modal states $\mathbf Z_m^{n+1/2}$.
 
 \item
 \textbf{Exact drift.}
-Using the updated modal velocities, the uncoupled modal equations are propagated analytically over a full time step with the exact state-transition matrix (including the exact application of the external physical forcing), yielding the updated modal positions
-\[
-U_{1,2,m}^{\,n+1}
-\]
-and intermediate modal velocities
-\[
-\dot U_{1,2,m}^{\,*}.
-\]
+The uncoupled modal equations are propagated analytically over a full time step $\Delta t$ with the exact state-transition matrix $S_m(\Delta t)$, yielding the updated intermediate modal states $\mathbf Z_m^*$.
 
 \item
 \textbf{Interface reconstruction.}
-The updated modal coefficients are transformed back to the physical domain, the interface correction
-\[
-\mathbf f_{\mathrm{corr}}^{\,n+1}
-=
-c^2C_{\mathrm{res}}
-\mathbf u^{\,n+1}
-\]
-is recomputed, and the corresponding modal forcing terms
-\[
-F_{1,m}^{\,n+1},
-\qquad
-F_{2,m}^{\,n+1}
-\]
-are obtained through the DCT.
+The updated modal states $\mathbf Z_m^*$ are transformed back to the physical domain via the inverse DCT to obtain $\mathbf u^*$ and $\mathbf v^*$.
 
 \item
 \textbf{Second half-kick.}
-Finally, the modal velocities are completed by
-\[
-\dot U_{1,2,m}^{\,n+1}
-=
-\dot U_{1,2,m}^{\,*}
-+
-\frac{\Delta t}{2}
-F_{1,2,m}^{\,n+1}.
-\]
+The physical velocities are advanced over the second half-step $\tau = \Delta t/2$ using the explicit Kick update \eqref{eq:kick_flow}. Finally, the completed physical velocities are projected back into modal space to yield $\mathbf Z_m^{n+1}$.
 
 \end{enumerate}
 
-This formulation possesses an important advantage for the viscoelastic wave equation. In a conventional FDTD discretization, the mixed derivative
-\[
-u_{xxt}
-\]
-typically introduces an implicit spatial solve. Such an implicit solve globally couples the computational domain and destroys the locality of the ARD interface correction.
-
-In contrast, within the pseudo-spectral formulation the Laplacian is diagonal in modal space, so that the viscoelastic term simply contributes an additional modal damping coefficient proportional to $k_m^2$. The modal equations therefore remain completely uncoupled and admit exact analytic propagation without any global linear solve. Consequently, the interface correction
-\[
-C_{\mathrm{res}}\mathbf u
-\]
-remains sparse and localized on the physical grid while driving the exact evolution of the damped modal oscillators.
+By leveraging the exact analytical solutions for the Drift (via the modal propagator) alongside the localized explicit interface Kick, the ARD-PSTD algorithm completely restores the global boundary coupling without requiring any global implicit matrix inversion, strictly preserving both the spectral accuracy of the bulk wavefield and the spatial locality of the interface forces.
 
 \subsection{Stability Considerations}
 

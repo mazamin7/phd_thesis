@@ -85,9 +85,12 @@ for k = 1:length(orders)
             D(Nx+NxSub+j, Nx+NxSub+j) = S_mat(2,2);
         end
         
+        % Viscous kick operator B
+        B = (nu / c^2) * A;
+        
         % Kick matrix constructed explicitly as block matrix
         K = [eye(Nx),   zeros(Nx);
-             (dt/2)*A,  eye(Nx)];
+             (dt/2)*A,  eye(Nx) + (dt/2)*B];
         
         % Amplification matrix exactly matching ard_solver.m sequence
         G = K * D * K;

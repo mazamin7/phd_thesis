@@ -88,7 +88,7 @@ function [x_grid,x_gridL,x_gridR,t_grid,u,uL,uR,UL_array,UR_array] = ard_solver(
     
     C_res = get_residue_matrix(Nx, space_order);
     
-    [FcorrL, FcorrR, uL_phys, uR_phys] = get_interface_forces(UL, UR, NxSub, C_res, dx, c);
+    [FcorrL, FcorrR, uL_phys, uR_phys] = get_interface_forces(UL, UR, VL, VR, NxSub, C_res, dx, c, nu);
 
     %-------------------------------------------------------------
     % Time stepping
@@ -118,7 +118,7 @@ function [x_grid,x_gridL,x_gridR,t_grid,u,uL,uR,UL_array,UR_array] = ard_solver(
         [UR,VR] = modal_step(UR, VR, FmR, S, Tm);
         
         % Recompute interface forces
-        [FcorrL, FcorrR, uL_phys, uR_phys] = get_interface_forces(UL, UR, NxSub, C_res, dx, c);
+        [FcorrL, FcorrR, uL_phys, uR_phys] = get_interface_forces(UL, UR, VL, VR, NxSub, C_res, dx, c, nu);
         
         % Second half-kick
         VL = VL + (dt/2) * FcorrL;
@@ -161,12 +161,15 @@ function [Um,Vm] = modal_step( ...
     end
 end
 
-function [FcorrL, FcorrR, uL_phys, uR_phys] = get_interface_forces(UL, UR, NxSub, C_res, dx, c)
+function [FcorrL, FcorrR, uL_phys, uR_phys] = get_interface_forces(UL, UR, VL, VR, NxSub, C_res, dx, c, nu)
         uL_phys = idct(UL);
         uR_phys = idct(UR);
+        vL_phys = idct(VL);
+        vR_phys = idct(VR);
         
         u_phys = [uL_phys; uR_phys];
-        fCorr_global = (c^2/dx^2) * (C_res * u_phys);
+        v_phys = [vL_phys; vR_phys];
+        fCorr_global = (c^2/dx^2) * (C_res * u_phys) + (nu/dx^2) * (C_res * v_phys);
         fCorrL = fCorr_global(1:NxSub);
         fCorrR = fCorr_global(NxSub+1:end);
         
