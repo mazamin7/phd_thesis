@@ -358,11 +358,13 @@ Chapter~4 summarizes the main conclusions of the thesis and discusses possible d
 
 \section{Choice of the Model}
 
+In this chapter, we derive the continuous properties of the damped wave equation and formulate numerical methods to simulate it accurately and efficiently, namely the Finite-Difference Time-Domain (FDTD) method and the Pseudo-Spectral Time-Domain (PSTD) method.
+
 A substantial literature addresses the computation of atmospheric absorption coefficients, including tabulated values for different atmospheric conditions, with \cite{knudsen_absorption_1933} among the early results, as well as prediction formulas (\cite{bass_atmospheric_1972,evans_atmospheric_1972}). The ISO standard \cite{iso_acoustics_1993} summarizes the most widely used formulas and tables.
 
 Our focus is on choosing a partial differential equation that models atmospheric absorption with the desired level of accuracy while keeping the analysis tractable enough to develop efficient numerical methods.
 
-To model a general attenuation law consistent with the atmospheric absorption formulas summarized in the ISO standard, one may consider an acoustic propagation equation with multiple relaxation terms, as proposed in \cite{nachman_equation_1990}. Assuming plane-wave solutions leads to a dispersion relation of kind
+To model a general attenuation law consistent with the atmospheric absorption formulas summarized in the ISO standard \cite{iso_acoustics_1993}, one may consider an acoustic propagation equation with multiple relaxation terms, as proposed in \cite{nachman_equation_1990}. Assuming plane-wave solutions leads to a dispersion relation of kind
 \begin{equation*}
 k^2(\omega)
 =
@@ -387,7 +389,7 @@ A simpler alternative is the damped wave equation with telegrapher and viscoelas
 -\nu\,\partial_t\Delta u
 =0,
 \end{equation*}
-where $u$ denotes the wave field, $c$ is the wave speed, $\gamma$ the telegrapher damping coefficient, and $\nu$ the viscoelastic damping coefficient.
+where $u$ denotes the wave field, $c$ is the wave speed [m/s], $\gamma$ the telegrapher damping coefficient [1/s], and $\nu$ the viscoelastic damping coefficient [m$^2$/s].
 
 The analytical properties of this model are studied in Section~\ref{sec:dispersion_analysis}. In particular, we derive its dispersion relation and it can be proven that the attenuation coefficient behaves as
 \begin{equation*}
@@ -420,14 +422,14 @@ f,
 x\in(0,L),\quad t>0,
 \label{eq:wave}
 \end{equation}
-where \(u(x,t)\) denotes the wave field, \(c>0\) is the wave propagation velocity, \(\gamma\ge0\) is the coefficient of telegrapher damping, and \(\nu\ge0\) is the coefficient of viscoelastic damping. The source term is
+where \(u(x,t)\) denotes the wave field, \(c>0\) is the wave propagation velocity [m/s], \(\gamma\ge0\) is the coefficient of telegrapher damping [1/s], and \(\nu\ge0\) is the coefficient of viscoelastic damping [m$^2$/s]. The source term is
 denoted by \(f(x,t)\).
 
 The problem is completed by the initial conditions
-\begin{align}
+\begin{align*}
 u(x,0)&=u_0(x),\\
 u_t(x,0)&=v_0(x),
-\end{align}
+\end{align*}
 together with suitable boundary conditions prescribed at \(x=0\) and \(x=L\).
 
 Before introducing the finite-difference discretization, it is useful to study the propagation properties of the continuous problem. In particular, the dispersion relation characterizes the propagation of harmonic waves in the presence of damping, while the reflection factor associated with Robin boundary conditions provides a quantitative measure of their absorbing properties. These continuous analyses will later serve as reference for the corresponding numerical counterparts.
@@ -437,39 +439,39 @@ Before introducing the finite-difference discretization, it is useful to study t
 Throughout this work, we consider four classes of boundary conditions.
 
 The first class consists of Dirichlet boundary conditions,
-\begin{equation}
+\begin{equation*}
 u=g,
-\end{equation}
+\end{equation*}
 which prescribe the value of the solution on the boundary.
 
 The second class consists of Neumann boundary conditions,
-\begin{equation}
+\begin{equation*}
 -\partial_nu=g,
-\end{equation}
+\end{equation*}
 where \(\partial_n\) denotes the outward normal derivative. These prescribe the normal flux across the boundary.
 
 For more information and for the physical interpretation of Dirichlet and Neumann boundary conditions for the wave equation, the reader may refer to \cite{bilbao_numerical_2009}.
 
 A third class is given by transparent boundary conditions, presented in \cite{engquist_absorbing_1977,gander_absorbing_2004}, which completely eliminate artificial reflections at the computational boundary. Contrary to the previous cases, the exact transparent boundary condition cannot generally be expressed as a local differential operator. Instead, it is given by the exact Dirichlet-to-Neumann (DtN) map,
-\begin{equation}
+\begin{equation*}
 -\partial_nu+\mathcal{T}u=g,
-\end{equation}
+\end{equation*}
 where \(\mathcal{T}\) is a pseudodifferential operator whose symbol coincides with the exact impedance of the damped wave equation. In the frequency domain, its symbol is
-\begin{equation}
+\begin{equation*}
 \widehat{\mathcal{T}}(\omega)
 =
 ik(i\omega),
-\end{equation}
+\end{equation*}
 where \(k(i\omega)\) satisfies the dispersion relation \eqref{eq:dispersion}. Consequently, the transparent boundary condition yields zero reflection for every frequency.
 
 Since the exact Dirichlet-to-Neumann operator is nonlocal in time, its direct implementation is generally impractical. A common approach shown in \cite{gander_absorbing_2004} is to replace the exact symbol \(\mathcal{T}\) by a rational approximation or, more simply, by a local affine approximation
-\begin{equation}
+\begin{equation*}
 \widehat{\mathcal{T}}(\omega)
 \approx
 iq\omega+r,
-\end{equation}
+\end{equation*}
 which leads to the generalized Robin boundary condition
-\begin{equation}
+\begin{equation*}
 -\partial_nu
 +
 q\,\partial_tu
@@ -477,25 +479,25 @@ q\,\partial_tu
 ru
 =
 g,
-\end{equation}
+\end{equation*}
 where \(q\) and \(r\) are non-negative parameters. The values of these parameters are chosen so that the local impedance \(iq\omega+r\) provides the best approximation of the exact impedance \(ik(i\omega)\) over the frequency range of interest.
 
 For the undamped wave equation (\(\gamma=\nu=0\)), the exact impedance reduces to
-\begin{equation}
+\begin{equation*}
 ik(i\omega)
 =
 i\frac{\omega}{c},
-\end{equation}
+\end{equation*}
 which is exactly reproduced by the choice
-\begin{equation}
+\begin{equation*}
 q=\frac{1}{c},
 \qquad
 r=0.
-\end{equation}
+\end{equation*}
 Therefore, in the absence of damping, the Robin boundary condition coincides with the exact transparent boundary condition and yields perfect absorption for all frequencies.
 
 In one spatial dimension, the Robin conditions read
-\begin{align}
+\begin{align*}
 -u_x(0,t)
 +
 q\,u_t(0,t)
@@ -511,17 +513,17 @@ q\,u_t(L,t)
 ru(L,t)
 &=
 g_{\mathrm R}(t),
-\end{align}
+\end{align*}
 where the change of sign accounts for the orientation of the outward normal.
 
 \subsection{Dispersion Analysis} \label{sec:dispersion_analysis}
 
 The dispersion relation is obtained by seeking time-harmonic plane wave solutions of the damped wave equation \eqref{eq:wave} with \(f=0\), in the form
-\begin{equation}
+\begin{equation*}
 u(x,t)
 =
 e^{i(\omega t-kx)},
-\end{equation}
+\end{equation*}
 where the angular frequency \(\omega\in\mathbb{R}\) is prescribed and the wavenumber
 \(
 k\in\mathbb{C}
@@ -539,7 +541,7 @@ e^{i(\omega t-k x)}.
 \]
 
 Differentiating the plane wave yields
-\begin{align}
+\begin{align*}
 u_t
 &=
 i\omega u,
@@ -559,22 +561,22 @@ u_{xx}
 u_{xxt}
 &=
 -i\omega k^2u.
-\end{align}
+\end{align*}
 
 Substituting these expressions into \eqref{eq:wave} gives
-\begin{equation}
+\begin{equation*}
 -\omega^2u
 +i\gamma\omega u
 =
 -c^2k^2u
 -i\nu\omega k^2u.
-\end{equation}
-Since \(u\neq0\), dividing through by \(u\) yields
-\begin{equation}
+\end{equation*}
+Since \(u\neq0\), dividing \eqref{eq:subst_disp} by \(u\) yields
+\begin{equation*}
 -\omega^2+i\gamma\omega
 =
 -c^2k^2-i\nu\omega k^2,
-\end{equation}
+\end{equation*}
 or equivalently,
 \begin{equation}
 \label{eq:dispersion}
@@ -584,40 +586,40 @@ or equivalently,
 \end{equation}
 
 Hence the dispersion relation is
-\begin{equation}
-\label{eq:komega}
+\begin{equation*}
+
 k(i\omega)
 =
 \sqrt{
 \frac{\omega^2-i\gamma\omega}
      {c^2+i\nu\omega}
 }.
-\end{equation}
+\end{equation*}
 
 The attenuation coefficient is therefore
-\begin{equation}
+\begin{equation*}
 \alpha(\omega)
 =
 -\operatorname{Im}\!\bigl(k(i\omega)\bigr),
-\end{equation}
+\end{equation*}
 while the phase constant is
-\begin{equation}
+\begin{equation*}
 \kappa(\omega)
 =
 \operatorname{Re}\!\bigl(k(i\omega)\bigr).
-\end{equation}
+\end{equation*}
 
 The phase velocity is defined by
-\begin{equation}
+\begin{equation*}
 c_p(\omega)
 =
 \frac{\omega}{\kappa(\omega)}
 =
 \frac{\omega}
 {\operatorname{Re}(k(i\omega))},
-\end{equation}
+\end{equation*}
 whereas the group velocity is
-\begin{equation}
+\begin{equation*}
 c_g(\omega)
 =
 \frac{d\omega}{d\kappa}
@@ -626,24 +628,24 @@ c_g(\omega)
 \frac{d\,\operatorname{Re}(k)}
      {d\omega}
 \right)^{-1}.
-\end{equation}
+\end{equation*}
 Since \(k(i\omega)\) is complex, only its real part contributes to the propagation speed, while its imaginary part determines the exponential decay of the wave amplitude.
 
 In the absence of damping, namely for \(\gamma=\nu=0\), the classical dispersion relation is recovered,
-\begin{equation}
+\begin{equation*}
 k=\frac{\omega}{c},
-\end{equation}
+\end{equation*}
 so that
-\begin{equation}
+\begin{equation*}
 \alpha=0,
 \qquad
 c_p=c_g=c,
-\end{equation}
+\end{equation*}
 showing that all frequencies propagate without attenuation and with the same speed.
 
 \subsection{Reflection Factor with Robin Boundary Conditions}
 To assess the absorbing properties of the Robin boundary condition, we derive its continuous reflection factor, as shown in \cite{kuttruff_acoustics_2007}, Chapter 6, §6.3. For simplicity, we consider the one-dimensional damped wave equation \eqref{eq:wave} with \(f=0\) posed on the half-line
-\begin{equation}
+\begin{equation*}
 u_{tt}
 +\gamma u_t
 =
@@ -651,14 +653,14 @@ c^2u_{xx}
 +\nu u_{xxt},
 \qquad
 x>0,
-\end{equation}
+\end{equation*}
 together with the Robin boundary condition at $x=0$
-\begin{equation}
+\begin{equation*}
 u_x-q\,u_t-ru=0.
-\end{equation}
+\end{equation*}
 
 We seek a time-harmonic solution consisting of an incident and a reflected wave,
-\begin{equation}
+\begin{equation*}
 u(x,t)
 =
 e^{i\omega t}
@@ -667,11 +669,11 @@ e^{ikx}
 +
 R(i\omega)e^{-ikx}
 \right),
-\end{equation}
+\end{equation*}
 where \(R(i\omega)\) denotes the reflection factor and \(k\) is the (complex) wavenumber satisfying the dispersion relation \eqref{eq:dispersion}.
 
 Evaluating the solution and its derivatives at the boundary yields
-\begin{align}
+\begin{align*}
 u(0,t)
 &=
 (1+R)e^{i\omega t},
@@ -683,21 +685,21 @@ ik(1-R)e^{i\omega t},
 u_t(0,t)
 &=
 i\omega(1+R)e^{i\omega t}.
-\end{align}
+\end{align*}
 Substituting these expressions into the Robin boundary condition gives
-\begin{equation}
+\begin{equation*}
 ik(1-R)
 -iq\omega(1+R)
 -r(1+R)
 =
 0.
-\end{equation}
+\end{equation*}
 Rearranging the terms leads to
-\begin{equation}
+\begin{equation*}
 (ik+iq\omega+r)R
 =
 ik-iq\omega-r,
-\end{equation}
+\end{equation*}
 and therefore the reflection factor is
 \begin{equation}
 R(i\omega)
@@ -712,13 +714,13 @@ ik(i\omega)+iq\omega+r
 \end{equation}
 
 Introducing the impedance function
-\begin{equation}
+\begin{equation*}
 \Lambda(i\omega)
 =
 iq\omega+r,
-\end{equation}
+\end{equation*}
 the reflection factor can be written in the compact form
-\begin{equation}
+\begin{equation*}
 R(i\omega)
 =
 \frac{
@@ -727,12 +729,12 @@ ik(i\omega)-\Lambda(i\omega)
 {
 ik(i\omega)+\Lambda(i\omega)
 }.
-\end{equation}
+\end{equation*}
 
 In particular, the reflection vanishes if
-\begin{equation}
+\begin{equation*}
 \Lambda(i\omega)=ik(i\omega),
-\end{equation}
+\end{equation*}
 that is, when the Robin operator coincides with the exact Dirichlet-to-Neumann map. Since \(k(i\omega)\) depends nonlinearly on the frequency, no constant values of \(q\) and \(r\) can achieve perfect absorption over the entire frequency
 spectrum. The choice of the Robin parameters therefore amounts to approximating the exact impedance by the affine function \(\Lambda(\omega)=iq\omega+r\) over the frequency range of interest.
 
@@ -742,40 +744,40 @@ The damped wave equation admits a modal decomposition in terms of the eigenfunct
 This representation is particularly useful since each spatial mode evolves independently in time, and it naturally motivates the cosine transforms used in the numerical methods presented later. We will generalize the undamped wave equation derivation presented in \cite{asmar_partial_2005} in Chapter 3, §3.3, and consider the homogeneous Neumann boundary conditions case.
 
 Consider the damped wave equation \eqref{eq:wave} subject to homogeneous Neumann boundary conditions
-\begin{equation}
+\begin{equation*}
 u_x(0,t)=u_x(L,t)=0.
-\end{equation}
+\end{equation*}
 
 Seeking separated solutions of the form
-\begin{equation}
+\begin{equation*}
 u(x,t)=X(x)T(t),
-\end{equation}
+\end{equation*}
 and substituting into \eqref{eq:wave} gives
-\begin{equation}
+\begin{equation*}
 XT''
 +\gamma XT'
 =
 c^2X''T
 +\nu X''T'.
-\end{equation}
-Dividing by $X$ yields
-\begin{equation}
+\end{equation*}
+Dividing by $X \neq 0$ yields
+\begin{equation*}
 \frac{T''+\gamma T'}{c^2T+\nu T'}
 =
 \frac{X''}{X}
 =
 \lambda,
-\end{equation}
+\end{equation*}
 where $\lambda$ is the separation constant.
 
 The spatial problem therefore becomes
-\begin{equation}
+\begin{equation*}
 X''=\lambda X,
-\end{equation}
+\end{equation*}
 with boundary conditions
-\begin{equation}
+\begin{equation*}
 X'(0)=X'(L)=0.
-\end{equation}
+\end{equation*}
 Its eigenvalues and orthonormal eigenfunctions are
 \begin{align}
 \lambda_m
@@ -797,21 +799,21 @@ m\ge1.
 \end{align}
 
 These eigenfunctions satisfy the orthonormality relation
-\begin{equation}
+\begin{equation*}
 \int_0^L
 X_m(x)X_n(x)\,dx
 =
 \delta_{mn},
-\end{equation}
+\end{equation*}
 where $\delta_{mn}$ denotes the Kronecker delta.
 
 Consequently, the solution admits the modal expansion
-\begin{equation}
+\begin{equation*}
 u(x,t)
 =
 \sum_{m=0}^{\infty}
 U_m(t)X_m(x),
-\end{equation}
+\end{equation*}
 where the modal amplitudes satisfy the independent ordinary differential equations
 \begin{equation} \label{eq:modal_ode}
 U_m''
@@ -828,20 +830,20 @@ c^2\lambda_mU_m
 F_m(t),
 \end{equation}
 with
-\begin{equation}
+\begin{equation*}
 F_m(t)
 =
 \int_0^L
 f(x,t)\,
 X_m(x)\,dx.
-\end{equation}
+\end{equation*}
 
 In the case of a constant forcing term, namely
-\begin{equation}
+\begin{equation*}
 F_m(t)=F_m,
-\end{equation}
+\end{equation*}
 the modal amplitudes are given by
-\begin{equation}
+\begin{equation*}
 U_m(t)
 =
 A_me^{s_m^+t}
@@ -851,9 +853,9 @@ B_me^{s_m^-t}
 \frac{F_m}{c^2\lambda_m},
 \qquad
 m\ge1,
-\end{equation}
+\end{equation*}
 where
-\begin{equation}
+\begin{equation*}
 s_m^\pm
 =
 \frac{
@@ -865,7 +867,7 @@ s_m^\pm
 4c^2\lambda_m
 }
 }{2}.
-\end{equation}
+\end{equation*}
 The constants $A_m$ and $B_m$ are determined from the initial conditions.
 
 \subsection{Time Reversibility}
@@ -873,18 +875,18 @@ The constants $A_m$ and $B_m$ are determined from the initial conditions.
 An important qualitative difference between the three models considered in this work concerns their behavior under time reversal, which directly affects the stability of recovering earlier states from measurements at a later time. For general aspects of time reversibility and inverse problems for partial differential equations, the reader may refer to \cite{isakov_inverse_2006}.
 
 To illustrate this property, consider the homogeneous problem
-\begin{equation}
+\begin{equation*}
 f=0,
-\end{equation}
+\end{equation*}
 and expand the solution in the Laplace eigenfunctions,
-\begin{equation}
+\begin{equation*}
 u(x,t)
 =
 \sum_{m=0}^{\infty}
 U_m(t)X_m(x).
-\end{equation}
+\end{equation*}
 Each modal amplitude satisfies
-\begin{equation}
+\begin{equation*}
 U_m''
 +
 (\gamma-\nu\lambda_m)U_m'
@@ -892,12 +894,12 @@ U_m''
 c^2\lambda_mU_m
 =
 0.
-\end{equation}
+\end{equation*}
 
 \paragraph{Undamped wave equation (\(\gamma=\nu=0\)).}
 
 The modal equation becomes
-\begin{equation}
+\begin{equation*}
 U_m''
 +
 \omega_m^2U_m
@@ -907,21 +909,21 @@ U_m''
 \omega_m
 =
 c\sqrt{-\lambda_m},
-\end{equation}
+\end{equation*}
 whose solution is
-\begin{equation}
+\begin{equation*}
 U_m(t)
 =
 A_m\cos(\omega_mt)
 +
 B_m\sin(\omega_mt).
-\end{equation}
+\end{equation*}
 The amplitudes remain bounded for all time and the mapping between the modal coefficients at times \(0\) and \(T\) is invertible. Consequently, knowing both \(U_m(T)\) and \(U_m'(T)\) uniquely determines \(U_m(0)\) and \(U_m'(0)\). The undamped wave equation is therefore time reversible.
 
 \paragraph{Telegrapher equation (\(\gamma>0,\ \nu=0\)).}
 
 The modal equation becomes
-\begin{equation}
+\begin{equation*}
 U_m''
 +
 \gamma U_m'
@@ -929,33 +931,33 @@ U_m''
 \omega_m^2U_m
 =
 0.
-\end{equation}
+\end{equation*}
 Each mode decays exponentially,
-\begin{equation}
+\begin{equation*}
 U_m(t)
 =
 A_me^{s_m^+t}
 +
 B_me^{s_m^-t},
-\end{equation}
+\end{equation*}
 where
-\begin{equation}
+\begin{equation*}
 \operatorname{Re}(s_m^\pm)
 =
 -\frac{\gamma}{2}.
-\end{equation}
+\end{equation*}
 Recovering the initial state from data at time \(T\) requires
-\begin{equation}
+\begin{equation*}
 A_m,B_m
 =
 \mathcal{O}(e^{\gamma T/2}),
-\end{equation}
+\end{equation*}
 so that perturbations are amplified uniformly across all frequencies. Backward propagation is therefore unstable, although every mode is affected in essentially the same way.
 
 \paragraph{Viscoelastic damping (\(\nu>0\)).}
 
 In this case,
-\begin{equation}
+\begin{equation*}
 U_m''
 +
 (\gamma-\nu\lambda_m)U_m'
@@ -963,25 +965,25 @@ U_m''
 c^2\lambda_mU_m
 =
 0,
-\end{equation}
+\end{equation*}
 where
-\begin{equation}
+\begin{equation*}
 \gamma-\nu\lambda_m
 =
 \gamma
 +
 \nu
 \left(\frac{m\pi}{L}\right)^2.
-\end{equation}
+\end{equation*}
 The effective damping therefore increases quadratically with the spatial frequency. For sufficiently large mode number,
-\begin{equation}
+\begin{equation*}
 \operatorname{Re}(s_m^\pm)
 \approx
 -\frac{\nu}{2}
 \left(\frac{m\pi}{L}\right)^2,
-\end{equation}
+\end{equation*}
 so that the high-frequency modes decay approximately as
-\begin{equation}
+\begin{equation*}
 U_m(T)
 \approx
 U_m(0)
@@ -989,9 +991,9 @@ U_m(0)
 -\frac{\nu T}{2}
 \left(\frac{m\pi}{L}\right)^2
 \right).
-\end{equation}
+\end{equation*}
 Recovering the initial coefficients from measurements at time \(T\) therefore requires
-\begin{equation}
+\begin{equation*}
 U_m(0)
 \approx
 U_m(T)
@@ -999,50 +1001,46 @@ U_m(T)
 \frac{\nu T}{2}
 \left(\frac{m\pi}{L}\right)^2
 \right),
-\end{equation}
+\end{equation*}
 which amplifies high-frequency perturbations exponentially with respect to the mode number. Consequently, the reconstruction becomes extremely sensitive to measurement noise and numerical errors. Unlike the wave equation with telegrapher damping, where all frequencies are damped at essentially the same rate, the viscoelastic damping acts as a strong low-pass filter, progressively removing fine spatial features from the solution.
 
 This progressive loss of high-frequency information plays an important role in the learning-based reconstruction methods presented later in this thesis.
 
 \section{Finite-Difference Time-Domain Method}
-In this section, we derive and analyze an FDTD scheme for the damped wave equation, following the approach described in \cite{bilbao_numerical_2009}, Chapter 6, §6.2. For simplicity, we derive the method in one spatial dimension. The extension to higher dimensions is obtained by replacing the second spatial derivative by the corresponding discrete Laplacian.
+In this section, we derive and analyze a FDTD scheme for the damped wave equation, following the approach described in \cite{bilbao_numerical_2009}, Chapter 6, \S6.2. For simplicity, we derive the method in one spatial dimension. The extension to higher dimensions is obtained by replacing the second spatial derivative by the corresponding discrete Laplacian \cite[Chapter 7]{bilbao_numerical_2009}.
 
 \subsection{Space and Time Discretization}
-We consider the damped wave equation \eqref{eq:wave} on a node-centered grid. Let
+We consider the damped wave equation \eqref{eq:wave} on a node-centered grid defined by
 \[
-x_i=i\Delta x,
-\qquad
-t_n=n\Delta t,
+x_i=i\Delta x, \quad \text{for } i = 0, \dots, N, \qquad t_n=n\Delta t, \quad \text{for } n \ge 0.
 \]
-and denote by
+We denote the numerical approximation of $u$ in $x_i$ at time $t_n$ by
 \[
-u_i^n\approx u(x_i,t_n)
+u_i^n\approx u(x_i,t_n).
 \]
-the numerical approximation.
 
-\subsection{Interior Scheme}
 The second-order centered approximation of the second-order time derivative is
-\begin{equation}
+\begin{equation*}
 \partial_{tt}u(x_i,t_n)
 \approx
 \frac{u_i^{n+1}-2u_i^n+u_i^{n-1}}{\Delta t^2},
-\end{equation}
+\end{equation*}
 while the telegrapher damping term is discretized by the centered difference
-\begin{equation}
+\begin{equation*}
 \partial_tu(x_i,t_n)
 \approx
 \frac{u_i^{n+1}-u_i^{n-1}}{2\Delta t}.
-\end{equation}
+\end{equation*}
 
 The spatial second derivative is approximated by
-\begin{equation}
+\begin{equation*}
 \partial_{xx}u(x_i,t_n)
 \approx
 \frac{u_{i+1}^n-2u_i^n+u_{i-1}^n}{\Delta x^2}.
-\end{equation}
+\end{equation*}
 
 Finally, the mixed derivative is obtained by composing the centered time and space finite-difference operators,
-\begin{equation}
+\begin{equation*}
 \partial_{txx}u(x_i,t_n)
 \approx
 \frac{1}{2\Delta t}
@@ -1051,7 +1049,7 @@ Finally, the mixed derivative is obtained by composing the centered time and spa
 -
 \frac{u_{i+1}^{n-1}-2u_i^{n-1}+u_{i-1}^{n-1}}{\Delta x^2}
 \right).
-\end{equation}
+\end{equation*}
 
 Substituting these approximations into \eqref{eq:wave} yields the finite-difference scheme
 \begin{multline}
@@ -1074,11 +1072,11 @@ Substituting these approximations into \eqref{eq:wave} yields the finite-differe
 \end{multline}
 
 Since the proposed discretization is a two-step method, the values at two consecutive time levels are required to start the iteration. The initial condition directly provides
-\begin{equation}
+\begin{equation*}
 u_i^0=u_0(x_i),
-\end{equation}
+\end{equation*}
 while the first time level is obtained from a second-order Taylor expansion about \(t=0\),
-\begin{equation}
+\begin{equation*}
 u(x,\Delta t)
 =
 u(x,0)
@@ -1088,7 +1086,7 @@ u(x,0)
 \frac{\Delta t^2}{2}\partial_{tt}u(x,0)
 +
 O(\Delta t^3).
-\end{equation}
+\end{equation*}
 
 Using \eqref{eq:wave} to eliminate \(\partial_{tt}u\) and discretizing the spatial derivatives with the same centered finite differences gives the initialization formula
 \begin{multline}
@@ -1120,52 +1118,47 @@ where
 \[
 v_i^0=\partial_tu(x_i,0)
 \]
-denotes the prescribed initial velocity.
-
-The finite-difference scheme outlined above provides numerical approximations solely at the discrete grid points \((x_i, t_n)\). To recover a continuous representation of the solution from these pointwise values—for instance, for visualization, post-processing, or coupling with other discretization techniques—one can construct an interpolant in the spatial domain. The most straightforward choice is the standard piecewise linear (hat function) interpolant
-\begin{equation}
-u_h(x, t_n) = \sum_{i=0}^{N-1} u_i^n \, \phi_i(x),
-\end{equation}
-where \(\phi_i(x)\) are the usual first-order finite element basis functions satisfying \(\phi_i(x_j) = \delta_{ij}\). This reconstruction yields a globally continuous function that is linear on each cell \([x_i, x_{i+1}]\).
+denotes the prescribed initial velocity inside our domain.
 
 \subsection{Treatment of Boundary Conditions}
 
 To enforce boundary conditions, only the first and last equations of the algebraic system corresponding to the interior FDTD scheme are modified.
 
-The resulting linear system can be written as
+By collecting the unknowns at all grid points $i=0,\dots,N$ into the global state vectors $\mathbf{u}^n = [u_0^n, \dots, u_N^n]^T$, the interior update equations for $i=1,\dots,N-1$, together with the discrete boundary equations evaluated at $i=0$ and $i=N$, can be assembled into the global algebraic system:
 \begin{equation}
-A_{\mathrm{bc}}u^{n+1}
+A_{\mathrm{bc}}\mathbf{u}^{n+1}
 =
-B_{\mathrm{bc}}u^{n}
+B_{\mathrm{bc}}\mathbf{u}^{n}
 +
-C_{\mathrm{bc}}u^{n-1}
+C_{\mathrm{bc}}\mathbf{u}^{n-1}
 +
-\Delta t^2f^{n}
+\Delta t^2\mathbf{f}^{n}
 +
-b_{\mathrm{bc}}^{\,n},
+\mathbf{b}_{\mathrm{bc}}^{\,n},
+\label{eq:fdtd_global_system}
 \end{equation}
-where the matrices $A_{\mathrm{bc}},B_{\mathrm{bc}},C_{\mathrm{bc}}$ coincide with the interior matrices except for their first and last rows, and $b_{\mathrm{bc}}^{\,n}$ collects the contribution of the prescribed boundary data.
+where the matrices $A_{\mathrm{bc}},B_{\mathrm{bc}}$, and $C_{\mathrm{bc}}$ coincide with the interior matrices except for their first and last rows, which are populated by the coefficients of the specific boundary scheme, and the vector $\mathbf{b}_{\mathrm{bc}}^{\,n}$ collects the contribution of the prescribed boundary data.
 
 \paragraph{Dirichlet boundary conditions.}
 
 For
-\begin{equation}
+\begin{equation*}
 u(0,t)=g_{\mathrm L}(t),
 \qquad
 u(L,t)=g_{\mathrm R}(t),
-\end{equation}
+\end{equation*}
 the boundary unknowns are directly prescribed,
-\begin{align}
+\begin{align*}
 u_0^{n+1}&=g_{\mathrm L}(t^{n+1}),
 \\
 u_{N-1}^{n+1}&=g_{\mathrm R}(t^{n+1}).
-\end{align}
+\end{align*}
 
 Accordingly, the first and last rows of $A_{\mathrm{bc}}$ are replaced by the corresponding canonical basis vectors, while the corresponding rows of
 $B_{\mathrm{bc}}$ and
 $C_{\mathrm{bc}}$
 are set to zero. The boundary contribution becomes
-\begin{equation}
+\begin{equation*}
 b_{\mathrm{bc}}^{\,n}
 =
 \begin{bmatrix}
@@ -1179,22 +1172,22 @@ g_{\mathrm L}(t^{n+1})
 &
 g_{\mathrm R}(t^{n+1})
 \end{bmatrix}^{T}.
-\end{equation}
+\end{equation*}
 
 \paragraph{Neumann boundary conditions.}
 
 For
-\begin{equation}
+\begin{equation*}
 \partial_n u=g,
-\end{equation}
+\end{equation*}
 that is,
-\begin{align}
+\begin{align*}
 -u_x(0,t)&=g_{\mathrm L}(t),
 \\
 u_x(L,t)&=g_{\mathrm R}(t),
-\end{align}
+\end{align*}
 ghost nodes are introduced outside the computational domain and eliminated through the centered approximations
-\begin{equation}
+\begin{equation*}
 -\frac{u_{1}^n-u_{-1}^n}{2\Delta x}
 =
 g_{\mathrm L}(t^n),
@@ -1202,9 +1195,9 @@ g_{\mathrm L}(t^n),
 \frac{u_N^n-u_{N-2}^n}{2\Delta x}
 =
 g_{\mathrm R}(t^n),
-\end{equation}
+\end{equation*}
 which yield
-\begin{align}
+\begin{align*}
 u_{-1}^n
 &=
 u_1^n
@@ -1216,10 +1209,10 @@ u_N^n
 u_{N-2}^n
 +
 2\Delta x\,g_{\mathrm R}(t^n).
-\end{align}
+\end{align*}
 
 The resulting boundary contribution is
-\begin{equation}
+\begin{equation*}
 b_{\mathrm{bc}}^{\,n}
 =
 \frac{2c^2\Delta t^2}{\Delta x}
@@ -1234,13 +1227,13 @@ g_{\mathrm L}(t^n)
 \\
 g_{\mathrm R}(t^n)
 \end{bmatrix},
-\end{equation}
+\end{equation*}
 while the first and last matrix rows are modified according to the ghost-node elimination.
 
 \paragraph{Robin boundary conditions.}
 
 Finally, consider the generalized Robin condition
-\begin{equation}
+\begin{equation*}
 \partial_nu
 +
 q\,\partial_tu
@@ -1248,10 +1241,10 @@ q\,\partial_tu
 ru
 =
 g.
-\end{equation}
+\end{equation*}
 
 Second-order backward differentiation formulas (BDF2) are used for both spatial and temporal derivatives. At time $t^{n+1}$, the boundary conditions are discretized using one-sided 3-point finite differences for the normal derivative and the BDF2 formula for the time derivative:
-\begin{align}
+\begin{align*}
 \frac{3u_{0}^{n+1}-4u_{1}^{n+1}+u_{2}^{n+1}}{2\Delta x}
 +
 q\frac{3u_0^{n+1}-4u_0^{n}+u_0^{n-1}}{2\Delta t}
@@ -1267,10 +1260,10 @@ q\frac{3u_{N-1}^{n+1}-4u_{N-1}^{n}+u_{N-1}^{n-1}}{2\Delta t}
 ru_{N-1}^{n+1}
 &=
 g_{\mathrm R}(t^{n+1}).
-\end{align}
+\end{align*}
 
 These equations directly replace the interior FDTD scheme at the boundary nodes. Unlike the Neumann case, ghost nodes are not required for this formulation. The corresponding first and last rows in $A_{\mathrm{bc}}$, $B_{\mathrm{bc}}$, and $C_{\mathrm{bc}}$ are updated to incorporate the BDF2 coefficients, and the boundary contribution vector evaluates the given data at the advanced time level $t^{n+1}$:
-\begin{equation}
+\begin{equation*}
 b_{\mathrm{bc}}^{\,n}
 =
 \begin{bmatrix}
@@ -1284,7 +1277,7 @@ g_{\mathrm L}(t^{n+1})
 &
 g_{\mathrm R}(t^{n+1})
 \end{bmatrix}^{T}.
-\end{equation}
+\end{equation*}
 
 Therefore, all the boundary conditions considered preserve the structure of the interior FDTD scheme, requiring only local modifications of the first and last equations of the algebraic system.
 
@@ -1304,12 +1297,12 @@ be the nodal grid and let
 \]
 denote the numerical solution at time $t_n$. The continuous reconstruction is
 defined as
-\begin{equation}
+\begin{equation*}
 u_h(x,t_n)
 =
 \sum_{i=0}^{N}
 u_i^n\,\varphi_i(x),
-\end{equation}
+\end{equation*}
 where $\{\varphi_i\}$ are the standard hat basis functions satisfying
 \[
 \varphi_i(x_j)=\delta_{ij}.
@@ -1320,7 +1313,7 @@ Equivalently, on each interval
 [x_i,x_{i+1}],
 \)
 the reconstruction is given by the linear interpolant
-\begin{equation}
+\begin{equation*}
 u_h(x,t_n)
 =
 \frac{x_{i+1}-x}{h}u_i^n
@@ -1328,7 +1321,7 @@ u_h(x,t_n)
 \frac{x-x_i}{h}u_{i+1}^n,
 \qquad
 x\in[x_i,x_{i+1}],
-\end{equation}
+\end{equation*}
 where
 \(
 h=\Delta x.
@@ -1344,17 +1337,17 @@ In this section we analyze the derived interior scheme and reconstruction strate
 \begin{proposition}[Consistency and accuracy]
 Assume that the exact solution $u$ is sufficiently smooth. Then the proposed finite-difference scheme is consistent with \eqref{eq:wave} and is
 second-order accurate in both space and time. More precisely, the local truncation error satisfies
-\begin{equation}
+\begin{equation*}
 \tau
 =
 O(\Delta t^2+\Delta x^2).
-\end{equation}
+\end{equation*}
 \end{proposition}
 
 \begin{proof}
 The proposed scheme is obtained by combining the following centered finite-difference approximations, whose truncation error is known (see, e.g.,
 \cite{bilbao_numerical_2009,bergman_computational_2018}):
-\begin{align}
+\begin{align*}
 \partial_{tt}u
 &=
 \delta_{tt}u
@@ -1370,21 +1363,21 @@ O(\Delta t^2),\\
 \delta_{xx}u
 +
 O(\Delta x^2).
-\end{align}
+\end{align*}
 
 The mixed derivative is approximated by composing the centered time difference
 with the centered second-order spatial difference,
-\begin{equation}
+\begin{equation*}
 \partial_{txx}u
 =
 \delta_t(\delta_{xx}u)
 +
 O(\Delta t^2+\Delta x^2).
-\end{equation}
+\end{equation*}
 
 Substituting these approximations into \eqref{eq:wave}
 shows that the numerical scheme satisfies
-\begin{equation}
+\begin{equation*}
 \delta_{tt}u
 +\gamma\delta_tu
 -c^2\delta_{xx}u
@@ -1393,13 +1386,13 @@ shows that the numerical scheme satisfies
 f
 +
 O(\Delta t^2+\Delta x^2).
-\end{equation}
+\end{equation*}
 Therefore, the local truncation error is
-\begin{equation}
+\begin{equation*}
 \tau
 =
 O(\Delta t^2+\Delta x^2),
-\end{equation}
+\end{equation*}
 proving that the scheme is consistent and second-order accurate in both space and time.
 \end{proof}
 
@@ -1407,9 +1400,9 @@ proving that the scheme is consistent and second-order accurate in both space an
 Assume that the damping coefficients satisfy $\gamma,\nu\ge0$. Then the
 proposed finite-difference scheme is Von Neumann stable if and only if the
 Courant number satisfies
-\begin{equation}
+\begin{equation*}
     \sigma=\frac{c\Delta t}{\Delta x}\le1.
-\end{equation}
+\end{equation*}
 Hence, neither the telegrapher damping nor the viscoelastic damping modifies
 the classical CFL stability condition of the centered finite-difference scheme
 for the wave equation.
@@ -1418,48 +1411,48 @@ for the wave equation.
 \begin{proof}
 We perform a Von Neumann analysis by assuming $f\equiv0$ and seeking solutions
 of the form
-\begin{equation}
-    u_i^n=\xi^n e^{\mathrm{i}ki\Delta x},
-\end{equation}
+\begin{equation*}
+    u_j^n=\xi^n e^{\mathrm{i}kj\Delta x},
+\end{equation*}
 where $k$ is the spatial wavenumber and $\xi$ is the amplification factor.
 
 The neighboring grid values satisfy
-\begin{align}
-u_i^{n+1}&=\xi u_i^n,\\
-u_i^{n-1}&=\xi^{-1}u_i^n,\\
-u_{i\pm1}^{\,n}&=e^{\pm\mathrm{i}k\Delta x}u_i^n,\\
-u_{i\pm1}^{\,n\pm1}&=\xi^{\pm1}e^{\pm\mathrm{i}k\Delta x}u_i^n.
-\end{align}
+\begin{align*}
+u_j^{n+1}&=\xi u_j^n,\\
+u_j^{n-1}&=\xi^{-1}u_j^n,\\
+u_{j\pm1}^{\,n}&=e^{\pm\mathrm{i}k\Delta x}u_j^n,\\
+u_{j\pm1}^{\,n\pm1}&=\xi^{\pm1}e^{\pm\mathrm{i}k\Delta x}u_j^n.
+\end{align*}
 Consequently,
-\begin{align}
-u_{i+1}^n-2u_i^n+u_{i-1}^n
+\begin{align*}
+u_{j+1}^n-2u_j^n+u_{j-1}^n
 &=
-\left(e^{\mathrm{i}k\Delta x}-2+e^{-\mathrm{i}k\Delta x}\right)u_i^n\\
+\left(e^{\mathrm{i}k\Delta x}-2+e^{-\mathrm{i}k\Delta x}\right)u_j^n\\
 &=
-2(\cos(k\Delta x)-1)u_i^n\\
+2(\cos(k\Delta x)-1)u_j^n\\
 &=
--2\delta\,u_i^n,
-\end{align}
+-2\delta\,u_j^n,
+\end{align*}
 where
-\begin{equation}
+\begin{equation*}
 \delta
 =
 1-\cos(k\Delta x)
 =
 2\sin^2\!\left(\frac{k\Delta x}{2}\right).
-\end{equation}
+\end{equation*}
 Similarly,
-\begin{equation}
-u_{i+1}^{n\pm1}
--2u_i^{n\pm1}
-+u_{i-1}^{n\pm1}
+\begin{equation*}
+u_{j+1}^{n\pm1}
+-2u_j^{n\pm1}
++u_{j-1}^{n\pm1}
 =
--2\delta\,\xi^{\pm1}u_i^n.
-\end{equation}
+-2\delta\,\xi^{\pm1}u_j^n.
+\end{equation*}
 
 Substituting these expressions into the finite-difference scheme and dividing
-through by $u_i^n$ gives
-\begin{equation}
+through by $u_j^n$ gives
+\begin{equation*}
 \frac{\xi-2+\xi^{-1}}{\Delta t^2}
 +
 \frac{\gamma}{2\Delta t}\left(\xi-\xi^{-1}\right)
@@ -1468,10 +1461,10 @@ through by $u_i^n$ gives
 -
 \frac{\nu\delta}{\Delta t\,\Delta x^2}
 \left(\xi-\xi^{-1}\right).
-\end{equation}
+\end{equation*}
 
 Multiplying by $\Delta t^2\xi$ yields
-\begin{equation}
+\begin{equation*}
 \xi^2-2\xi+1
 +\frac{\gamma\Delta t}{2}\left(\xi^2-1\right)
 =
@@ -1479,46 +1472,46 @@ Multiplying by $\Delta t^2\xi$ yields
 -
 \frac{\nu\Delta t}{\Delta x^2}\delta
 \left(\xi^2-1\right).
-\end{equation}
+\end{equation*}
 
 Introducing the dimensionless parameters
-\begin{equation}
+\begin{equation*}
 \sigma=\frac{c\Delta t}{\Delta x},
 \qquad
 \alpha=\frac{\gamma\Delta t}{2},
 \qquad
 \beta=\frac{\nu\Delta t}{2\Delta x^2},
-\end{equation}
+\end{equation*}
 we obtain the amplification polynomial
-\begin{equation}
+\begin{equation*}
 (1+\alpha+2\beta\delta)\xi^2
 -2(1-\sigma^2\delta)\xi
 +(1-\alpha-2\beta\delta)=0,
-\end{equation}
+\end{equation*}
 which can be rewritten as
-\begin{equation}
+\begin{equation*}
 a\xi^2+b\xi+c=0,
-\end{equation}
+\end{equation*}
 where
-\begin{align}
+\begin{align*}
 a&=1+\alpha+2\beta\delta,\\
 b&=-2(1-\sigma^2\delta),\\
 c&=1-\alpha-2\beta\delta.
-\end{align}
+\end{align*}
 
 Since the polynomial has real coefficients and $a>0$, the Jury criterion states
 that both roots satisfy $|\xi|\le1$ if and only if
-\begin{align}
+\begin{align*}
 a+b+c&\ge0,\\
 a-b+c&\ge0,\\
 a-c&\ge0.
-\end{align}
+\end{align*}
 Substituting the coefficients gives
-\begin{align}
+\begin{align*}
 a+b+c&=2\delta\sigma^2,\\
 a-b+c&=4-2\delta\sigma^2,\\
 a-c&=2(\alpha+2\beta\delta).
-\end{align}
+\end{align*}
 
 Since
 \[
@@ -1528,21 +1521,21 @@ Since
 \]
 the first and third inequalities are always satisfied. The second inequality
 becomes
-\begin{equation}
+\begin{equation*}
 \sigma^2\le\frac{2}{\delta}.
-\end{equation}
+\end{equation*}
 Because stability must hold for every Fourier mode, the most restrictive case
 is the Nyquist frequency, for which $\delta=2$. Therefore,
-\begin{equation}
+\begin{equation*}
 \sigma\le1,
-\end{equation}
+\end{equation*}
 which is precisely the classical CFL condition.
 \end{proof}
 
 \begin{proposition}[Numerical dispersion relation]
 The numerical dispersion relation associated with the proposed finite-difference
 scheme is
-\begin{equation}
+\begin{equation*}
 \cos(\omega\Delta t)
 +
 \mathrm{i}
@@ -1561,7 +1554,7 @@ scheme is
 \frac{c\Delta t}{\Delta x}
 \right)^2
 \sin^2\!\left(\frac{k\Delta x}{2}\right).
-\end{equation}
+\end{equation*}
 Moreover, this relation is second-order consistent with the continuous
 dispersion relation \eqref{eq:dispersion}.
 \end{proposition}
@@ -1569,73 +1562,73 @@ dispersion relation \eqref{eq:dispersion}.
 \begin{proof}
 To derive the numerical dispersion relation, we interpret the amplification
 factor as the propagation of a time-harmonic wave and consider the Fourier mode
-\begin{equation}
+\begin{equation*}
 u_i^n=e^{\mathrm{i}(\omega n \Delta t - k i \Delta x)},
-\end{equation}
+\end{equation*}
 which implies
-\begin{equation}
+\begin{equation*}
 \xi=e^{\mathrm{i}\omega\Delta t}.
-\end{equation}
+\end{equation*}
 
 Substituting this expression into the amplification polynomial
-\begin{equation}
+\begin{equation*}
 (1+\alpha+2\beta\delta)\xi^2
 -2(1-\sigma^2\delta)\xi
 +(1-\alpha-2\beta\delta)=0
-\end{equation}
+\end{equation*}
 gives
-\begin{equation}
+\begin{equation*}
 (1+\alpha+2\beta\delta)e^{2\mathrm{i}\omega\Delta t}
 -2(1-\sigma^2\delta)e^{\mathrm{i}\omega\Delta t}
 +(1-\alpha-2\beta\delta)=0.
-\end{equation}
+\end{equation*}
 
 Multiplying by $e^{-\mathrm{i}\omega\Delta t}$ yields
-\begin{equation}
+\begin{equation*}
 (1+\alpha+2\beta\delta)e^{\mathrm{i}\omega\Delta t}
 +
 (1-\alpha-2\beta\delta)e^{-\mathrm{i}\omega\Delta t}
 =
 2(1-\sigma^2\delta).
-\end{equation}
+\end{equation*}
 
 Using Euler's identities,
-\begin{equation}
+\begin{equation*}
 e^{\pm\mathrm{i}\theta}
 =
 \cos\theta
 \pm
 \mathrm{i}\sin\theta,
-\end{equation}
+\end{equation*}
 we obtain
-\begin{equation}
+\begin{equation*}
 \cos(\omega\Delta t)
 +
 \mathrm{i}(\alpha+2\beta\delta)
 \sin(\omega\Delta t)
 =
 1-\sigma^2\delta.
-\end{equation}
+\end{equation*}
 
 Finally, recalling that
-\begin{equation}
+\begin{equation*}
 \delta
 =
 2\sin^2\!\left(\frac{k\Delta x}{2}\right),
-\end{equation}
+\end{equation*}
 together with the definitions
-\begin{equation}
+\begin{equation*}
 \sigma=\frac{c\Delta t}{\Delta x},
 \qquad
 \alpha=\frac{\gamma\Delta t}{2},
 \qquad
 \beta=\frac{\nu\Delta t}{2\Delta x^2},
-\end{equation}
+\end{equation*}
 gives the stated numerical dispersion relation.
 
 To study its consistency, we let $\Delta x,\Delta t\rightarrow0$ and expand the
 trigonometric functions to second order:
-\begin{align}
+\begin{align*}
 \cos(\omega\Delta t)
 &=
 1-\frac{\omega^2\Delta t^2}{2}
@@ -1651,7 +1644,7 @@ O(\Delta t^3),\\
 \left(\frac{k\Delta x}{2}\right)^2
 +
 O(\Delta x^4).
-\end{align}
+\end{align*}
 Substituting these expansions into the numerical dispersion relation yields
 \begin{multline}
 1
@@ -1684,7 +1677,7 @@ with the continuous one.
 
 \subsection{Reflection Factor with Robin Boundary Condition}
 We now derive the reflection factor associated with the fully implicit BDF2 discretization of the Robin boundary condition. For simplicity, we consider the left boundary, where the continuous condition reads
-\begin{equation}
+\begin{equation*}
 -\partial_xu
 +
 q\,\partial_tu
@@ -1692,10 +1685,10 @@ q\,\partial_tu
 ru
 =
 0.
-\end{equation}
+\end{equation*}
 
 Using one-sided 3-point finite differences for space and the BDF2 scheme for time, the boundary condition is approximated by
-\begin{equation}
+\begin{equation*}
 \frac{3u_{0}^{n+1}-4u_{1}^{n+1}+u_{2}^{n+1}}{2\Delta x}
 +
 q\frac{3u_0^{n+1}-4u_0^{n}+u_0^{n-1}}{2\Delta t}
@@ -1703,10 +1696,10 @@ q\frac{3u_0^{n+1}-4u_0^{n}+u_0^{n-1}}{2\Delta t}
 ru_0^{n+1}
 =
 0.
-\end{equation}
+\end{equation*}
 
 We seek a numerical solution consisting of an incident and a reflected wave,
-\begin{equation}
+\begin{equation*}
 u_j^n
 =
 \xi^n
@@ -1715,138 +1708,137 @@ e^{i\theta j}
 +
 R_h e^{-i\theta j}
 \right),
-\end{equation}
+\end{equation*}
 where
-\begin{equation}
+\begin{equation*}
 \theta=k\Delta x,
 \qquad
 \xi=e^{i\omega\Delta t},
-\end{equation}
+\end{equation*}
 and $(\omega,k)$ satisfy the numerical dispersion relation of the interior scheme.
 
 Evaluating the numerical solution at the required grid points gives
-\begin{align}
+\begin{align*}
 u_0^m &= \xi^m(1+R_h) \quad \text{for} \quad m \in \{n-1, n, n+1\}, \\
 u_1^{n+1} &= \xi^{n+1}\left(e^{i\theta} + R_he^{-i\theta}\right), \\
 u_2^{n+1} &= \xi^{n+1}\left(e^{2i\theta} + R_he^{-2i\theta}\right).
-\end{align}
+\end{align*}
 
 Substituting these expressions into the discrete Robin condition and dividing by $\xi^{n+1}$ yields
-\begin{multline}
+\begin{equation*}
 \frac{3 - 4e^{i\theta} + e^{2i\theta} + R_h\left(3 - 4e^{-i\theta} + e^{-2i\theta}\right)}{2\Delta x}
-\\
 +
 q\frac{3 - 4\xi^{-1} + \xi^{-2}}{2\Delta t}(1+R_h)
 +
 r(1+R_h)
 =
 0.
-\end{multline}
+\end{equation*}
 
 To simplify the notation, we define the discrete spatial derivative symbols evaluated at the boundary:
-\begin{equation}
+\begin{equation*}
 D_x^+(\theta) = \frac{3 - 4e^{i\theta} + e^{2i\theta}}{2\Delta x},
 \qquad
 D_x^-(\theta) = \frac{3 - 4e^{-i\theta} + e^{-2i\theta}}{2\Delta x},
-\end{equation}
+\end{equation*}
 and the discrete BDF2 temporal derivative symbol:
-\begin{equation}
+\begin{equation*}
 D_t(\xi) = \frac{3 - 4\xi^{-1} + \xi^{-2}}{2\Delta t}.
-\end{equation}
+\end{equation*}
 
 The discrete Robin condition can then be written compactly as
-\begin{equation}
+\begin{equation*}
 D_x^+(\theta) + R_h D_x^-(\theta)
 +
 \left(q D_t(\xi) + r\right)(1+R_h)
 =
 0.
-\end{equation}
+\end{equation*}
 
 Collecting the terms containing $R_h$ gives
-\begin{equation}
+\begin{equation*}
 \left( D_x^-(\theta) + q D_t(\xi) + r \right) R_h
 =
 - \left( D_x^+(\theta) + q D_t(\xi) + r \right),
-\end{equation}
+\end{equation*}
 and therefore the discrete reflection factor is
-\begin{equation}
+\begin{equation*}
 R_h(i\omega)
 =
 - \frac{D_x^+(\theta) + q D_t(\xi) + r}{D_x^-(\theta) + q D_t(\xi) + r}.
-\end{equation}
+\end{equation*}
 
 Using the Taylor expansions for small $\Delta x$ and $\Delta t$,
-\begin{align}
+\begin{align*}
 D_x^+(\theta) &= -ik + O(\Delta x^2), \\
 D_x^-(\theta) &= ik + O(\Delta x^2), \\
 D_t(\xi) &= i\omega + O(\Delta t^2),
-\end{align}
+\end{align*}
 it follows that
-\begin{equation}
+\begin{equation*}
 R_h(i\omega)
 =
 - \frac{-ik + i\omega q + r}{ik + i\omega q + r} + O(\Delta x^2 + \Delta t^2)
 =
 \frac{ik - i\omega q - r}{ik + i\omega q + r} + O(\Delta x^2 + \Delta t^2).
-\end{equation}
+\end{equation*}
 
 Therefore,
-\begin{equation}
+\begin{equation*}
 R_h(i\omega)
 =
 R(i\omega)
 +
 O(\Delta x^2+\Delta t^2),
-\end{equation}
+\end{equation*}
 where \(R(i\omega)\) is the continuous reflection factor defined in \eqref{eq:reflection_cont}.
 
-\subsection{Cell-Centered Discretization and Modal Expansion with Homogeneous Neumann Boundary Conditions}
+\subsection{Staggered FDTD Discretization and Modal Expansion with Homogeneous Neumann Boundary Conditions}
 The finite-difference scheme presented above is valid independently of the location of the spatial degrees of freedom. Throughout the remainder of this work, however, we adopt a cell-centered discretization, since it naturally leads to a cosine modal expansion diagonalized by the Discrete Cosine Transform (DCT-II), which plays a central role in the Adaptive Rectangular Decomposition method.
 
 The computational domain is partitioned into $N$ cells of width
 $\Delta x=L/N$, and the unknowns are located at the cell centers
-\begin{equation}
+\begin{equation*}
 x_i
 =
 \left(i+\frac12\right)\Delta x,
 \qquad
 i=0,\ldots,N-1.
-\end{equation}
+\end{equation*}
 Consequently, the physical boundaries are located half a grid spacing outside the first and last computational nodes, i.e., $x_{-1/2}=0$ and $x_{N-1/2}=L$.
 
 The interior finite-difference stencil remains unchanged and is therefore still given by
-\begin{equation}
+\begin{equation*}
 \frac{
 u_{i+1}-2u_i+u_{i-1}
 }{\Delta x^2},
 \qquad
 i=1,\ldots,N-2.
-\end{equation}
+\end{equation*}
 
 Only the treatment of the boundary nodes must be modified. Let's consider the homogeneous Neumann boundary conditions case:
-\begin{equation}
+\begin{equation*}
 u_x(0,t)=0,
 \qquad
 u_x(L,t)=0.
-\end{equation}
+\end{equation*}
 The boundary derivatives are approximated by centered finite differences (respectively centered at $x_{-1/2}=0$ and $x_{N-1/2} = L$):
-\begin{align}
+\begin{align*}
 \frac{u_0-u_{-1}}{\Delta x}
 &=0,
 \\
 \frac{u_N-u_{N-1}}{\Delta x}
 &=0.
-\end{align}
+\end{align*}
 Hence,
-\begin{equation}
+\begin{equation*}
 u_{-1}=u_0,
 \qquad
 u_N=u_{N-1}.
-\end{equation}
+\end{equation*}
 
 Substituting these relations into the second-order finite-difference operator gives
-\begin{align}
+\begin{align*}
 \Delta_hu_0
 &=
 \frac{u_1-u_0}{\Delta x^2},
@@ -1854,9 +1846,9 @@ Substituting these relations into the second-order finite-difference operator gi
 \Delta_hu_{N-1}
 &=
 \frac{u_{N-2}-u_{N-1}}{\Delta x^2}.
-\end{align}
+\end{align*}
 Therefore, only the first and last rows of the discrete Laplacian differ from the interior stencil. Let
-\begin{equation}
+\begin{equation*}
 A u^{n+1}
 =
 B u^n
@@ -1864,22 +1856,22 @@ B u^n
 C u^{n-1}
 +
 \Delta t^2f^n
-\end{equation}
-denote the interior scheme introduced previously.
+\end{equation*}
+denote the interior scheme \eqref{eq:fdtd_global_system} introduced previously.
 
 The Neumann boundary conditions modify only the first and last rows of the matrices. Denoting the resulting matrices by
 $A_{\mathrm{bc}}$, $B_{\mathrm{bc}}$, and $C_{\mathrm{bc}}$, the first row is obtained by replacing the standard three-point stencil
-\begin{equation}
+\begin{equation*}
 \frac{
 u_{-1}-2u_0+u_1
 }{\Delta x^2}
-\end{equation}
+\end{equation*}
 with
-\begin{equation}
+\begin{equation*}
 \frac{
 u_1-u_0
 }{\Delta x^2},
-\end{equation}
+\end{equation*}
 while the last row is obtained analogously.
 
 Equivalently, if
@@ -1910,7 +1902,7 @@ L_h^{(\mathrm N)}
 \end{equation}
 
 Consequently,
-\begin{align}
+\begin{align*}
 A_{\mathrm{bc}}
 &=
 \left(1+\frac{\gamma\Delta t}{2}\right)I
@@ -1931,7 +1923,7 @@ C_{\mathrm{bc}}
 +
 \frac{\nu\Delta t}{2}
 L_h^{(\mathrm N)}.
-\end{align}
+\end{align*}
 
 Thus, the cell-centered formulation preserves exactly the same time-stepping scheme as the nodal discretization. Only the discrete Laplacian is modified at the two boundary nodes through the ghost-node elimination, while the interior stencil and the algebraic structure of the method remain unchanged.
 
@@ -1939,7 +1931,7 @@ The discrete Laplacian with homogeneous Neumann boundary conditions admits a cos
 
 The eigenvectors of the boundary-corrected Laplacian in
 \eqref{eq:boundary_corrected_laplacian} are
-\begin{align}
+\begin{align*}
 \phi_0(i)
 &=
 \frac1{\sqrt N},
@@ -1953,7 +1945,7 @@ The eigenvectors of the boundary-corrected Laplacian in
 \right),
 \qquad
 m=1,\ldots,N-1,
-\end{align}
+\end{align*}
 where $i=0,\ldots,N-1$ denotes the cell index. These vectors form an
 orthonormal basis of $\mathbb{R}^N$,
 \begin{equation}
@@ -1967,7 +1959,7 @@ and correspond exactly to the normalized basis of the Discrete Cosine
 Transform of type II (DCT-II, \cite{rao_discrete_1990}).
 
 The associated eigenvalues are
-\begin{equation}
+\begin{equation*}
 \lambda_m^{(h)}
 =
 -\frac{4}{\Delta x^2}
@@ -1976,37 +1968,37 @@ The associated eigenvalues are
 \right),
 \qquad
 m=0,\ldots,N-1.
-\end{equation}
+\end{equation*}
 
 Therefore, the numerical solution admits the modal expansion
-\begin{equation}
+\begin{equation*}
 u_i^n
 =
 \sum_{m=0}^{N-1}
 \widehat u_m^{\,n}\phi_m(i),
-\end{equation}
+\end{equation*}
 where the modal coefficients are simply given by the orthogonal projection
-\begin{equation}
+\begin{equation*}
 \widehat u_m^{\,n}
 =
 \sum_{i=0}^{N-1}
 u_i^n\,\phi_m(i).
-\end{equation}
+\end{equation*}
 
 Likewise, the forcing term is expanded as
-\begin{equation}
+\begin{equation*}
 \widehat f_m^{\,n}
 =
 \sum_{i=0}^{N-1}
 f_i^n\,\phi_m(i).
-\end{equation}
+\end{equation*}
 
 Since the cosine modes diagonalize the discrete Laplacian,
-\begin{equation}
+\begin{equation*}
 L_h^{(\mathrm N)}\phi_m
 =
 \lambda_m^{(h)}\phi_m,
-\end{equation}
+\end{equation*}
 substituting the modal expansion into the finite-difference scheme yields a
 collection of uncoupled recurrence relations,
 \begin{multline}
@@ -2052,24 +2044,24 @@ The modal decomposition presented above naturally suggests a pseudo-spectral spa
 
 \subsection{Space Discretization and Modal Expansion}
 Let the computational grid consist of the cell centers
-\begin{equation}
+\begin{equation*}
 x_i
 =
 \left(i+\frac12\right)\Delta x,
 \qquad
 i=0,\ldots,N-1,
-\end{equation}
+\end{equation*}
 with $\Delta x=L/N$.
 
 The numerical solution is represented by its expansion in the orthonormal DCT-II basis,
-\begin{equation}
+\begin{equation*}
 u_i(t)
 =
 \sum_{m=0}^{N-1}
 U_m(t)\phi_m(i),
-\end{equation}
+\end{equation*}
 where the basis functions $\phi_m$ are defined as
-\begin{align}
+\begin{align*}
 \phi_0(i)
 &=
 \frac1{\sqrt N},
@@ -2083,54 +2075,54 @@ where the basis functions $\phi_m$ are defined as
 \right),
 \qquad
 m=1,\ldots,N-1.
-\end{align}
+\end{align*}
 
 Conversely, the modal coefficients are recovered by the inverse transform
-\begin{equation}
+\begin{equation*}
 U_m(t)
 =
 \sum_{i=0}^{N-1}
 u_i(t)\phi_m(i),
 \qquad
 m=0,\ldots,N-1,
-\end{equation}
+\end{equation*}
 thanks to the orthonormality relation \eqref{eq:orthonormality}.
 
 Unlike the finite-difference method, the Laplacian is not approximated by a discrete operator. Instead, each cosine mode is associated with the continuous Laplacian eigenvalue shown in \eqref{eq:eigenvalues}
-\begin{equation}
+\begin{equation*}
 \lambda_m
 =
 -\left(\frac{m\pi}{L}\right)^2.
-\end{equation}
+\end{equation*}
 
 Consequently,
-\begin{equation}
+\begin{equation*}
 u_{xx}(x_i,t)
 =
 \sum_{m=0}^{N-1}
 \lambda_m
 U_m(t)
 \phi_m(i),
-\end{equation}
+\end{equation*}
 which is spectrally accurate for sufficiently smooth solutions.
 
 Similarly, the forcing term is expanded as
-\begin{equation}
+\begin{equation*}
 f_i(t)
 =
 \sum_{m=0}^{N-1}
 F_m(t)\phi_m(i),
-\end{equation}
+\end{equation*}
 where
-\begin{equation}
+\begin{equation*}
 F_m(t)
 =
 \sum_{i=0}^{N-1}
 f_i(t)\phi_m(i).
-\end{equation}
+\end{equation*}
 
 Substituting the modal expansions of both the solution and the forcing term into \eqref{eq:wave} yields a collection of uncoupled ordinary differential equations as in the continuous case \eqref{eq:modal_ode},
-\begin{equation}
+\begin{equation*}
 U_m''
 +
 \left(
@@ -2145,13 +2137,13 @@ c^2\lambda_mU_m
 F_m(t),
 \qquad
 m=0,\ldots,N-1.
-\end{equation}
+\end{equation*}
 
 Therefore, the pseudo-spectral discretization reduces the original partial differential equation to the independent time integration of one scalar ordinary differential equation for each cosine mode.
 
 \subsection{Time Integration Scheme for the Undamped Case}
 In the absence of damping ($\gamma=\nu=0$), the modal equations reduce to
-\begin{equation}
+\begin{equation*}
 U_m''
 +\omega_m^2U_m
 =
@@ -2162,10 +2154,10 @@ F_m(t),
 c\sqrt{-\lambda_m}
 =
 \frac{cm\pi}{L}.
-\end{equation}
+\end{equation*}
 
 Rather than integrating this ordinary differential equation by a standard finite-difference method, we choose to approximate the second derivative by the recurrence studied in \cite{cieslinski_exact_2011}, Equation (2.4),
-\begin{equation}
+\begin{equation*}
 U_m^{n+1}
 -
 2\cos(\omega_m\Delta t)\,
@@ -2174,16 +2166,16 @@ U_m^n
 U_m^{n-1}
 =
 0.
-\end{equation}
+\end{equation*}
 
 Indeed, substituting an exact harmonic solution of kind
-\begin{equation}
+\begin{equation*}
 U_m^n
 =
 e^{i\omega_mn\Delta t}
-\end{equation}
+\end{equation*}
 into the recurrence gives
-\begin{equation}
+\begin{equation*}
 e^{i\omega_m\Delta t}
 -
 2\cos(\omega_m\Delta t)
@@ -2191,14 +2183,14 @@ e^{i\omega_m\Delta t}
 e^{-i\omega_m\Delta t}
 =
 0,
-\end{equation}
+\end{equation*}
 which is an identity by Euler's formula. Consequently, every harmonic mode is propagated exactly in time, independently of the time step.
 
 When telegrapher or viscoelastic damping is present, the modal equations remain uncoupled but we need to develop a different exact time integration scheme. This construction will be discussed in the following section.
 
 \subsection{State Space Form}
 For convenience, we define the orthonormal DCT-II matrix $\Phi$, the physical displacement, velocity and force vectors
-\begin{equation}
+\begin{equation*}
 \mathbf u
 =
 \begin{bmatrix}
@@ -2222,9 +2214,9 @@ f_0\\
 \vdots\\
 f_{N-1}
 \end{bmatrix},
-\end{equation}
+\end{equation*}
 and the modal displacement, velocity and force vectors
-\begin{equation}
+\begin{equation*}
 \mathbf U
 =
 \begin{bmatrix}
@@ -2248,9 +2240,9 @@ F_0\\
 \vdots\\
 F_{N-1}
 \end{bmatrix},
-\end{equation}
+\end{equation*}
 that satisfy
-\begin{equation}
+\begin{equation*}
 \mathbf U
 =
 \Phi^T\mathbf u,
@@ -2262,9 +2254,9 @@ that satisfy
 \mathbf F
 =
 \Phi^T\mathbf f,
-\end{equation}
+\end{equation*}
 and
-\begin{equation}
+\begin{equation*}
 \mathbf u
 =
 \Phi\mathbf U,
@@ -2276,10 +2268,10 @@ and
 \mathbf f
 =
 \Phi\mathbf F.
-\end{equation}
+\end{equation*}
 
 For the state space representation, we define the physical state vector and the physical force vector in state space form as
-\begin{equation}
+\begin{equation*}
 \mathbf z
 =
 \begin{bmatrix}
@@ -2293,9 +2285,9 @@ For the state space representation, we define the physical state vector and the 
 \mathbf 0\\
 \mathbf f
 \end{bmatrix},
-\end{equation}
+\end{equation*}
 then we define the modal state vector and the modal force vector in state space form as
-\begin{equation}
+\begin{equation*}
 \mathbf Z
 =
 \begin{bmatrix}
@@ -2313,9 +2305,9 @@ then we define the modal state vector and the modal force vector in state space 
 \vdots\\
 \mathbf W_{N-1}
 \end{bmatrix}.
-\end{equation}
+\end{equation*}
 together with the permuted versions
-\begin{equation}
+\begin{equation*}
 \widetilde{\mathbf Z}
 =
 \begin{bmatrix}
@@ -2329,10 +2321,10 @@ V
 0\\
 F
 \end{bmatrix}.
-\end{equation}
+\end{equation*}
 
 The vectors $\mathbf Z$ and $\widetilde{\mathbf Z}$ (and analogously the vectors $\mathbf W$ and $\widetilde{\mathbf W}$) are related by
-\begin{equation}
+\begin{equation*}
 \widetilde{\mathbf Z}
 =
 P\mathbf Z,
@@ -2340,34 +2332,34 @@ P\mathbf Z,
 \mathbf Z
 =
 P^T\widetilde{\mathbf Z},
-\end{equation}
+\end{equation*}
 where $P$ is the $2N\times2N$ permutation matrix satisfying
-\begin{equation}
+\begin{equation*}
 P^{-1}
 =
 P^T.
-\end{equation}
+\end{equation*}
 
 Introducing the block transform
-\begin{equation}
+\begin{equation*}
 \Psi
 =
 \begin{bmatrix}
 \Phi&0\\
 0&\Phi
 \end{bmatrix},
-\end{equation}
+\end{equation*}
 the physical state vector
-\begin{equation}
+\begin{equation*}
 \mathbf z
 =
 \begin{bmatrix}
 \mathbf u\\
 \mathbf v
 \end{bmatrix}
-\end{equation}
+\end{equation*}
 is related to the reordered modal vector through
-\begin{equation}
+\begin{equation*}
 \widetilde{\mathbf Z}
 =
 \Psi^T\mathbf z,
@@ -2375,34 +2367,34 @@ is related to the reordered modal vector through
 \mathbf z
 =
 \Psi\widetilde{\mathbf Z}.
-\end{equation}
+\end{equation*}
 
 Similarly, the modal counterpart of the global force vector in state space form satisfies
-\begin{equation}
+\begin{equation*}
 \widetilde{\mathbf W}
 =
 \Psi^T\mathbf w.
-\end{equation}
+\end{equation*}
 
 \subsection{Time Integration Scheme for the General Case}
 Let's consider the general case, without assuming $\gamma=\nu=0$ as before.
 
 For each mode, introduce the modal velocity
-\begin{equation}
+\begin{equation*}
 V_m(t)=U_m'(t),
-\end{equation}
+\end{equation*}
 and define the state vector
-\begin{equation} \label{eq:modal_state_def}
+\begin{equation*} 
 \mathbf Z_m(t)
 =
 \begin{bmatrix}
 U_m(t)\\
 V_m(t)
 \end{bmatrix}.
-\end{equation}
+\end{equation*}
 
 Then, the modal equation \eqref{eq:modal_ode}, which we report for readability,
-\begin{equation}
+\begin{equation*}
 U_m''
 +
 \left(
@@ -2413,33 +2405,33 @@ U_m'
 c^2\lambda_mU_m
 =
 F_m(t)
-\end{equation}
+\end{equation*}
 can be written as the first-order system
-\begin{equation} \label{eq:modal_ode_first_order}
+\begin{equation*} 
 \frac{d\mathbf Z_m}{dt}
 =
 A_m\mathbf Z_m
 +
 \mathbf W_m(t),
-\end{equation}
+\end{equation*}
 where
-\begin{equation} \label{eq:modal_ODE_matrix_A}
+\begin{equation*} 
     A_m
     =
     \begin{bmatrix}
     0 & 1\\
     c^2\lambda_m & -(\gamma-\nu\lambda_m)
     \end{bmatrix},
-\end{equation}
+\end{equation*}
 and
-\begin{equation}
+\begin{equation*}
     \mathbf W_m(t)
     =
     \begin{bmatrix}
     0\\
     F_m(t)
     \end{bmatrix}.
-\end{equation}
+\end{equation*}
 
 Consider a sequence of discrete times $t_n$, with a generally variable time step $\Delta t^{(n)} = t_{n+1} - t_n$. Using the Duhamel's formula shown in \cite{teschl_ordinary_2012}, Chapter 3, §3.2, Equation (3.48), the exact solution at time $t_{n+1}$ can be expressed in terms of the state at time $t_n$ as
 \begin{equation} \label{eq:modal_general_update}
@@ -2456,13 +2448,13 @@ e^{A_m(t_{n+1}-\tau)}
 This general formulation is exact and accommodates any generic functional form for the forcing term $\mathbf W_m(t)$, whether it is piecewise linear, piecewise polynomial, harmonic, or otherwise.
 
 We begin particularizing this framework by assuming that the forcing term is piecewise constant over each time step:
-\begin{equation}
+\begin{equation*}
 F_m(t)=F_m^n,
 \qquad
 t\in[t_n,t_{n+1}).
-\end{equation}
+\end{equation*}
 Under this assumption, shifting the integration limits in \eqref{eq:modal_general_update} yields
-\begin{equation}
+\begin{equation*}
 \mathbf Z_m(t_{n+1})
 =
 e^{A_m\Delta t^{(n)}}
@@ -2472,19 +2464,19 @@ e^{A_m\Delta t^{(n)}}
 e^{A_m(\Delta t^{(n)}-\tau)}
 \,d\tau\,
 \mathbf W_m^{\,n},
-\end{equation}
+\end{equation*}
 where $\mathbf W_m^{\,n} = [0, F_m^n]^T$. We can formally define the step-dependent matrices
-\begin{align}
+\begin{align*}
 S_m^{(n)}
 &=
-e^{A_m\Delta t^{(n)}}, \label{eq:modal_ODE_matrix_S_n}
+e^{A_m\Delta t^{(n)}}, 
 \\
 T_m^{(n)}
 &=
 \int_0^{\Delta t^{(n)}}
 e^{A_m(\Delta t^{(n)}-\tau)}
-\,d\tau, \label{eq:modal_ODE_matrix_T_n}
-\end{align}
+\,d\tau, 
+\end{align*}
 which allows us to express the exact time-marching scheme for each mode as
 \begin{equation} \label{eq:modal_update_variable}
 \mathbf Z_m(t_{n+1})
@@ -2502,13 +2494,13 @@ Under the constant time step assumption, we drop the superscript $(n)$ from the 
 \begin{align}
 S_m
 &=
-e^{A_m\Delta t}, \label{eq:modal_ODE_matrix_S}
+e^{A_m\Delta t}, \label{eq:Sm_def}
 \\
 T_m
 &=
 \int_0^{\Delta t}
 e^{A_m(\Delta t-\tau)}
-\,d\tau, \label{eq:modal_ODE_matrix_T}
+\,d\tau, \label{eq:Tm_def}
 \end{align}
 and the exact update step \eqref{eq:modal_update_variable} becomes
 \begin{equation} \label{eq:modal_update}
@@ -2523,7 +2515,7 @@ T_m
 where we have used the compact notation $\mathbf Z_m^{\,n} = \mathbf Z_m(t_n)$.
 
 Defining the block-diagonal matrices
-\begin{equation}
+\begin{equation*}
 S
 =
 \operatorname{diag}
@@ -2533,7 +2525,7 @@ T
 =
 \operatorname{diag}
 (T_0,\ldots,T_{N-1}),
-\end{equation}
+\end{equation*}
 we can express the time-marching scheme for all modes as
 \begin{equation} \label{eq:all_modal_update}
 \mathbf Z^{n+1}
@@ -2545,49 +2537,49 @@ T\mathbf W^n.
 
 \begin{proposition} \label{prop:Tmatrix}
 If $A_m$ is invertible, the forcing matrix satisfies
-\begin{equation}
+\begin{equation*}
 T_m
 =
 A_m^{-1}(S_m-I).
-\end{equation}
+\end{equation*}
 \end{proposition}
 
 \begin{proof}
 By definition,
-\begin{equation}
+\begin{equation*}
 T_m
 =
 \int_0^{\Delta t}
 e^{A_m(\Delta t-\tau)}
 \,d\tau.
-\end{equation}
+\end{equation*}
 Introducing the change of variables
-\begin{equation}
+\begin{equation*}
 s=\Delta t-\tau,
-\end{equation}
+\end{equation*}
 gives
-\begin{equation}
+\begin{equation*}
 T_m
 =
 \int_0^{\Delta t}
 e^{A_ms}\,ds.
-\end{equation}
+\end{equation*}
 Since
-\begin{equation}
+\begin{equation*}
 \frac{d}{ds}e^{A_ms}
 =
 A_me^{A_ms},
-\end{equation}
+\end{equation*}
 and we have assumed $A_m$ to be invertible,
-\begin{equation}
+\begin{equation*}
 e^{A_ms}
 =
 A_m^{-1}
 \frac{d}{ds}
 e^{A_ms}.
-\end{equation}
+\end{equation*}
 Therefore,
-\begin{align}
+\begin{align*}
 T_m
 &=
 A_m^{-1}
@@ -2599,14 +2591,14 @@ A_m^{-1}
 \left(
 e^{A_m\Delta t}-I
 \right),
-\end{align}
+\end{align*}
 which proves the result.
 \end{proof}
 
 The matrices $S_m$ and $T_m$ depend only on the modal eigenvalue $\lambda_m$, the damping coefficients $\gamma$ and $\nu$, and the time step $\Delta t$. Closed-form expressions can be obtained from the exponential of the $2\times2$ matrix $A_m$. Their explicit form depends on the nature of the eigenvalues of $A_m$.
 
 The eigenvalues of the modal matrix
-\begin{equation}
+\begin{equation*}
 A_m=
 \begin{bmatrix}
 0 & 1\\
@@ -2614,13 +2606,13 @@ c^2\lambda_m & -d_m
 \end{bmatrix},
 \qquad
 d_m=\gamma-\nu\lambda_m,
-\end{equation}
+\end{equation*}
 are
-\begin{equation}
+\begin{equation*}
 s_m^\pm
 =
 \frac{-d_m\pm\sqrt{d_m^2+4c^2\lambda_m}}{2}.
-\end{equation}
+\end{equation*}
 
 We know that $\lambda_m\le0$, and six situations may occur: undamped first mode, damped first mode, undamped mode, underdamped mode, critically damped mode, and overdamped mode. Closed form expressions are derived in Appendix \ref{app:A}.
 
@@ -2629,7 +2621,7 @@ The proposed method admits two equivalent interpretations. Since the DCT diagona
 
 \subsubsection{Modal Space Formulation}
 The numerical solution is advanced in the modal domain. Before performing the first time step, the initial displacement, initial velocity and the forcing term are transformed into the cosine basis through the DCT-II:
-\begin{equation}
+\begin{equation*}
 \mathbf U_0
 =
 \Phi^T\mathbf u_0,
@@ -2641,7 +2633,7 @@ The numerical solution is advanced in the modal domain. Before performing the fi
 \mathbf F_n
 =
 \Phi^T\mathbf f_n.
-\end{equation}
+\end{equation*}
 
 Once the modal coefficients have been computed, each mode is advanced independently according to \eqref{eq:modal_update}:
 \begin{equation*}
@@ -2666,7 +2658,7 @@ Once the modal coefficients have been computed, each mode is advanced independen
 \end{equation*}
 The updated modal coefficients are then transformed back to the physical domain,
 whenever needed, using the inverse DCT-II:
-\begin{equation}
+\begin{equation*}
 \mathbf u_n
 =
 \Phi\mathbf U_n,
@@ -2674,22 +2666,22 @@ whenever needed, using the inverse DCT-II:
 \mathbf v_n
 =
 \Phi\mathbf V_n.
-\end{equation}
+\end{equation*}
 In practice, the matrix-vector products are not formed explicitly. Instead, the
 forward and inverse transforms are evaluated using fast DCT algorithms with
 computational complexity $O(N\log N)$.
 
 \subsubsection{Physical Space Formulation}
 Recall the PSTD scheme expressed in matrix form shown in \eqref{eq:all_modal_update}:
-\begin{equation}
+\begin{equation*}
     \mathbf Z^{n+1}
     =
     S\mathbf Z^n
     +
     T\mathbf W^n.
-\end{equation}
-Employing the permuted vectors, we can rewrite it as
-\begin{equation}
+\end{equation*}
+Employing the permuted vectors to group the modal displacements and velocities block-wise, we can rewrite it as
+\begin{equation*}
 \widetilde{\mathbf Z}^{\,n+1}
 =
 \widetilde S
@@ -2697,9 +2689,9 @@ Employing the permuted vectors, we can rewrite it as
 +
 \widetilde T
 \widetilde{\mathbf W}^{\,n},
-\end{equation}
+\end{equation*}
 where
-\begin{equation}
+\begin{equation*}
 \widetilde S
 =
 PSP^T,
@@ -2711,10 +2703,10 @@ PTP^T,
 \widetilde{\mathbf W}
 =
 P\mathbf W.
-\end{equation}
+\end{equation*}
 
 Finally, recalling that
-\begin{equation}
+\begin{equation*}
     \widetilde{\mathbf Z}
     =
     \Psi^T\mathbf z,
@@ -2722,9 +2714,9 @@ Finally, recalling that
     \widetilde{\mathbf W}
     =
     \Psi^T\mathbf w,
-\end{equation}
+\end{equation*}
 we can express the PSTD scheme in physical coordinates as
-\begin{equation}
+\begin{equation*}
     \mathbf z^{n+1}
     =
     \Psi
@@ -2736,9 +2728,9 @@ we can express the PSTD scheme in physical coordinates as
     \widetilde T
     \Psi^T
     \mathbf w^n,
-\end{equation}
+\end{equation*}
 or, equivalently, as
-\begin{equation}
+\begin{equation*}
     \begin{bmatrix}
     \mathbf u\\
     \mathbf v
@@ -2771,7 +2763,7 @@ or, equivalently, as
     \mathbf 0\\
     \mathbf f
     \end{bmatrix}^n.
-\end{equation}
+\end{equation*}
 
 \subsubsection{Reconstruction of the Solution}
 
@@ -2787,14 +2779,14 @@ Given the modal coefficients at time $t_n$,
 \]
 the corresponding continuous approximation is obtained by evaluating the cosine
 expansion
-\begin{equation}
+\begin{equation*}
 u_h(x,t_n)
 =
 \sum_{m=0}^{N-1}
 U_m^n\,\phi_m(x),
 \qquad
 x\in[0,L],
-\end{equation}
+\end{equation*}
 where $\phi_m$ denotes the orthonormal DCT-II basis function introduced
 previously. This expression corresponds to the unique trigonometric polynomial
 represented by the retained cosine modes.
@@ -2819,13 +2811,13 @@ In this section we analyze the developed PSTD scheme using the time integrator f
 \begin{proposition}[Unconditional stability of the time integrator]
 \label{prop:stability}
 Assume that the damping coefficients satisfy
-\begin{equation}
+\begin{equation*}
 \gamma\ge0,
 \qquad
 \nu\ge0.
-\end{equation}
+\end{equation*}
 Then, for every mode, the exact time-marching scheme
-\begin{equation}
+\begin{equation*}
 \mathbf Z_m^{\,n+1}
 =
 S_m
@@ -2833,11 +2825,11 @@ S_m
 +
 T_m
 \mathbf W_m^{\,n},
-\end{equation}
-is unconditionally stable. More precisely,
-\begin{equation}
+\end{equation*}
+is unconditionally stable, where $S_m$ and $T_m$ are defined in \eqref{eq:Sm_def} and \eqref{eq:Tm_def}. More precisely,
+\begin{equation*}
 \rho(S_m)\le1,
-\end{equation}
+\end{equation*}
 for every time step $\Delta t>0$, where $\rho(\cdot)$ denotes the spectral
 radius.
 \end{proposition}
@@ -2845,22 +2837,22 @@ radius.
 \begin{proof}
 The stability of the affine recurrence is completely determined by its
 homogeneous part,
-\begin{equation}
+\begin{equation*}
 \mathbf Z_m^{\,n+1}
 =
 S_m
 \mathbf Z_m^{\,n},
-\end{equation}
+\end{equation*}
 since the forcing term only affects the particular solution.
 
 By construction,
-\begin{equation}
+\begin{equation*}
 S_m
 =
 e^{A_m\Delta t},
-\end{equation}
+\end{equation*}
 where
-\begin{equation}
+\begin{equation*}
 A_m
 =
 \begin{bmatrix}
@@ -2871,28 +2863,28 @@ c^2\lambda_m & -d_m
 d_m
 =
 \gamma-\nu\lambda_m.
-\end{equation}
+\end{equation*}
 
 Since the eigenvalues of the Laplace operator satisfy
-\begin{equation}
+\begin{equation*}
 \lambda_m\le0,
-\end{equation}
+\end{equation*}
 it follows from $\gamma,\nu\ge0$ that
-\begin{equation}
+\begin{equation*}
 d_m
 =
 \gamma-\nu\lambda_m
 =
 \gamma+\nu|\lambda_m|
 \ge0.
-\end{equation}
+\end{equation*}
 
 The eigenvalues of $A_m$ are the roots of
-\begin{equation}
+\begin{equation*}
 s^2+d_ms-c^2\lambda_m=0,
-\end{equation}
+\end{equation*}
 that is,
-\begin{equation}
+\begin{equation*}
 s_m^\pm
 =
 \frac{
@@ -2900,59 +2892,59 @@ s_m^\pm
 \pm
 \sqrt{d_m^2+4c^2\lambda_m}
 }{2}.
-\end{equation}
+\end{equation*}
 
 If the discriminant is nonnegative, both eigenvalues are real. Since
-\begin{equation}
+\begin{equation*}
 \sqrt{d_m^2+4c^2\lambda_m}
 \le d_m,
-\end{equation}
+\end{equation*}
 both satisfy
-\begin{equation}
+\begin{equation*}
 s_m^\pm\le0.
-\end{equation}
+\end{equation*}
 
 If the discriminant is negative, the eigenvalues form the complex conjugate
 pair
-\begin{equation}
+\begin{equation*}
 s_m^\pm
 =
 -\frac{d_m}{2}
 \pm
 i\omega_m,
-\end{equation}
+\end{equation*}
 whose real part is
-\begin{equation}
+\begin{equation*}
 \Re(s_m^\pm)
 =
 -\frac{d_m}{2}
 \le0.
-\end{equation}
+\end{equation*}
 
 Hence, in every case,
-\begin{equation}
+\begin{equation*}
 \Re(s_m^\pm)\le0.
-\end{equation}
+\end{equation*}
 
 Since
-\begin{equation}
+\begin{equation*}
 S_m=e^{A_m\Delta t},
-\end{equation}
+\end{equation*}
 the eigenvalues of $S_m$ are
-\begin{equation}
+\begin{equation*}
 \mu_m^\pm
 =
 e^{s_m^\pm\Delta t},
-\end{equation}
+\end{equation*}
 and therefore
-\begin{equation}
+\begin{equation*}
 |\mu_m^\pm|
 =
 e^{\Delta t\,\Re(s_m^\pm)}
 \le1.
-\end{equation}
+\end{equation*}
 Consequently,
-\begin{equation}
+\begin{equation*}
 \rho(S_m)
 =
 \max\!\left(
@@ -2960,28 +2952,28 @@ Consequently,
 |\mu_m^-|
 \right)
 \le1,
-\end{equation}
+\end{equation*}
 independently of the time step $\Delta t$. Therefore, the exact modal
 time-marching scheme is unconditionally stable.
 \end{proof}
 
 \begin{proposition}[Error induced by the piecewise-constant forcing approximation]
 Assume that, for every mode,
-\begin{equation}
+\begin{equation*}
 F_m\in C^1([0,T]),
-\end{equation}
+\end{equation*}
 and define
-\begin{equation}
+\begin{equation*}
 \mathbf W_m(t)
 =
 \begin{bmatrix}
 0\\
 F_m(t)
 \end{bmatrix}.
-\end{equation}
+\end{equation*}
 
 Let
-\begin{equation}
+\begin{equation*}
 \mathbf Z_m(t_{n+1})
 =
 e^{A_m\Delta t}\mathbf Z_m(t_n)
@@ -2989,43 +2981,43 @@ e^{A_m\Delta t}\mathbf Z_m(t_n)
 \int_0^{\Delta t}
 e^{A_m(\Delta t-\tau)}
 \mathbf W_m(t_n+\tau)\,d\tau
-\end{equation}
-be the exact solution over one time step, and let
-\begin{equation}
+\end{equation*}
+be the exact evolution of the modal coefficients over one time step, and let
+\begin{equation*}
 \hat{\mathbf Z}_m^{\,n+1}
 =
 S_m\mathbf Z_m^n
 +
 T_m\mathbf W_m^n,
-\end{equation}
+\end{equation*}
 where
-\begin{equation}
+\begin{equation*}
 \mathbf W_m^n
 =
 \mathbf W_m(t_n),
-\end{equation}
+\end{equation*}
 be the approximation obtained by assuming the forcing is constant over the time interval.
 
 Then the local truncation error satisfies
-\begin{equation}
+\begin{equation*}
 \mathbf Z_m(t_{n+1})
 -
 \hat{\mathbf Z}_m^{\,n+1}
 =
 O(\Delta t^2).
-\end{equation}
+\end{equation*}
 
 Consequently, over a fixed time interval, the global error introduced by the
 piecewise constant approximation of the forcing is
-\begin{equation}
-O(\Delta t).
-\end{equation}
+\begin{equation*}
+O(\Delta t) \quad \text{\cite{quarteroni_numerical_2014}}.
+\end{equation*}
 \end{proposition}
 
 \begin{proof}
 The homogeneous part of the scheme is integrated exactly, so the error arises
 solely from approximating the forcing by its left-endpoint value. Thus,
-\begin{equation}
+\begin{equation*}
 \mathbf e_n
 =
 \int_0^{\Delta t}
@@ -3036,22 +3028,22 @@ e^{A_m(\Delta t-\tau)}
 \mathbf W_m(t_n)
 \right)
 \,d\tau.
-\end{equation}
+\end{equation*}
 
 Since $\mathbf W_m\in C^1([0,T])$, Taylor's theorem gives
-\begin{equation}
+\begin{equation*}
 \mathbf W_m(t_n+\tau)
 =
 \mathbf W_m(t_n)
 +
 \tau\mathbf W_m'(\xi_\tau),
-\end{equation}
+\end{equation*}
 for some
-\begin{equation}
+\begin{equation*}
 \xi_\tau\in(t_n,t_n+\tau).
-\end{equation}
+\end{equation*}
 Therefore,
-\begin{equation}
+\begin{equation*}
 \mathbf e_n
 =
 \int_0^{\Delta t}
@@ -3059,10 +3051,10 @@ Therefore,
 e^{A_m(\Delta t-\tau)}
 \mathbf W_m'(\xi_\tau)
 \,d\tau.
-\end{equation}
+\end{equation*}
 
-Since $A_m$ is constant, there exists a constant $C_m>0$ such that
-\begin{equation}
+Since $A_m$ is constant, the matrix exponential is uniformly bounded over finite intervals \cite{quarteroni_numerical_2014}. Thus, denoting by $\|\cdot\|$ the standard vector 2-norm and its induced matrix norm, there exists a constant $C_m>0$ such that
+\begin{equation*}
 \left\|
 e^{A_ms}
 \right\|
@@ -3070,9 +3062,9 @@ e^{A_ms}
 C_m,
 \qquad
 0\le s\le\Delta t.
-\end{equation}
+\end{equation*}
 Hence,
-\begin{align}
+\begin{align*}
 \|\mathbf e_n\|
 &\le
 C_m
@@ -3084,7 +3076,7 @@ C_m
 \max_{t\in[t_n,t_{n+1}]}
 \|\mathbf W_m'(t)\|
 \Delta t^2.
-\end{align}
+\end{align*}
 Thus the local error is $O(\Delta t^2)$.
 
 Since Proposition~\ref{prop:Tmatrix} shows that the homogeneous propagator is
@@ -3095,7 +3087,7 @@ yielding an overall global error of order $O(\Delta t)$.
 
 \begin{proposition}[Numerical dispersion relation]
 The PSTD method satisfies the matrix dispersion relation
-\begin{equation}
+\begin{equation*}
 e^{i\omega\Delta t}\mathbf z
 =
 \Psi
@@ -3103,8 +3095,9 @@ P
 S
 P^T
 \Psi^T
-\mathbf z.
-\end{equation}
+\mathbf z,
+\label{eq:matrix_dispersion}
+\end{equation*}
 
 If the exact solution belongs to the approximation space
 \[
@@ -3121,7 +3114,7 @@ More generally, as
 \(
 \Delta x=L/N\rightarrow0,
 \)
-the matrix dispersion relation converges to the continuous dispersion relation,
+the matrix dispersion relation \eqref{eq:matrix_dispersion} converges to the continuous dispersion relation \eqref{eq:dispersion},
 with the same convergence rate as the cosine approximation.
 \end{proposition}
 
@@ -3221,7 +3214,7 @@ Finally, for a general solution, Proposition~\ref{prop:cosine_approximation_conv
 \(
 \Delta x\to0.
 \)
-Consequently, the matrix dispersion relation converges to the continuous dispersion relation with the same algebraic or spectral rate as the underlying cosine approximation.
+Consequently, the matrix dispersion relation \eqref{eq:matrix_dispersion} converges to the continuous dispersion relation \eqref{eq:dispersion} with the same algebraic or spectral rate as the underlying cosine approximation.
 \end{proof}
 
 \begin{proposition}[Convergence of the cosine projection] \label{prop:cosine_approximation_convergence}
@@ -3243,13 +3236,7 @@ u_N(x)
 \sum_{m=0}^{N-1}
 a_m\phi_m(x)
 \]
-denote its projection onto the approximation space
-\[
-V_N
-=
-\operatorname{span}
-\{\phi_0,\ldots,\phi_{N-1}\}.
-\]
+denote its projection onto the approximation space $V_N = \operatorname{span}\{\phi_0,\ldots,\phi_{N-1}\}$.
 Then,
 \[
 u_N\longrightarrow u
@@ -3757,7 +3744,7 @@ where $\delta$ denotes the overlap width. Let $u$ and $v$ denote the solutions d
 
 At Schwarz iteration $k+1$, the subdomain problems are
 
-\begin{align}
+\begin{align*}
 u_{tt}^{(k+1)}
 +\gamma u_t^{(k+1)}
 &=
@@ -3773,11 +3760,11 @@ c^2v_{xx}^{(k+1)}
 +\nu v_{xxt}^{(k+1)}
 +f,
 &&x\in(a,L),
-\end{align}
+\end{align*}
 
 subject to the physical boundary conditions at $x=0$ and $x=L$, together with Robin transmission conditions at the interfaces
 
-\begin{align}
+\begin{align*}
 u_x^{(k+1)}(b,t)
 +
 q\,u_t^{(k+1)}(b,t)
@@ -3801,7 +3788,7 @@ r\,v^{(k+1)}(a,t)
 q\,u_t^{(k)}(a,t)
 +
 r\,u^{(k)}(a,t).
-\end{align}
+\end{align*}
 
 The symbols $q,r\ge0$ are the transmission operator parameters that we want to optimize.
 
@@ -3809,46 +3796,46 @@ The symbols $q,r\ge0$ are the transmission operator parameters that we want to o
 
 To analyze the convergence of the algorithm, it is sufficient to consider the error equations. Since the exact solution satisfies the same equations, the forcing term, initial conditions and physical boundary data vanish. We therefore study
 
-\begin{equation}
+\begin{equation*}
 u_{tt}
 +\gamma u_t
 =
 c^2u_{xx}
 +\nu u_{xxt},
-\end{equation}
+\end{equation*}
 
 with homogeneous Neumann boundary conditions.
 
 Applying the Laplace transform in time gives
 
-\begin{equation}
+\begin{equation*}
 (c^2+\nu s)\widehat{u}_{xx}
 =
 (s^2+\gamma s)\widehat{u}.
-\end{equation}
+\end{equation*}
 
 Introducing the Laplace-domain wavenumber
 
-\begin{equation}
+\begin{equation*}
 k(s)
 =
 \sqrt{
 \frac{-s^2-\gamma s}
      {c^2+\nu s}
 },
-\label{eq:kappa_laplace}
-\end{equation}
+
+\end{equation*}
 
 the transformed equation becomes
 
-\begin{equation}
+\begin{equation*}
 \widehat{u}_{xx}
 +
 k(s)^2
 \widehat{u}
 =
 0.
-\end{equation}
+\end{equation*}
 
 Restricting the Laplace variable to the imaginary axis,
 \[
@@ -3867,9 +3854,9 @@ k(i\omega)
 
 The Laplace symbol of the Robin operator is
 
-\begin{equation}
+\begin{equation*}
 \Lambda(s)=qs+r.
-\end{equation}
+\end{equation*}
 
 The homogeneous Neumann conditions at the physical boundaries constrain the general exponential solutions of
 \[
@@ -3878,10 +3865,10 @@ The homogeneous Neumann conditions at the physical boundaries constrain the gene
 \widehat{v}_{xx}+k^2\widehat{v}=0
 \]
 on each subdomain. Writing the general solution as a superposition of counter-propagating exponentials,
-\begin{align}
+\begin{align*}
 \widehat{u}(x,s) &= \alpha_u\,e^{ikx} + \beta_u\,e^{-ikx}, \\
 \widehat{v}(x,s) &= \alpha_v\,e^{ik(L-x)} + \beta_v\,e^{-ik(L-x)},
-\end{align}
+\end{align*}
 with derivatives
 \[
 \widehat{u}_x(x,s) = ik\left(\alpha_u e^{ikx}-\beta_u e^{-ikx}\right),
@@ -3890,21 +3877,21 @@ with derivatives
 \]
 Imposing $\widehat u_x(0,s)=0$, $\widehat v_x(L,s)=0$ forces $\beta_u=\alpha_u$ and $\beta_v=\alpha_v$. Absorbing the amplitude into a single constant on each subdomain gives
 
-\begin{align}
+\begin{align*}
 \widehat{u}(x,s) &= A_u\left(e^{ikx}+e^{-ikx}\right), \\
 \widehat{v}(x,s) &= A_v\left(e^{ik(L-x)}+e^{-ik(L-x)}\right),
-\end{align}
+\end{align*}
 
 with corresponding derivatives
 
-\begin{align}
+\begin{align*}
 \widehat{u}_x(x,s) &= ikA_u\left(e^{ikx}-e^{-ikx}\right), \\
 \widehat{v}_x(x,s) &= -ikA_v\left(e^{ik(L-x)}-e^{-ik(L-x)}\right).
-\end{align}
+\end{align*}
 
 Using $L-a=b$ and $L-b=a$, the interface traces are
 
-\begin{align}
+\begin{align*}
 \widehat{u}(a) &= A_u\left(e^{ika}+e^{-ika}\right),
 &
 \widehat{u}_x(a) &= ikA_u\left(e^{ika}-e^{-ika}\right),
@@ -3920,11 +3907,11 @@ Using $L-a=b$ and $L-b=a$, the interface traces are
 \widehat{v}(b) &= A_v\left(e^{ika}+e^{-ika}\right),
 &
 \widehat{v}_x(b) &= -ikA_v\left(e^{ika}-e^{-ika}\right).
-\end{align}
+\end{align*}
 
 Substituting into the Laplace-transformed Robin transmission conditions,
 
-\begin{align}
+\begin{align*}
 (\partial_x+\Lambda)\widehat{u}^{(k+1)}(b)
 &=
 (\partial_x+\Lambda)\widehat{v}^{(k)}(b),
@@ -3932,11 +3919,11 @@ Substituting into the Laplace-transformed Robin transmission conditions,
 (-\partial_x+\Lambda)\widehat{v}^{(k+1)}(a)
 &=
 (-\partial_x+\Lambda)\widehat{u}^{(k)}(a),
-\end{align}
+\end{align*}
 
 gives
 
-\begin{align}
+\begin{align*}
 A_u^{(k+1)}
 \Bigl[
 ik\left(e^{ikb}-e^{-ikb}\right)
@@ -3960,7 +3947,7 @@ A_u^{(k)}
 -ik\left(e^{ika}-e^{-ika}\right)
 +\Lambda\left(e^{ika}+e^{-ika}\right)
 \Bigr].
-\end{align}
+\end{align*}
 
 Denoting the bracketed quantities by
 \[
@@ -3969,11 +3956,11 @@ F(b) = ik\left(e^{ikb}-e^{-ikb}\right)+\Lambda\left(e^{ikb}+e^{-ikb}\right),
 H(a) = -ik\left(e^{ika}-e^{-ika}\right)+\Lambda\left(e^{ika}+e^{-ika}\right),
 \]
 the two equations decouple into a two-step recurrence
-\begin{equation}
+\begin{equation*}
 A_u^{(k+2)} = G(s)^2 A_u^{(k)},
 \qquad
 G(s) = \frac{H(a)}{F(b)}.
-\end{equation}
+\end{equation*}
 
 We now pass from exponentials to hyperbolic functions using
 \[
@@ -3982,14 +3969,14 @@ e^{ikz}-e^{-ikz}=2\sinh(ikz),
 e^{ikz}+e^{-ikz}=2\cosh(ikz),
 \]
 which gives
-\begin{align}
+\begin{align*}
 F(b) &= 2\left[ik\sinh(ikb)+\Lambda\cosh(ikb)\right], \\
 H(a) &= 2\left[-ik\sinh(ika)+\Lambda\cosh(ika)\right].
-\end{align}
+\end{align*}
 
 Hence, the convergence factor is
 
-\begin{equation}
+\begin{equation*}
 \rho(s)
 =
 |G(s)|
@@ -4005,14 +3992,14 @@ ik(s)\sinh\bigl(ik(s)b\bigr)
 \Lambda(s)\cosh\bigl(ik(s)b\bigr)
 }
 \right|.
-\end{equation}
+\end{equation*}
 
 To obtain optimized transmission conditions, we restrict the Laplace
 variable to the imaginary axis, $s=i\omega$, corresponding to purely
 oscillatory Fourier modes. On this axis the convergence factor becomes a
 function of $\omega$ alone (for fixed $a,b$),
 
-\begin{equation}
+\begin{equation*}
 \rho(\omega;q,r)
 =
 \left|
@@ -4028,7 +4015,7 @@ ik(i\omega)\sinh\bigl(ik(i\omega)b\bigr)
 \right|,
 \qquad
 \Lambda(i\omega)=iq\omega+r.
-\end{equation}
+\end{equation*}
 
 The overall contraction rate of the algorithm is governed by the worst mode present in the simulation. Since the simulation is run over a finite time window $[0,T]$ with time step $\Delta t$, only frequencies in the range
 \[
@@ -4153,16 +4140,16 @@ this simplifies to
 \end{equation}
 
 Because the Neumann interface condition holds at all times, the temporal derivative also satisfies $[\partial_x\dot u]=0$, meaning the exact same distributional identity applies to the mixed viscous term:
-\begin{equation}
+\begin{equation*}
 \bar u_{txx}
 =
 \overline{u_{txx}}
 +
 [\dot u]\delta_\Gamma'.
-\end{equation}
+\end{equation*}
 
 Consequently, the full viscoelastic wave equation over the decomposed domain becomes
-\begin{equation}
+\begin{equation*}
 \bar u_{tt}
 +
 \gamma\bar u_t
@@ -4174,30 +4161,30 @@ c^2\overline{u_{xx}}
 c^2[u]\delta_\Gamma'
 +
 \nu[\dot u]\delta_\Gamma'.
-\end{equation}
+\end{equation*}
 
 Therefore, the independent Neumann subdomain solutions satisfy the original wave equation everywhere except at the artificial interface, where the missing physical coupling appears as a sum of two singular dipole distributions: a stiffness jump ($c^2[u]$) and a viscous jump ($\nu[\dot u]$). Recovering the exact monolithic solution is therefore equivalent to explicitly restoring this combined singular interface source.
 
 \subsection{A General Strang Splitting Formulation}
 
 To implement the ARD coupling efficiently, we must first translate the continuous singular dipole sources into a discrete algebraic operator. We define the residual matrix
-\begin{equation}
+\begin{equation*}
 C_{\mathrm{res}}
 =
 L_h
 -
 L_h^{(\mathrm N)},
-\end{equation}
+\end{equation*}
 where $L_h$ denotes the interior finite-difference Laplacian crossing the artificial interface, while $L_h^{(\mathrm N)}$ denotes the broken operator obtained by imposing homogeneous Neumann conditions on each subdomain (as introduced in \eqref{eq:boundary_corrected_laplacian}).
 
 This relationship can be directly justified by recalling the distributional identity from \eqref{eq:dist_deriv}. In the discrete setting, applying the global finite-difference Laplacian $L_h \mathbf{u}$ natively evaluates the full distributional derivative $\bar{u}_{xx}$ by differencing across the interface. Conversely, the broken Neumann operator $L_h^{(\mathrm N)} \mathbf{u}$ acts entirely within the isolated subdomains, effectively evaluating only the piecewise classical derivative $\overline{u_{xx}}$. Taking the difference between these two discrete operators isolates the singular distribution:
 \[
-(L_h - L_h^{(\mathrm N)}) \mathbf{u} \approx \bar{u}_{xx} - \overline{u_{xx}} = [u]\delta_\Gamma'.
+\underbrace{(L_h - L_h^{(\mathrm N)})}_{C_{\mathrm{res}}} \mathbf{u} \approx \bar{u}_{xx} - \overline{u_{xx}} = [u]\delta_\Gamma'.
 \]
 Consequently, the matrix $C_{\mathrm{res}}$ natively acts as the exact discrete analog of the singular dipole distribution. Applying this residual matrix to the state variables numerically reconstructs the required localized interface forces.
 
 With this operator defined, we cast the governing PDE as a first-order system in time. Defining the global state vector $\mathbf Z=[\mathbf u;\mathbf v]^T$, the full viscoelastic wave equation can be separated into two distinct evolution operators:
-\begin{equation}
+\begin{equation*}
 \frac{d\mathbf Z}{dt}
 =
 \underbrace{
@@ -4210,14 +4197,14 @@ With this operator defined, we cast the governing PDE as a first-order system in
 c^2C_{\mathrm{res}}\mathbf u+\nu C_{\mathrm{res}}\mathbf v
 \end{bmatrix}
 }_{\text{Kick (Interface Correction)}}.
-\label{eq:first_order_split}
-\end{equation}
+
+\end{equation*}
 
 The Drift operator $\mathcal{F}_{\mathrm{local}}(\mathbf Z)$ abstractly governs the uncoupled physics of the isolated subdomains under homogeneous Neumann boundary conditions, driven by the external physical source. We can treat the time integration of this local evolution as a generic black-box solver $\mathcal S_{\mathrm{local}}(\Delta t)$. 
 The Kick operator exclusively applies the localized interface correction forces required to restore the global monolithic solution.
 
 Because the interface correction depends on the instantaneous state, we decouple the operators using the symmetric Kick-Drift-Kick composition of Strang splitting~\cite{strang_construction_1968},
-\begin{equation}
+\begin{equation*}
 e^{\Delta t(A+B)}
 =
 e^{\frac{\Delta t}{2}B}
@@ -4225,16 +4212,16 @@ e^{\Delta t A}
 e^{\frac{\Delta t}{2}B}
 +
 \mathcal O(\Delta t^3).
-\end{equation}
+\end{equation*}
 
 During the Drift step, the subdomains evolve independently using the black-box solver. During the Kick step, the positions $\mathbf u$ remain constant, while the velocities satisfy the localized interface ODE:
-\begin{equation}
+\begin{equation*}
 \mathbf{\dot v}
 =
 \nu C_{\mathrm{res}}\mathbf v
 +
 c^2C_{\mathrm{res}}\mathbf u.
-\end{equation}
+\end{equation*}
 
 Because $\mathbf u$ is constant during this substep, the interface force varies linearly with time only through $\mathbf v$. By evaluating the Kick step using an explicit forward Euler integration over a time interval $\tau$, we obtain the straightforward discrete update:
 \begin{equation}
@@ -4270,23 +4257,48 @@ The complete ARD-PSTD algorithm executes the following sequence at each time ste
 
 \item
 \textbf{Interface reconstruction.}
-The modal coefficients are transformed to the physical domain via the inverse DCT to obtain $\mathbf u^n$ and $\mathbf v^n$.
+The modal coefficients are transformed to the physical domain via the inverse DCT to obtain $\mathbf u^n$ and $\mathbf v^n$:
+\begin{equation*}
+    \mathbf{u}^n = \mathcal{D}^{-1} \{ \mathbf{U}_m^n \} \quad \text{and} \quad \mathbf{v}^n = \mathcal{D}^{-1} \{ \mathbf{V}_m^n \}.
+\end{equation*}
 
 \item
 \textbf{First half-kick.}
-The physical velocities are advanced over $\tau = \Delta t/2$ using the explicit Kick update \eqref{eq:kick_flow}. Because $C_{\mathrm{res}}$ acts locally in the physical domain, this evaluation is performed directly on the physical grid. The updated velocities are then projected back into modal space via the forward DCT to obtain the intermediate modal states $\mathbf Z_m^{n+1/2}$.
+The physical velocities are advanced over $\tau = \Delta t/2$ using the explicit Kick update \eqref{eq:kick_flow}. Because $C_{\mathrm{res}}$ acts locally in the physical domain, this evaluation is performed directly on the physical grid:
+\begin{equation*}
+    \mathbf{v}^{n+1/2} = \mathbf{v}^n + \frac{\Delta t}{2} \left( c^2 C_{\mathrm{res}} \mathbf{u}^n + \nu C_{\mathrm{res}} \mathbf{v}^n \right).
+\end{equation*}
+The updated velocities are then projected back into modal space via the forward DCT to obtain the intermediate modal states $\mathbf Z_m^{n+1/2}$:
+\begin{equation*}
+    \mathbf{V}_m^{n+1/2} = \mathcal{D} \{ \mathbf{v}^{n+1/2} \} \quad \text{and} \quad \mathbf{U}_m^{n+1/2} = \mathbf{U}_m^n,
+\end{equation*}
+yielding $\mathbf{Z}_m^{n+1/2} = [\mathbf{U}_m^{n+1/2}, \mathbf{V}_m^{n+1/2}]^T$.
 
 \item
 \textbf{Exact drift.}
-The uncoupled modal equations are propagated analytically over a full time step $\Delta t$ with the exact state-transition matrix $S_m(\Delta t)$, yielding the updated intermediate modal states $\mathbf Z_m^*$.
+The uncoupled modal equations are propagated analytically over a full time step $\Delta t$ with the exact state-transition matrix $S_m(\Delta t)$, yielding the updated intermediate modal states $\mathbf Z_m^*$:
+\begin{equation*}
+    \mathbf{Z}_m^* = S_m(\Delta t) \mathbf{Z}_m^{n+1/2}.
+\end{equation*}
 
 \item
 \textbf{Interface reconstruction.}
-The updated modal states $\mathbf Z_m^*$ are transformed back to the physical domain via the inverse DCT to obtain $\mathbf u^*$ and $\mathbf v^*$.
+The updated modal states $\mathbf Z_m^*$ are transformed back to the physical domain via the inverse DCT to obtain $\mathbf u^*$ and $\mathbf v^*$:
+\begin{equation*}
+    \mathbf{u}^* = \mathcal{D}^{-1} \{ \mathbf{U}_m^* \} \quad \text{and} \quad \mathbf{v}^* = \mathcal{D}^{-1} \{ \mathbf{V}_m^* \}.
+\end{equation*}
 
 \item
 \textbf{Second half-kick.}
-The physical velocities are advanced over the second half-step $\tau = \Delta t/2$ using the explicit Kick update \eqref{eq:kick_flow}. Finally, the completed physical velocities are projected back into modal space to yield $\mathbf Z_m^{n+1}$.
+The physical velocities are advanced over the second half-step $\tau = \Delta t/2$ using the explicit Kick update \eqref{eq:kick_flow}:
+\begin{equation*}
+    \mathbf{v}^{n+1} = \mathbf{v}^* + \frac{\Delta t}{2} \left( c^2 C_{\mathrm{res}} \mathbf{u}^* + \nu C_{\mathrm{res}} \mathbf{v}^* \right).
+\end{equation*}
+Finally, the completed physical velocities are projected back into modal space to yield $\mathbf Z_m^{n+1}$:
+\begin{equation*}
+    \mathbf{V}_m^{n+1} = \mathcal{D} \{ \mathbf{v}^{n+1} \} \quad \text{and} \quad \mathbf{U}_m^{n+1} = \mathbf{U}_m^*,
+\end{equation*}
+yielding the fully synchronized state $\mathbf{Z}_m^{n+1} = [\mathbf{U}_m^{n+1}, \mathbf{V}_m^{n+1}]^T$.
 
 \end{enumerate}
 
@@ -4477,7 +4489,7 @@ During the forward pass, the predicted initial condition $u_0(x)$ and the curren
 In this framework, the numerical solver acts as a rigid, physics-informed layer of the network. We compare two different solvers for this forward operator: the FDTD method, which relies on sparse matrix operations and sequential time-stepping, and the PSTD method. Crucially, because the inverse problem involves no time-dependent forcing term ($F(x,t) \equiv 0$), the PSTD method leverages its exact analytical modal propagator to bypass temporal recursion entirely. It evaluates the complete spatio-temporal wave field instantaneously through a fully vectorized, loop-free tensor broadcast across time, drastically accelerating the backpropagation process compared to standard sequential stepping. The physical solver outputs the predicted wave field, from which we extract the temporal signals at the discrete sensor locations.
 
 The network parameters and the physical variables are jointly updated by minimizing a composite loss function,
-\begin{align}
+\begin{align*}
 \mathcal{L}(\Theta, \tilde{\gamma}, \tilde{\nu}) 
 &= 
 \lambda_{\mathrm{data}} \, \frac{1}{N_{\text{sensors}}} \sum_{i=1}^{N_{\text{sensors}}} \| u_{\text{pred}}(x_i, t; \Theta, \tilde{\gamma}, \tilde{\nu}) - u_{\text{obs}}(x_i, t) \|_2^2 \\
@@ -4485,28 +4497,28 @@ The network parameters and the physical variables are jointly updated by minimiz
 \lambda_{\text{sp}} \, \| u_0(x; \Theta) \|_1 \\
 &\quad +
 \lambda_{\text{smooth}} \nu \left\| \frac{\partial u_0(x; \Theta)}{\partial x} \right\|_2^2,
-\end{align}
+\end{align*}
 where the first term measures the Mean Squared Error (MSE) against the noisy observations, and the second term imposes an $L_1$ sparsity penalty on the initial condition to suppress localized spurious artifacts and alleviate the ill-posedness of the inverse problem. Crucially, the third term introduces a Sobolev $H^1$ smoothness regularization on the predicted initial condition, scaled directly by the physical viscoelastic damping parameter $\nu$. 
 
 The physical justification for this term arises from the modal decomposition of the governing wave equation. As derived in previous sections, the exact modal damping coefficient $d_m$ for the $m$-th spectral mode is given by $d_m = \gamma - \nu \lambda_m = \gamma + \nu k_m^2$, where $\lambda_m = -k_m^2$ is the Laplacian eigenvalue and $k_m$ is the corresponding discrete wavenumber. Because high-frequency modes attenuate at a rate proportional to $\nu k_m^2$, they are rapidly extinguished before reaching the sensors, leaving them entirely unconstrained by the data loss. This lack of constraint causes the SIREN network to hallucinate invisible high-frequency noise.
 
 To counteract this, we can explicitly analyze the spectral energy of the initial condition. For a one-dimensional domain $[0, L]$ with homogeneous Neumann boundary conditions, the initial condition $u_0(x)$ can be expanded into a discrete cosine series with modal coefficients $U_{0,m}$ and discrete wavenumbers $k_m = m\pi / L$:
-\begin{equation}
+\begin{equation*}
 u_0(x) = \sum_{m=0}^{\infty} U_{0,m} \cos(k_m x).
-\end{equation}
+\end{equation*}
 Taking the continuous spatial derivative of this expansion yields a corresponding sine series where each modal amplitude is scaled by its respective wavenumber $k_m$:
-\begin{equation}
+\begin{equation*}
 \frac{\partial u_0(x)}{\partial x} = \sum_{m=1}^{\infty} -k_m U_{0,m} \sin(k_m x).
-\end{equation}
+\end{equation*}
 The $L_2$ norm of the spatial gradient (the Sobolev $H^1$ semi-norm) is evaluated by integrating the square of this derivative over the physical domain. Because the sine basis functions are mutually orthogonal over $[0, L]$, all cross-terms in the squared expansion integrate exactly to zero. By Parseval's identity for Fourier series, the continuous spatial integral reduces exactly to the sum of the squared modal coefficients weighted by $k_m^2$:
-\begin{equation}
+\begin{equation*}
 \left\| \frac{\partial u_0}{\partial x} \right\|_2^2 = \int_0^L \left( \sum_{m=1}^{\infty} -k_m U_{0,m} \sin(k_m x) \right)^2 dx \propto \sum_{m=1}^{\infty} k_m^2 |U_{0,m}|^2.
-\end{equation}
+\end{equation*}
 
 By scaling this gradient penalty by $\nu$, our proposed regularization term becomes mathematically identical to applying the exact physical modal damping profile $\nu k_m^2$ against the spectral energy of the predicted initial condition:
-\begin{equation}
+\begin{equation*}
 \lambda_{\text{smooth}} \nu \left\| \frac{\partial u_0}{\partial x} \right\|_2^2 \propto \lambda_{\text{smooth}} \sum_{m} \nu k_m^2 |U_{0,m}|^2.
-\end{equation}
+\end{equation*}
 
 This derivation proves that penalizing the spatial gradient energy $\nu \|\partial_x u_0\|_2^2$ perfectly suppresses high-frequency hallucinations proportionally to the exact physics governing the wave. Furthermore, because of Parseval's theorem, we are able to compute this mode-dependent penalty entirely in the spatial domain, gracefully avoiding the need for computationally expensive spectral transforms during the training loop. Gradients are then backpropagated through the numerical solver via automatic differentiation, seamlessly embedding the physical laws into the training process.
 
@@ -4627,19 +4639,19 @@ In conclusion, the integration of pseudo-spectral methods, advanced domain decom
 \label{app:A}
 
 This appendix derives the closed-form expressions of the matrices \(S_m\) and \(T_m\), respectively defined in \eqref{eq:modal_ODE_matrix_S} and \eqref{eq:modal_ODE_matrix_T}, associated with the exact time integration of the modal ordinary differential equations. For convenience, we recall their definitions:
-\begin{equation}
+\begin{equation*}
 S_m=e^{A_m\Delta t},
-\end{equation}
-\begin{equation}
+\end{equation*}
+\begin{equation*}
 T_m
 =
 \int_0^{\Delta t}
 e^{A_m(\Delta t-\tau)}
 \,d\tau.
-\end{equation}
+\end{equation*}
 
 The modal matrix is
-\begin{equation}
+\begin{equation*}
 A_m=
 \begin{bmatrix}
 0 & 1\\
@@ -4647,19 +4659,19 @@ c^2\lambda_m & -d_m
 \end{bmatrix},
 \qquad
 d_m=\gamma-\nu\lambda_m,
-\label{eq:general_A}
-\end{equation}
+
+\end{equation*}
 where the Laplace eigenvalues satisfy
 \[
 \lambda_m\le0.
 \]
 
 Whenever \(A_m\) is invertible, Proposition~\ref{prop:Tmatrix} yields
-\begin{equation}
+\begin{equation*}
 T_m
 =
 A_m^{-1}(S_m-I),
-\end{equation}
+\end{equation*}
 which considerably simplifies the derivation.
 
 Since the Laplace operator possesses a single zero eigenvalue corresponding to the constant mode, only two fundamentally different situations arise:
@@ -4675,21 +4687,21 @@ This classification unifies all damping regimes into only two derivations. Withi
 \section{Constant mode (\(\lambda_m=0\))}
 
 For the constant mode,
-\begin{equation}
+\begin{equation*}
 \lambda_m=0,
-\end{equation}
+\end{equation*}
 the modal matrix becomes
-\begin{equation}
+\begin{equation*}
 A_m=
 \begin{bmatrix}
 0 & 1\\
 0 & -d_m
 \end{bmatrix},
-\end{equation}
+\end{equation*}
 which is singular for every value of \(d_m\). Consequently, Proposition~\ref{prop:Tmatrix} cannot be applied and the forcing matrix must be computed directly from its definition.
 
 The powers of \(A_m\) satisfy
-\begin{equation}
+\begin{equation*}
 A_m^n
 =
 \begin{bmatrix}
@@ -4698,10 +4710,10 @@ A_m^n
 \end{bmatrix},
 \qquad
 n\ge1.
-\end{equation}
+\end{equation*}
 
 Substituting these expressions into the Taylor expansion of the matrix exponential,
-\begin{equation}
+\begin{equation*}
 e^{A_m\Delta t}
 =
 I
@@ -4710,9 +4722,9 @@ A_m\Delta t
 +
 \frac{(A_m\Delta t)^2}{2!}
 +\cdots,
-\end{equation}
+\end{equation*}
 yields
-\begin{equation}
+\begin{equation*}
 S_m
 =
 \begin{bmatrix}
@@ -4726,22 +4738,22 @@ S_m
 \sum_{n=0}^{\infty}
 \frac{(-d_m\Delta t)^n}{n!}
 \end{bmatrix}.
-\end{equation}
+\end{equation*}
 
 Recognizing the exponential series gives
-\begin{equation}
+\begin{equation*}
 \sum_{n=0}^{\infty}
 \frac{(-d_m\Delta t)^n}{n!}
 =
 e^{-d_m\Delta t},
-\end{equation}
+\end{equation*}
 while
-\begin{equation}
+\begin{equation*}
 \sum_{n=1}^{\infty}
 \frac{(-d_m)^{\,n-1}\Delta t^n}{n!}
 =
 \frac{1-e^{-d_m\Delta t}}{d_m}.
-\end{equation}
+\end{equation*}
 
 Therefore,
 \begin{equation}
@@ -4759,12 +4771,12 @@ e^{-d_m\Delta t}
 where the upper-right entry is understood by continuity when \(d_m=0\).
 
 Indeed,
-\begin{equation}
+\begin{equation*}
 \lim_{d_m\to0}
 \frac{1-e^{-d_m\Delta t}}{d_m}
 =
 \Delta t,
-\end{equation}
+\end{equation*}
 recovering the undamped constant-mode propagator
 \[
 S_m=
@@ -4775,15 +4787,15 @@ S_m=
 \]
 
 To derive the forcing matrix, we integrate the matrix exponential directly:
-\begin{equation}
+\begin{equation*}
 T_m
 =
 \int_0^{\Delta t}
 e^{A_ms}\,ds.
-\end{equation}
+\end{equation*}
 
 Using \eqref{eq:constantSm} with \(\Delta t\) replaced by \(s\),
-\begin{equation}
+\begin{equation*}
 e^{A_ms}
 =
 \begin{bmatrix}
@@ -4793,9 +4805,9 @@ e^{A_ms}
 0 &
 e^{-d_ms}
 \end{bmatrix},
-\end{equation}
+\end{equation*}
 gives
-\begin{equation}
+\begin{equation*}
 T_m
 =
 \begin{bmatrix}
@@ -4805,11 +4817,11 @@ T_m
 0 &
 \dfrac{1-e^{-d_m\Delta t}}{d_m}
 \end{bmatrix}.
-\label{eq:constantTm}
-\end{equation}
+
+\end{equation*}
 
 Again, the removable singularity at \(d_m=0\) is resolved by taking the limits
-\begin{equation}
+\begin{equation*}
 \lim_{d_m\to0}
 \frac{e^{-d_m\Delta t}-1+d_m\Delta t}{d_m^2}
 =
@@ -4817,7 +4829,7 @@ Again, the removable singularity at \(d_m=0\) is resolved by taking the limits
 \dfrac{1-e^{-d_m\Delta t}}{d_m}
 =
 \Delta t,
-\end{equation}
+\end{equation*}
 so that
 \[
 T_m=
@@ -4835,34 +4847,34 @@ Thus, the undamped constant mode is obtained simply as the limit \(d_m\rightarro
 \section{Non-constant modes (\(\lambda_m<0\))}
 
 For every non-constant mode,
-\begin{equation}
+\begin{equation*}
 \lambda_m<0,
-\end{equation}
+\end{equation*}
 the modal matrix
-\begin{equation}
+\begin{equation*}
 A_m=
 \begin{bmatrix}
 0 & 1\\
 c^2\lambda_m & -d_m
 \end{bmatrix}
-\end{equation}
+\end{equation*}
 is invertible, since
-\begin{equation}
+\begin{equation*}
 \det(A_m)
 =
 -c^2\lambda_m
 >
 0.
-\end{equation}
+\end{equation*}
 Therefore, Proposition~\ref{prop:Tmatrix} applies, and the forcing matrix can be recovered once the state transition matrix is known:
-\begin{equation}
+\begin{equation*}
 T_m
 =
 A_m^{-1}(S_m-I).
-\end{equation}
+\end{equation*}
 
 Introduce the shifted matrix
-\begin{equation}
+\begin{equation*}
 B_m
 =
 A_m+\frac{d_m}{2}I
@@ -4871,13 +4883,13 @@ A_m+\frac{d_m}{2}I
 \dfrac{d_m}{2} & 1\\
 c^2\lambda_m & -\dfrac{d_m}{2}
 \end{bmatrix},
-\end{equation}
+\end{equation*}
 and define the discriminant
-\begin{equation}
+\begin{equation*}
 \delta_m
 =
 \sqrt{d_m^2+4c^2\lambda_m},
-\end{equation}
+\end{equation*}
 which may be either real, null or purely imaginary.
 
 A direct computation gives
@@ -4901,21 +4913,21 @@ c^2\lambda_m & -\dfrac{d_m}{2}
 \end{align}
 
 Since
-\begin{equation}
+\begin{equation*}
 A_m
 =
 -\frac{d_m}{2}I+B_m,
-\end{equation}
+\end{equation*}
 and the identity matrix commutes with every matrix,
-\begin{equation}
+\begin{equation*}
 e^{A_m\Delta t}
 =
 e^{-d_m\Delta t/2}
 e^{B_m\Delta t}.
-\end{equation}
+\end{equation*}
 
 The exponential of \(B_m\) is obtained from its Taylor expansion,
-\begin{equation}
+\begin{equation*}
 e^{B_m\Delta t}
 =
 I
@@ -4926,23 +4938,23 @@ B_m\Delta t
 +
 \frac{(B_m\Delta t)^3}{3!}
 +\cdots.
-\end{equation}
+\end{equation*}
 
 Using \eqref{eq:Bsquare}, the even powers satisfy
-\begin{equation}
+\begin{equation*}
 B_m^{2k}
 =
 \left(\frac{\delta_m}{2}\right)^{2k}I,
-\end{equation}
+\end{equation*}
 while the odd powers satisfy
-\begin{equation}
+\begin{equation*}
 B_m^{2k+1}
 =
 \left(\frac{\delta_m}{2}\right)^{2k}B_m.
-\end{equation}
+\end{equation*}
 
 Separating the Taylor series into even and odd powers yields
-\begin{align}
+\begin{align*}
 e^{B_m\Delta t}
 &=
 I
@@ -4956,10 +4968,10 @@ I
 \sum_{k=0}^{\infty}
 \frac{\left(\frac{\delta_m\Delta t}{2}\right)^{2k+1}}
 {(2k+1)!}.
-\end{align}
+\end{align*}
 
 Recognizing the Taylor expansions of the hyperbolic cosine and sine gives
-\begin{equation}
+\begin{equation*}
 e^{B_m\Delta t}
 =
 \cosh\!\left(
@@ -4970,7 +4982,7 @@ I
 \frac{2\sinh(\delta_m\Delta t/2)}
 {\delta_m}
 B_m.
-\end{equation}
+\end{equation*}
 
 Substituting the definition of \(B_m\) yields the unified expression
 \begin{equation}
@@ -5005,11 +5017,11 @@ Equations \eqref{eq:SmUnified} and \eqref{eq:TmUnified} provide a unified expres
 \subsection*{Underdamped regime}
 
 When
-\begin{equation}
+\begin{equation*}
 d_m^2+4c^2\lambda_m<0,
-\end{equation}
+\end{equation*}
 the discriminant is purely imaginary. Writing
-\begin{equation}
+\begin{equation*}
 \delta_m
 =
 2i\omega_m,
@@ -5018,15 +5030,15 @@ the discriminant is purely imaginary. Writing
 =
 \frac12
 \sqrt{-d_m^2-4c^2\lambda_m},
-\end{equation}
+\end{equation*}
 and using the identities
-\begin{equation}
+\begin{equation*}
 \cosh(i\theta)=\cos\theta,
 \qquad
 \sinh(i\theta)=i\sin\theta,
-\end{equation}
+\end{equation*}
 equation \eqref{eq:SmUnified} becomes
-\begin{equation}
+\begin{equation*}
 S_m
 =
 e^{-d_m\Delta t/2}
@@ -5039,28 +5051,28 @@ e^{-d_m\Delta t/2}
 A_m+\frac{d_m}{2}I
 \right)
 \right].
-\end{equation}
+\end{equation*}
 
 \subsection*{Critically damped regime}
 
 When
-\begin{equation}
+\begin{equation*}
 d_m^2+4c^2\lambda_m=0,
-\end{equation}
+\end{equation*}
 we have
-\begin{equation}
+\begin{equation*}
 \delta_m=0.
-\end{equation}
+\end{equation*}
 
 Using
-\begin{equation}
+\begin{equation*}
 \lim_{z\to0}
 \frac{\sinh z}{z}
 =
 1,
-\end{equation}
+\end{equation*}
 equation \eqref{eq:SmUnified} reduces to
-\begin{equation}
+\begin{equation*}
 S_m
 =
 e^{-d_m\Delta t/2}
@@ -5072,14 +5084,14 @@ I
 A_m+\frac{d_m}{2}I
 \right)
 \right].
-\end{equation}
+\end{equation*}
 
 \subsection*{Overdamped regime}
 
 When
-\begin{equation}
+\begin{equation*}
 d_m^2+4c^2\lambda_m>0,
-\end{equation}
+\end{equation*}
 the discriminant \(\delta_m\) is real, and equation~\eqref{eq:SmUnified} directly provides the overdamped propagator in terms of hyperbolic functions. No further specialization is required.
 
 \chapter{Appendix B}
