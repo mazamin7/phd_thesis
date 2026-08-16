@@ -356,9 +356,9 @@ Chapter~4 summarizes the main conclusions of the thesis and discusses possible d
 
 \chapter{Model Problem and Numerical Solvers}
 
-\section{Choice of the Model}
-
 In this chapter, we derive the continuous properties of the damped wave equation and formulate numerical methods to simulate it accurately and efficiently, namely the Finite-Difference Time-Domain (FDTD) method and the Pseudo-Spectral Time-Domain (PSTD) method.
+
+\section{Choice of the Model}
 
 A substantial literature addresses the computation of atmospheric absorption coefficients, including tabulated values for different atmospheric conditions, with \cite{knudsen_absorption_1933} among the early results, as well as prediction formulas (\cite{bass_atmospheric_1972,evans_atmospheric_1972}). The ISO standard \cite{iso_acoustics_1993} summarizes the most widely used formulas and tables.
 
@@ -1006,7 +1006,7 @@ which amplifies high-frequency perturbations exponentially with respect to the m
 This progressive loss of high-frequency information plays an important role in the learning-based reconstruction methods presented later in this thesis.
 
 \section{Finite-Difference Time-Domain Method}
-In this section, we derive and analyze a FDTD scheme for the damped wave equation, following the approach described in \cite{bilbao_numerical_2009}, Chapter 6, \S6.2. For simplicity, we derive the method in one spatial dimension. The extension to higher dimensions is obtained by replacing the second spatial derivative by the corresponding discrete Laplacian \cite[Chapter 7]{bilbao_numerical_2009}.
+In this section, we derive and analyze an FDTD scheme for the damped wave equation, following the approach described in \cite{bilbao_numerical_2009}, Chapter 6, \S6.2. For simplicity, we derive the method in one spatial dimension. The extension to higher dimensions is obtained by replacing the second spatial derivative by the corresponding discrete Laplacian \cite[Chapter 11]{bilbao_numerical_2009}.
 
 \subsection{Space and Time Discretization}
 We consider the damped wave equation \eqref{eq:wave} on a node-centered grid defined by
@@ -1068,6 +1068,7 @@ Substituting these approximations into \eqref{eq:wave} yields the finite-differe
     (u_{i+1}^{\,n-1}-2u_i^{\,n-1}+u_{i-1}^{\,n-1})
     \Bigr]
     +f_i^n.
+    \label{eq:fdtd_scalar}
 \end{multline}
 
 Since the proposed discretization is a two-step method, the values at two consecutive time levels are required to start the iteration. The initial condition directly provides
@@ -1123,7 +1124,40 @@ denotes the prescribed initial velocity inside our domain.
 
 To enforce boundary conditions, only the first and last equations of the algebraic system corresponding to the interior FDTD scheme are modified.
 
-By collecting the unknowns at all grid points $i=0,\dots,N$ into the global state vectors $\mathbf{u}^n = [u_0^n, \dots, u_N^n]^T$, the interior update equations for $i=1,\dots,N-1$, together with the discrete boundary equations evaluated at $i=0$ and $i=N$, can be assembled into the global algebraic system:
+By collecting the unknowns at all grid points $i=0,\dots,N$ into the global state vector $\mathbf{u}^n = [u_0^n, \dots, u_N^n]^T$, the interior update equations for $i=1,\dots,N-1$ can be expressed in matrix form as
+\begin{equation}
+A_{\mathrm{int}}\mathbf{u}^{n+1}
+=
+B_{\mathrm{int}}\mathbf{u}^{n}
++
+C_{\mathrm{int}}\mathbf{u}^{n-1}
++
+\Delta t^2\mathbf{f}^{n},
+\label{eq:fdtd_interior_system}
+\end{equation}
+where $A_{\mathrm{int}}, B_{\mathrm{int}}$, and $C_{\mathrm{int}}$ are $(N+1)\times(N+1)$ tridiagonal matrices. Multiplying the scalar scheme \eqref{eq:fdtd_scalar} by $\Delta t^2$ and isolating the time levels yields their explicit coefficients:
+\begin{align*}
+A_{\mathrm{int}}
+&=
+\left(1+\frac{\gamma\Delta t}{2}\right)\mathbf{I}
+-
+\frac{\nu\Delta t}{2\Delta x^2} \mathbf{D}_2,
+\\
+B_{\mathrm{int}}
+&=
+2\mathbf{I}
++
+\frac{c^2\Delta t^2}{\Delta x^2} \mathbf{D}_2,
+\\
+C_{\mathrm{int}}
+&=
+-\left(1-\frac{\gamma\Delta t}{2}\right)\mathbf{I}
++
+\frac{\nu\Delta t}{2\Delta x^2} \mathbf{D}_2,
+\end{align*}
+where $\mathbf{I}$ is the identity matrix and $\mathbf{D}_2 = \operatorname{tridiag}(1, -2, 1)$ is the standard discrete Laplacian matrix.
+
+To enforce boundary conditions, the first and last equations of this algebraic system are modified, leading to the global system
 \begin{equation}
 A_{\mathrm{bc}}\mathbf{u}^{n+1}
 =
@@ -1133,10 +1167,10 @@ C_{\mathrm{bc}}\mathbf{u}^{n-1}
 +
 \Delta t^2\mathbf{f}^{n}
 +
-\mathbf{b}_{\mathrm{bc}}^{\,n},
+\mathbf{b}_{\mathrm{bc}}^{\,n}.
 \label{eq:fdtd_global_system}
 \end{equation}
-where the matrices $A_{\mathrm{bc}},B_{\mathrm{bc}}$, and $C_{\mathrm{bc}}$ coincide with the interior matrices except for their first and last rows, which are populated by the coefficients of the specific boundary scheme, and the vector $\mathbf{b}_{\mathrm{bc}}^{\,n}$ collects the contribution of the prescribed boundary data.
+Here, $A_{\mathrm{bc}}, B_{\mathrm{bc}}$, and $C_{\mathrm{bc}}$ coincide with $A_{\mathrm{int}}, B_{\mathrm{int}}$, and $C_{\mathrm{int}}$ respectively, except for their first and last rows, which are populated by the specific boundary scheme, and the vector $\mathbf{b}_{\mathrm{bc}}^{\,n}$ contains the prescribed boundary data.
 
 \paragraph{Dirichlet boundary conditions.}
 
@@ -1150,27 +1184,28 @@ the boundary unknowns are directly prescribed,
 \begin{align*}
 u_0^{n+1}&=g_{\mathrm L}(t^{n+1}),
 \\
-u_{N-1}^{n+1}&=g_{\mathrm R}(t^{n+1}).
+u_{N}^{n+1}&=g_{\mathrm R}(t^{n+1}).
 \end{align*}
 
-Accordingly, the first and last rows of $A_{\mathrm{bc}}$ are replaced by the corresponding canonical basis vectors, while the corresponding rows of
-$B_{\mathrm{bc}}$ and
-$C_{\mathrm{bc}}$
-are set to zero. The boundary contribution becomes
+Accordingly, the first and last rows of the matrices are modified as follows. The first and last rows of $A_{\mathrm{bc}}$ are replaced by the corresponding canonical basis vectors:
 \begin{equation*}
-b_{\mathrm{bc}}^{\,n}
+[A_{\mathrm{bc}}]_{0,j} = \delta_{0,j}, \qquad [A_{\mathrm{bc}}]_{N,j} = \delta_{N,j},
+\end{equation*}
+where $\delta_{i,j}$ is the Kronecker delta. The corresponding rows of $B_{\mathrm{bc}}$ and $C_{\mathrm{bc}}$ are set to zero:
+\begin{equation*}
+[B_{\mathrm{bc}}]_{0,j} = [B_{\mathrm{bc}}]_{N,j} = 0, \qquad [C_{\mathrm{bc}}]_{0,j} = [C_{\mathrm{bc}}]_{N,j} = 0.
+\end{equation*}
+The boundary contribution vector takes the prescribed values at the first and last entries, and zero elsewhere:
+\begin{equation*}
+\mathbf{b}_{\mathrm{bc}}^{\,n}
 =
 \begin{bmatrix}
-g_{\mathrm L}(t^{n+1})
-&
-0
-&
-\cdots
-&
-0
-&
+g_{\mathrm L}(t^{n+1}) \\
+0 \\
+\vdots \\
+0 \\
 g_{\mathrm R}(t^{n+1})
-\end{bmatrix}^{T}.
+\end{bmatrix}.
 \end{equation*}
 
 \paragraph{Neumann boundary conditions.}
@@ -1185,7 +1220,7 @@ that is,
 \\
 u_x(L,t)&=g_{\mathrm R}(t),
 \end{align*}
-ghost nodes are introduced outside the computational domain and eliminated through the centered approximations
+ghost nodes are introduced outside the computational domain and eliminated through the second-order accurate centered approximations
 \begin{equation*}
 -\frac{u_{1}^n-u_{-1}^n}{2\Delta x}
 =
@@ -1210,24 +1245,41 @@ u_{N-2}^n
 2\Delta x\,g_{\mathrm R}(t^n).
 \end{align*}
 
-The resulting boundary contribution is
+Substituting these relations into the interior scalar scheme \eqref{eq:fdtd_scalar} evaluated at the boundary nodes $i=0$ and $i=N$ effectively eliminates the ghost nodes. The modified first and last rows of the matrices explicitly become:
+\begin{align*}
+[A_{\mathrm{bc}}]_{0, :} &= \left[ 1+\frac{\gamma\Delta t}{2}+\frac{\nu\Delta t}{\Delta x^2}, -\frac{\nu\Delta t}{\Delta x^2}, 0, \dots, 0 \right], \\
+[B_{\mathrm{bc}}]_{0, :} &= \left[ 2-\frac{2c^2\Delta t^2}{\Delta x^2}, \frac{2c^2\Delta t^2}{\Delta x^2}, 0, \dots, 0 \right], \\
+[C_{\mathrm{bc}}]_{0, :} &= \left[ -\left(1-\frac{\gamma\Delta t}{2}\right) - \frac{\nu\Delta t}{\Delta x^2}, \frac{\nu\Delta t}{\Delta x^2}, 0, \dots, 0 \right],
+\end{align*}
+and
+\begin{align*}
+[A_{\mathrm{bc}}]_{N, :} &= \left[ 0, \dots, 0, -\frac{\nu\Delta t}{\Delta x^2}, 1+\frac{\gamma\Delta t}{2}+\frac{\nu\Delta t}{\Delta x^2} \right], \\
+[B_{\mathrm{bc}}]_{N, :} &= \left[ 0, \dots, 0, \frac{2c^2\Delta t^2}{\Delta x^2}, 2-\frac{2c^2\Delta t^2}{\Delta x^2} \right], \\
+[C_{\mathrm{bc}}]_{N, :} &= \left[ 0, \dots, 0, \frac{\nu\Delta t}{\Delta x^2}, -\left(1-\frac{\gamma\Delta t}{2}\right) - \frac{\nu\Delta t}{\Delta x^2} \right].
+\end{align*}
+
+The resulting boundary contribution incorporating the source terms is
 \begin{equation*}
-b_{\mathrm{bc}}^{\,n}
+\mathbf{b}_{\mathrm{bc}}^{\,n}
 =
 \frac{2c^2\Delta t^2}{\Delta x}
 \begin{bmatrix}
-g_{\mathrm L}(t^n)
-\\
-0
-\\
-\vdots
-\\
-0
-\\
+g_{\mathrm L}(t^n) \\
+0 \\
+\vdots \\
+0 \\
 g_{\mathrm R}(t^n)
-\end{bmatrix},
+\end{bmatrix}
++
+\frac{\nu\Delta t}{\Delta x}
+\begin{bmatrix}
+g_{\mathrm L}(t^{n+1}) - g_{\mathrm L}(t^{n-1}) \\
+0 \\
+\vdots \\
+0 \\
+g_{\mathrm R}(t^{n+1}) - g_{\mathrm R}(t^{n-1})
+\end{bmatrix}.
 \end{equation*}
-while the first and last matrix rows are modified according to the ghost-node elimination.
 
 \paragraph{Robin boundary conditions.}
 
