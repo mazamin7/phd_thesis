@@ -86,9 +86,18 @@ function [x_grid,x_gridL,x_gridR,t_grid,u,uL,uR,UL_array,UR_array] = ard_solver(
     % Initial interface forces
     %-------------------------------------------------------------
     
-    C_res = get_residue_matrix(Nx, space_order);
+    %-------------------------------------------------------------
+    % CN matrix factorizations
+    %-------------------------------------------------------------
     
-    [FcorrL, FcorrR, uL_phys, uR_phys] = get_interface_forces(UL, UR, VL, VR, NxSub, C_res, dx, c, nu);
+    C_res = get_residue_matrix(Nx, space_order);
+    C_nu = (nu/dx^2) * C_res;
+    C_c2 = (c^2/dx^2) * C_res;
+    
+    % Matrices for the half-kick
+    dt_tau = dt/2;
+    M_lhs = eye(Nx) - (dt_tau/2)*C_nu;
+    M_rhs = eye(Nx) + (dt_tau/2)*C_nu;
 
     %-------------------------------------------------------------
     % Time stepping
@@ -109,23 +118,19 @@ function [x_grid,x_gridL,x_gridR,t_grid,u,uL,uR,UL_array,UR_array] = ard_solver(
         FmL = dct(fL);
         FmR = dct(fR);
         
-        % Recompute interface forces at start of step n
-        [FcorrL, FcorrR] = get_interface_forces(UL, UR, VL, VR, NxSub, C_res, dx, c, nu);
-        
-        % First half-kick with interface forces
-        VL = VL + (dt/2) * FcorrL;
-        VR = VR + (dt/2) * FcorrR;
+        % First half-kick (Implicit CN)
+        [VL, VR] = apply_cn_kick(UL, UR, VL, VR, NxSub, M_lhs, M_rhs, C_c2, dt_tau);
         
         % Drift: modal propagation with physical forcing
         [UL,VL] = modal_step(UL, VL, FmL, S, Tm);
         [UR,VR] = modal_step(UR, VR, FmR, S, Tm);
         
-        % Recompute interface forces at intermediate step
-        [FcorrL, FcorrR, uL_phys, uR_phys] = get_interface_forces(UL, UR, VL, VR, NxSub, C_res, dx, c, nu);
+        % Second half-kick (Implicit CN)
+        [VL, VR] = apply_cn_kick(UL, UR, VL, VR, NxSub, M_lhs, M_rhs, C_c2, dt_tau);
         
-        % Second half-kick
-        VL = VL + (dt/2) * FcorrL;
-        VR = VR + (dt/2) * FcorrR;
+        % For output
+        uL_phys = idct(UL);
+        uR_phys = idct(UR);
         
         % Store results
         uL(:,n+1) = uL_phys;
@@ -164,7 +169,7 @@ function [Um,Vm] = modal_step( ...
     end
 end
 
-function [FcorrL, FcorrR, uL_phys, uR_phys] = get_interface_forces(UL, UR, VL, VR, NxSub, C_res, dx, c, nu)
+function [VL_new, VR_new] = apply_cn_kick(UL, UR, VL, VR, NxSub, M_lhs, M_rhs, C_c2, dt_tau)
         uL_phys = idct(UL);
         uR_phys = idct(UR);
         vL_phys = idct(VL);
@@ -172,10 +177,11 @@ function [FcorrL, FcorrR, uL_phys, uR_phys] = get_interface_forces(UL, UR, VL, V
         
         u_phys = [uL_phys; uR_phys];
         v_phys = [vL_phys; vR_phys];
-        fCorr_global = (c^2/dx^2) * (C_res * u_phys) + (nu/dx^2) * (C_res * v_phys);
-        fCorrL = fCorr_global(1:NxSub);
-        fCorrR = fCorr_global(NxSub+1:end);
         
-        FcorrL = dct(fCorrL);
-        FcorrR = dct(fCorrR);
-    end
+        rhs = M_rhs * v_phys + dt_tau * C_c2 * u_phys;
+        
+        v_phys_new = M_lhs \ rhs;
+        
+        VL_new = dct(v_phys_new(1:NxSub));
+        VR_new = dct(v_phys_new(NxSub+1:end));
+end

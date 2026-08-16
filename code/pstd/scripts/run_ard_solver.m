@@ -29,14 +29,23 @@ dt = CFL * dx;
 
 % bcType = 'neumannGhost';
 
-% experiment = 'standingWave'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 1;
-% experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 2;
-% experiment = 'standingWave'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0.5; nu = 0.005; exp_idx = 3;
-% experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0.5; nu = 0.005; exp_idx = 4;
-% experiment = 'smoothPulse'; L = 2; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 5;
-experiment = 'trianglePulse'; L = 2; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 6;
+for exp_idx = 2:6
 
-% unused
+switch exp_idx
+    case 1
+        experiment = 'standingWave'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0;
+    case 2
+        experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0;
+    case 3
+        experiment = 'standingWave'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0.5; nu = 0.005;
+    case 4
+        experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0.5; nu = 0.005;
+    case 5
+        experiment = 'smoothPulse'; L = 2; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0;
+    case 6
+        experiment = 'trianglePulse'; L = 2; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0;
+end
+
 q = 1/c;
 r = 0;
 
@@ -163,7 +172,15 @@ end
 
 %% Animation
 
-figure
+% Create a subfolder based on the experiment index
+saveFolder = sprintf('snapshots/experiment_%d', exp_idx);
+if ~exist(saveFolder, 'dir')
+    mkdir(saveFolder); 
+end
+
+figure('Color', 'w');
+
+snapshotTimes = [0.2, 0.5, 1.0];
 
 hNum = plot(x_fine,u_fine(:,1), ...
     'b','LineWidth',2);
@@ -203,11 +220,21 @@ for n = 1:length(t_grid)
 
     drawnow;
 
+    % Check if we need to save a snapshot
+    for s = 1:length(snapshotTimes)
+        if abs(t_grid(n) - snapshotTimes(s)) < (dt/2)
+            filename = fullfile(saveFolder, sprintf('snapshot_t_%.4f.png', t_grid(n)));
+            exportgraphics(gcf, filename, 'Resolution', 300);
+            fprintf('Saved snapshot at t = %.4f\n', t_grid(n));
+        end
+    end
 end
 
 %% Space-time plot
 
-figure
+%% Space-time plot
+
+hSpacetime = figure('Color', 'w');
 
 imagesc(t_grid,x_fine,u_fine)
 
@@ -220,9 +247,13 @@ title('Space-time solution')
 
 colorbar
 
+exportgraphics(hSpacetime, fullfile(saveFolder, 'spacetime_solution.png'), 'Resolution', 300);
+
 %% Surface plot
 
-figure
+%% Surface plot
+
+hSurf = figure('Color', 'w');
 
 surf(t_grid,x_fine,u_fine,...
     'EdgeColor','none')
@@ -235,8 +266,10 @@ title('Space-time solution')
 
 view(45,30)
 
-camlight
-lighting gouraud
+exportgraphics(hSurf, fullfile(saveFolder, 'surface_solution.png'), 'Resolution', 300);
+
+close all;
+end
 
 function T = modal_time(k,c,gamma,nu)
 

@@ -1,4 +1,4 @@
-function [x_grid,x_gridL,x_gridR,t_grid,u,uL,uR,UL_array,UR_array] = ard_solver(u0_fun,v0_fun,f_fun,dx,dt,L,T,c,gamma,nu,bcType,q,r,space_order)
+function [x_grid,x_gridL,x_gridR,t_grid,u,uL,uR,UL_array,UR_array] = ard_solver_no_splitting(u0_fun,v0_fun,f_fun,dx,dt,L,T,c,gamma,nu,bcType,q,r,space_order)
     
     if nargin < 14
         space_order = 2;
@@ -109,23 +109,12 @@ function [x_grid,x_gridL,x_gridR,t_grid,u,uL,uR,UL_array,UR_array] = ard_solver(
         FmL = dct(fL);
         FmR = dct(fR);
         
-        % Recompute interface forces at start of step n
-        [FcorrL, FcorrR] = get_interface_forces(UL, UR, VL, VR, NxSub, C_res, dx, c, nu);
-        
-        % First half-kick with interface forces
-        VL = VL + (dt/2) * FcorrL;
-        VR = VR + (dt/2) * FcorrR;
-        
-        % Drift: modal propagation with physical forcing
-        [UL,VL] = modal_step(UL, VL, FmL, S, Tm);
-        [UR,VR] = modal_step(UR, VR, FmR, S, Tm);
-        
-        % Recompute interface forces at intermediate step
+        % Compute interface forces from current state
         [FcorrL, FcorrR, uL_phys, uR_phys] = get_interface_forces(UL, UR, VL, VR, NxSub, C_res, dx, c, nu);
         
-        % Second half-kick
-        VL = VL + (dt/2) * FcorrL;
-        VR = VR + (dt/2) * FcorrR;
+        % Drift: modal propagation with combined physical + interface forcing
+        [UL,VL] = modal_step(UL, VL, FmL + FcorrL, S, Tm);
+        [UR,VR] = modal_step(UR, VR, FmR + FcorrR, S, Tm);
         
         % Store results
         uL(:,n+1) = uL_phys;
