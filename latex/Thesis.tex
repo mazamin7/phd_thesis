@@ -3292,52 +3292,39 @@ Consequently, the matrix dispersion relation \eqref{eq:matrix_dispersion} conver
 \end{proof}
 
 \begin{proposition}[Convergence of the cosine projection] \label{prop:cosine_approximation_convergence}
-Let
+Let $u(\cdot,t) \in L^2(0,L)$ for all $t > 0$, with cosine expansion
 \[
-u(x)
+u(x,t)
 =
 \sum_{m=0}^{\infty}
-a_m\phi_m(x)
+a_m(t)\phi_m(x),
 \]
-be the cosine expansion of a function
-\(
-u\in L^2(0,L)
-\),
 and let
 \[
-u_N(x)
+P_N u(x,t)
 =
 \sum_{m=0}^{N-1}
-a_m\phi_m(x)
+a_m(t)\phi_m(x)
 \]
 denote its projection onto the approximation space $V_N = \operatorname{span}\{\phi_0,\ldots,\phi_{N-1}\}$.
 Then,
 \[
-u_N\longrightarrow u
+P_N u(\cdot,t)\longrightarrow u(\cdot,t)
 \qquad\text{in }L^2(0,L),
 \]
-as
-\(
-N\rightarrow\infty
-\).
+as $N\rightarrow\infty$.
 
-Moreover, if
+Moreover, if $u(\cdot,t)\in H^r(0,L)$, then
 \[
-u\in H^r(0,L),
-\]
-then
-\[
-\|u-u_N\|_{L^2}
+\|u(\cdot,t)-P_N u(\cdot,t)\|_{L^2(0,L)}
 =
 O(N^{-r})
 =
 O(\Delta x^{\,r}),
 \]
-whereas, if $u$ is analytic, there exist constants
-$C,\alpha>0$
-such that
+whereas, if $u(\cdot,t)$ is analytic, there exist constants $C,\alpha>0$ such that
 \[
-\|u-u_N\|_{L^2}
+\|u(\cdot,t)-P_N u(\cdot,t)\|_{L^2(0,L)}
 \le
 Ce^{-\alpha N}
 =
