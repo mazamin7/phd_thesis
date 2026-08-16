@@ -1726,6 +1726,20 @@ $-\Delta t^2/2$, we obtain the continuous dispersion relation \eqref{eq:dispersi
 with the continuous one.
 \end{proof}
 
+\begin{proposition}[Convergence of the piecewise linear interpolation]
+Assume that the exact solution $u(\cdot,t)$ belongs to $H^2(0,L)$ for every $t$, and let $u_h(\cdot,t)$ be the continuous piecewise linear interpolant matching $u$ at the nodes $x_i$, i.e., $u_i(t) = u(x_i,t)$. Then, there exists a constant $C>0$ independent of $\Delta x$ such that
+\begin{equation*}
+\|u(\cdot,t) - u_h(\cdot,t)\|_{L^2(0,L)}
+\le
+C \Delta x^2 \|u_{xx}(\cdot,t)\|_{L^2(0,L)}.
+\end{equation*}
+Consequently, the piecewise linear reconstruction is second-order accurate in space.
+\end{proposition}
+
+\begin{proof}
+This is a standard result in finite element analysis and approximation theory (see, e.g., \cite{quarteroni_numerical_2014}, Chapter~8). The bound follows from applying the Bramble--Hilbert lemma on each subinterval $[x_i, x_{i+1}]$ and summing the local contributions over the grid.
+\end{proof}
+
 \subsection{Reflection Factor with Robin Boundary Condition}
 We now derive the reflection factor associated with the fully implicit BDF2 discretization of the Robin boundary condition. For simplicity, we consider the left boundary, where the continuous condition reads
 \begin{equation*}
