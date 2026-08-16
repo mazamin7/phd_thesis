@@ -3084,8 +3084,9 @@ O(\Delta t^2).
 Consequently, over a fixed time interval, the global error introduced by the
 piecewise constant approximation of the forcing is
 \begin{equation*}
-O(\Delta t) \quad \text{\cite{quarteroni_numerical_2014}}.
+O(\Delta t)
 \end{equation*}
+as shown in \cite{quarteroni_numerical_2014}.
 \end{proposition}
 
 \begin{proof}
@@ -3161,7 +3162,7 @@ yielding an overall global error of order $O(\Delta t)$.
 
 \begin{proposition}[Numerical dispersion relation]
 The PSTD method satisfies the matrix dispersion relation
-\begin{equation*}
+\begin{equation}
 e^{i\omega\Delta t}\mathbf z
 =
 \Psi
@@ -3171,7 +3172,7 @@ P^T
 \Psi^T
 \mathbf z,
 \label{eq:matrix_dispersion}
-\end{equation*}
+\end{equation}
 
 If the exact solution belongs to the approximation space
 \[
@@ -3224,10 +3225,7 @@ P^T
 \]
 which is the matrix dispersion relation.
 
-Assume now that the exact solution belongs to
-\[
-V_N.
-\]
+Assume now that the exact solution belongs to $V_N$.
 Each modal component evolves independently according to
 \eqref{eq:modal_update},
 \[
@@ -3283,12 +3281,6 @@ up to the periodicity of the complex exponential. Substituting into the characte
 \omega^2-i\gamma\omega,
 \]
 which is precisely the continuous dispersion relation \eqref{eq:dispersion}. Therefore, every function represented exactly by the retained cosine modes propagates without numerical dispersion or artificial numerical dissipation.
-
-Finally, for a general solution, Proposition~\ref{prop:cosine_approximation_convergence} implies that the cosine approximation converges to the exact solution as
-\(
-\Delta x\to0.
-\)
-Consequently, the matrix dispersion relation \eqref{eq:matrix_dispersion} converges to the continuous dispersion relation \eqref{eq:dispersion} with the same algebraic or spectral rate as the underlying cosine approximation.
 \end{proof}
 
 \begin{proposition}[Convergence of the cosine projection] \label{prop:cosine_approximation_convergence}
@@ -3335,6 +3327,8 @@ Ce^{-\alpha L/\Delta x}.
 \begin{proof}
 These are standard results for cosine spectral expansions. They follow from the decay of the cosine coefficients and can be found, for example, in \cite{canuto_spectral_2006}, Chapter~5, \S5.1, equations~(5.1.9) and~(5.1.15); see also \cite{quarteroni_numerical_2007}.
 \end{proof}
+
+For a general solution, Proposition~\ref{prop:cosine_approximation_convergence} implies that the cosine approximation converges to the exact solution as $\Delta x\to0$. Consequently, the matrix dispersion relation \eqref{eq:matrix_dispersion} converges to the continuous dispersion relation \eqref{eq:dispersion} with the same algebraic or spectral rate as the underlying cosine approximation.
 
 \section{Numerical Experiments}
 To rigorously quantify the accuracy of the proposed methods, we evaluate the discrete $L^2$ error at the computational nodes at the final simulation time. Let $u(x,t)$ denote the exact analytical solution and let $u_h(x,t)$ denote the discrete numerical approximation. The discretization error is defined as
