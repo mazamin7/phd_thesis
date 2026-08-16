@@ -1727,17 +1727,26 @@ with the continuous one.
 \end{proof}
 
 \begin{proposition}[Convergence of the piecewise linear interpolation]
-Assume that the exact solution $u(\cdot,t)$ belongs to $H^2(0,L)$ for every $t$, and let $u_h(\cdot,t)$ be the continuous piecewise linear interpolant matching $u$ at the nodes $x_i$, i.e., $u_i(t) = u(x_i,t)$. Then, there exists a constant $C>0$ independent of $\Delta x$ such that
-\begin{equation*}
-\|u(\cdot,t) - u_h(\cdot,t)\|_{L^2(0,L)}
-\le
-C \Delta x^2 \|u_{xx}(\cdot,t)\|_{L^2(0,L)}.
-\end{equation*}
-Consequently, the piecewise linear reconstruction is second-order accurate in space.
+Let $u(\cdot,t) \in H^1(0,L)$ for all $t > 0$, and let
+\[
+I_h u(\cdot,t) : H^1(0,L) \to V_h
+\]
+denote its continuous piecewise linear interpolant on a uniform mesh of size $h = \Delta x$. Then
+\[
+I_h u(\cdot,t) \to u(\cdot,t) \quad \text{in } L^2(0,L),
+\]
+as $h \to 0$. Moreover, if $u(\cdot,t) \in H^2(0,L)$ for all $t > 0$, there exists a constant $C$, independent of $h$, such that
+\[
+\|u(\cdot,t) - I_h u(\cdot,t)\|_{L^2(0,L)} \le Ch^2 |u(\cdot,t)|_{H^2(0,L)}.
+\]
+More generally, if $u(\cdot,t) \in H^r(0,L)$ for $1 \le r \le 2$, then
+\[
+\|u(\cdot,t) - I_h u(\cdot,t)\|_{L^2(0,L)} = O(h^r).
+\]
 \end{proposition}
 
 \begin{proof}
-This is a standard result in finite element analysis and approximation theory (see, e.g., \cite{quarteroni_numerical_2014}, Chapter~8). The bound follows from applying the Bramble--Hilbert lemma on each subinterval $[x_i, x_{i+1}]$ and summing the local contributions over the grid.
+These are classical interpolation estimates for continuous piecewise linear finite elements. A proof can be found, for example, in \cite{quarteroni_numerical_2007}, Chapter~8, where interpolation error estimates for finite-element spaces are derived using the Bramble--Hilbert lemma.
 \end{proof}
 
 \subsection{Reflection Factor with Robin Boundary Condition}
