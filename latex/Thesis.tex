@@ -3429,15 +3429,24 @@ The computational domain, boundary conditions and model parameters are the same 
 \partial_xu(0,t)=\partial_xu(L,t)=0,\qquad
 \gamma=\nu=0.
 \]
-The initial displacement is a trapezoidal profile, explicitly defined by its cosine expansion
+The initial displacement is a trapezoidal profile, given by the piecewise linear function
+\[
+u(x,0) = 
+\begin{cases}
+1 & \text{if } 0 \le x \le \frac{L}{4}, \\[4pt]
+2 - \frac{4x}{L} & \text{if } \frac{L}{4} < x < \frac{3L}{4}, \\[4pt]
+-1 & \text{if } \frac{3L}{4} \le x \le L,
+\end{cases}
+\]
+which is equivalent to the cosine expansion
 \[
 u(x,0)
 =
 \sum_{j=0}^{\infty}
 \frac{16}{\pi^2} \frac{\cos\left((2j+1)\pi/4\right)}{(2j+1)^2}
-\cos\left((2j+1)\pi x/L\right),
+\cos\left((2j+1)\pi x/L\right).
 \]
-while the initial velocity and forcing vanish,
+The initial velocity and forcing vanish,
 \[
 \partial_tu(x,0)=0,
 \qquad
@@ -3543,6 +3552,15 @@ with
 \nu=0.005.
 \]
 The initial displacement is the same trapezoidal profile considered in Experiment 2,
+\[
+u(x,0) = 
+\begin{cases}
+1 & \text{if } 0 \le x \le \frac{L}{4}, \\[4pt]
+2 - \frac{4x}{L} & \text{if } \frac{L}{4} < x < \frac{3L}{4}, \\[4pt]
+-1 & \text{if } \frac{3L}{4} \le x \le L,
+\end{cases}
+\]
+which corresponds to the cosine expansion
 \[
 u(x,0)
 =
