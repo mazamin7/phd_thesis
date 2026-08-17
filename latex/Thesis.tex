@@ -3429,13 +3429,21 @@ The computational domain, boundary conditions and model parameters are the same 
 \partial_xu(0,t)=\partial_xu(L,t)=0,\qquad
 \gamma=\nu=0.
 \]
-The initial displacement is a trapezoidal profile, while the initial velocity and forcing vanish,
+The initial displacement is a trapezoidal profile, explicitly defined by its cosine expansion
+\[
+u(x,0)
+=
+\sum_{j=0}^{\infty}
+\frac{16}{\pi^2} \frac{\cos\left((2j+1)\pi/4\right)}{(2j+1)^2}
+\cos\left((2j+1)\pi x/L\right),
+\]
+while the initial velocity and forcing vanish,
 \[
 \partial_tu(x,0)=0,
 \qquad
 f(x,t)=0.
 \]
-The reference solution is obtained from the cosine expansion of the initial condition,
+The reference solution is obtained by evolving the modal amplitudes,
 \[
 u(x,t)
 =
@@ -3443,7 +3451,7 @@ u(x,t)
 \frac{16}{\pi^2} \frac{\cos\left((2j+1)\pi/4\right)}{(2j+1)^2}
 U_{2j+1}(t)\cos\left((2j+1)\pi x/L\right),
 \]
-where the modal coefficients are computed analytically from the cosine series and the modal amplitudes evolve according to the exact modal solution. In practice, the series is truncated after a sufficiently large number of modes, making the truncation error negligible. This experiment investigates the effect of reduced spatial regularity on the convergence of the two methods. As in the previous experiment, the FDTD method exhibits the expected exponential convergence of the discretization error. Since the cosine coefficients of non-smooth functions decay algebraically rather than exponentially, the PSTD method exhibits algebraic convergence.
+where the modal amplitudes $U_{2j+1}(t)$ evolve according to the exact modal solution. In practice, the series is truncated after a sufficiently large number of modes, making the truncation error negligible. This experiment investigates the effect of reduced spatial regularity on the convergence of the two methods. As in the previous experiment, the FDTD method exhibits the expected exponential convergence of the discretization error. Since the cosine coefficients of non-smooth functions decay algebraically rather than exponentially, the PSTD method exhibits algebraic convergence.
 
 \begin{figure}[H]
     \centering
@@ -3534,7 +3542,15 @@ with
 \qquad
 \nu=0.005.
 \]
-The initial displacement is the same trapezoidal profile considered in Experiment 2 (Section 2.5.2), while
+The initial displacement is the same trapezoidal profile considered in Experiment 2,
+\[
+u(x,0)
+=
+\sum_{j=0}^{\infty}
+\frac{16}{\pi^2} \frac{\cos\left((2j+1)\pi/4\right)}{(2j+1)^2}
+\cos\left((2j+1)\pi x/L\right),
+\]
+while
 \[
 \partial_tu(x,0)=0,
 \qquad
