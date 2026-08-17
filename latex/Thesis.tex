@@ -3401,6 +3401,7 @@ where $U_m(t)$ denotes the time evolution of mode $m$ as shown in Section~\ref{s
 
 \begin{table}[H]
 \centering
+\resizebox{\textwidth}{!}{%
 \begin{tabular}{c|ccccc|ccccc}
 \toprule
 & \multicolumn{5}{c|}{\textbf{FDTD Error ($L_2$)}} & \multicolumn{5}{c}{\textbf{PSTD Error ($L_2$)}} \\
@@ -3413,7 +3414,8 @@ where $U_m(t)$ denotes the time evolution of mode $m$ as shown in Section~\ref{s
 5 & 3.02e-04 & 1.08e-04 & 8.05e-05 & 7.47e-05 & 0.11 & 7.29e-05 & 7.29e-05 & 7.29e-05 & 7.29e-05 & - \\
 6 & 2.34e-02 & 1.62e-02 & 7.61e-03 & 4.06e-03 & 0.91 & 2.78e-04 & 3.93e-04 & 5.46e-04 & 7.23e-04 & -0.41 \\
 \bottomrule
-\end{tabular}
+\end{tabular}%
+}
 \caption{Convergence analysis for the various experimental configurations. The values represent the global $L_2$ discretization error at the final time $T=2$.}
 \label{tab:convergence_analysis}
 \end{table}
