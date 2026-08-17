@@ -3341,10 +3341,9 @@ E
 |u_h(x_i,T)-u(x_i,T)|^2
 \right)^{1/2}.
 \]
+This metric measures the global discrepancy, encompassing both the projection error of the initial condition and the accumulation of numerical errors during the time integration.
 
-This metric reflects both the error already present in the discrete initial representation and the numerical errors introduced during the subsequent time evolution.
-
-For the FDTD method we choose $\Delta t = \Delta x/c$ (which corresponds to the stability limit), while for the PSTD method we choose $\Delta t = 0.9\Delta x/c$ (there is no stability limit).
+For the FDTD method we choose $\Delta t = \Delta x/c$ (which corresponds to the stability limit), while for the PSTD method we choose $\Delta t = 0.9\Delta x/c$ (this choice avoids the `magic step' where $\text{CFL}=1$ gives superconvergence, ensuring a fair evaluation of the generic numerical dispersion rather than a special-case exactness).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Smooth Standing Wave (Undamped)}
@@ -3399,22 +3398,24 @@ where $U_m(t)$ denotes the time evolution of mode $m$ as shown in Section~\ref{s
     \caption{Comparison of FDTD and PSTD for smooth undamped standing wave.}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}{0.48\textwidth} 
-        \centering 
-        \includegraphics[width=\textwidth]{Images/fdtd_snapshots/experiment_1/final_nodal_error_monolithic.png} 
-        \caption{Discretization error (FDTD).} 
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.48\textwidth} 
-        \centering 
-        \includegraphics[width=\textwidth]{Images/pstd_snapshots/experiment_1/final_nodal_error_monolithic.png} 
-        \caption{Discretization error (PSTD).} 
-    \end{subfigure}
-    \caption{Convergence analysis for a smooth standing wave. The left column illustrates the FDTD scheme, while the right column shows the PSTD scheme.}
-    \label{fig:standing_wave_convergence}
-\end{figure}
+\begin{table}[H]
+\centering
+\begin{tabular}{c|ccccc|ccccc}
+\toprule
+& \multicolumn{5}{c|}{\textbf{FDTD Error ($L_2$)}} & \multicolumn{5}{c}{\textbf{PSTD Error ($L_2$)}} \\
+\textbf{Exp} & $N=100$ & $N=200$ & $N=400$ & $N=800$ & \textbf{Rate} & $N=100$ & $N=200$ & $N=400$ & $N=800$ & \textbf{Rate} \\
+\midrule
+1 & 4.62e-05 & 4.18e-05 & 4.07e-05 & 7.74e-06 & 2.39 & 4.02e-05 & 4.02e-05 & 4.02e-05 & 7.69e-06 & 2.39 \\
+2 & 3.66e-03 & 1.80e-03 & 9.45e-04 & 4.32e-04 & 1.13 & 9.07e-05 & 1.26e-04 & 1.68e-04 & 4.61e-05 & 1.87 \\
+3 & 7.98e-05 & 8.54e-05 & 8.67e-05 & 3.43e-05 & 1.34 & 8.69e-05 & 8.69e-05 & 8.69e-05 & 3.43e-05 & 1.34 \\
+4 & 4.77e-05 & 7.38e-05 & 8.19e-05 & 3.37e-05 & 1.28 & 1.07e-04 & 8.99e-05 & 8.54e-05 & 3.46e-05 & 1.31 \\
+5 & 3.02e-04 & 1.08e-04 & 8.05e-05 & 7.47e-05 & 0.11 & 7.29e-05 & 7.29e-05 & 7.29e-05 & 7.29e-05 & - \\
+6 & 2.34e-02 & 1.62e-02 & 7.61e-03 & 4.06e-03 & 0.91 & 2.78e-04 & 3.93e-04 & 5.46e-04 & 7.23e-04 & -0.41 \\
+\bottomrule
+\end{tabular}
+\caption{Convergence analysis for the various experimental configurations. The values represent the global $L_2$ discretization error at the final time $T=2$.}
+\label{tab:convergence_analysis}
+\end{table}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Non-smooth Standing Wave (Undamped)}
@@ -3435,8 +3436,9 @@ The reference solution is obtained from the cosine expansion of the initial cond
 \[
 u(x,t)
 =
-\sum_{m=0}^{\infty}
-U_m(t)\phi_m(x),
+\sum_{j=0}^{\infty}
+\frac{16}{\pi^2} \frac{\cos\left((2j+1)\pi/4\right)}{(2j+1)^2}
+U_{2j+1}(t)\cos\left((2j+1)\pi x/L\right),
 \]
 where the modal coefficients are computed analytically from the cosine series and the modal amplitudes evolve according to the exact modal solution. In practice, the series is truncated after a sufficiently large number of modes, making the truncation error negligible. This experiment investigates the effect of reduced spatial regularity on the convergence of the two methods. As in the previous experiment, the FDTD method exhibits the expected exponential convergence of the discretization error. Since the cosine coefficients of non-smooth functions decay algebraically rather than exponentially, the PSTD method exhibits algebraic convergence.
 
@@ -3464,18 +3466,6 @@ where the modal coefficients are computed analytically from the cosine series an
     \begin{subfigure}{0.48\textwidth} 
         \centering 
         \includegraphics[width=\textwidth]{Images/fdtd_snapshots/experiment_2/final_nodal_error_monolithic.png} 
-        \caption{Discretization error (FDTD).} 
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.48\textwidth} 
-        \centering 
-        \includegraphics[width=\textwidth]{Images/pstd_snapshots/experiment_2/final_nodal_error_monolithic.png} 
-        \caption{Discretization error (PSTD).} 
-    \end{subfigure}
-    \caption{Convergence analysis for a non-smooth standing wave. The left column illustrates the FDTD scheme, while the right column shows the PSTD scheme.}
-    \label{fig:nonsmooth_standing_wave_convergence}
-\end{figure}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Smooth Standing Wave (Damped)}
 
@@ -3531,23 +3521,6 @@ where the modal amplitudes now include the effect of telegrapher and viscoelasti
     \caption{Comparison of FDTD and PSTD for smooth damped standing wave.}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}{0.48\textwidth} 
-        \centering 
-        \includegraphics[width=\textwidth]{Images/fdtd_snapshots/experiment_3/final_nodal_error_monolithic.png} 
-        \caption{Discretization error (FDTD).} 
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.48\textwidth} 
-        \centering 
-        \includegraphics[width=\textwidth]{Images/pstd_snapshots/experiment_3/final_nodal_error_monolithic.png} 
-        \caption{Discretization error (PSTD).} 
-    \end{subfigure}
-    \caption{Convergence analysis for a non-smooth standing wave with damping. The left column illustrates the FDTD scheme, while the right column shows the PSTD scheme.}
-    \label{fig:nonsmooth_damped_standing_wave_convergence}
-\end{figure}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Non-smooth Standing Wave (Damped)}
 
@@ -3562,7 +3535,7 @@ with
 \qquad
 \nu=0.005.
 \]
-The initial displacement is the same trapezoidal profile considered in the second experiment, while
+The initial displacement is the same trapezoidal profile considered in Experiment 2 (Section 2.5.2), while
 \[
 \partial_tu(x,0)=0,
 \qquad
@@ -3587,23 +3560,6 @@ The reference solution is computed from the cosine expansion of the initial cond
     \hfill
     \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=\textwidth]{pstd_snapshots/experiment_4/spacetime_solution.png} \caption{PSTD spacetime.} \end{subfigure}
     \caption{Comparison of FDTD and PSTD for non-smooth damped standing wave.}
-\end{figure}
-
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}{0.48\textwidth} 
-        \centering 
-        \includegraphics[width=\textwidth]{Images/fdtd_snapshots/experiment_4/final_nodal_error_monolithic.png} 
-        \caption{Discretization error (FDTD).} 
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.48\textwidth} 
-        \centering 
-        \includegraphics[width=\textwidth]{Images/pstd_snapshots/experiment_4/final_nodal_error_monolithic.png} 
-        \caption{Discretization error (PSTD).} 
-    \end{subfigure}
-    \caption{Convergence analysis for a non-smooth standing wave with damping (Experiment 4). The left column illustrates the FDTD scheme, while the right column shows the PSTD scheme.}
-    \label{fig:experiment_4_convergence}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3636,11 +3592,7 @@ while
 f(x,t)=0.
 \]
 
-The reference solution is obtained by combining the classical d'Alembert formula with the method of images. More precisely, the initial condition is extended to an even $2L$-periodic function,
-\[
-u_0^{\mathrm{ext}}(x),
-\]
-which automatically satisfies the homogeneous Neumann boundary conditions. The exact solution is therefore
+The reference solution is obtained by combining the classical d'Alembert formula with the method of images \cite{strauss2007partial}. More precisely, the initial condition is extended to an even $2L$-periodic function, $u_0^{\mathrm{ext}}(x)$, which automatically satisfies the homogeneous Neumann boundary conditions. The exact solution is therefore
 \[
 u(x,t)
 =
@@ -3677,23 +3629,6 @@ whose reflections preserve the sign of the wave. This construction exactly repro
     \caption{Comparison of FDTD and PSTD for propagating Gaussian pulse.}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}{0.48\textwidth} 
-        \centering 
-        \includegraphics[width=\textwidth]{Images/fdtd_snapshots/experiment_5/final_nodal_error_monolithic.png} 
-        \caption{Discretization error (FDTD).} 
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.48\textwidth} 
-        \centering 
-        \includegraphics[width=\textwidth]{Images/pstd_snapshots/experiment_5/final_nodal_error_monolithic.png} 
-        \caption{Discretization error (PSTD).} 
-    \end{subfigure}
-    \caption{Convergence analysis for smooth propagating waves (Experiment 5). The left column illustrates the FDTD scheme, while the right column shows the PSTD scheme.}
-    \label{fig:experiment_5_convergence}
-\end{figure}
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Non-smooth Propagating Waves (Undamped)}
 
@@ -3703,22 +3638,18 @@ The computational domain, boundary conditions and physical parameters coincide w
 \partial_xu(0,t)=\partial_xu(L,t)=0,\qquad
 \gamma=\nu=0.
 \]
-The initial displacement is a triangular pulse centered at
+The initial displacement is a triangular pulse centered at $\mu = L/4$ with support determined by $\sigma = L/50$, explicitly given by
 \[
-\mu=\frac{L}{4},
+u(x,0) = \max\left(1 - \frac{|x-\mu|}{\sigma}, 0\right),
 \]
-with support determined by $\sigma=L/50$, while
+while the initial velocity and forcing vanish,
 \[
 \partial_tu(x,0)=0,
 \qquad
 f(x,t)=0.
 \]
 
-As in the previous experiment, the reference solution is obtained by combining the classical d'Alembert formula with the method of images. The initial triangular profile is extended to an even $2L$-periodic function,
-\[
-u_0^{\mathrm{ext}}(x),
-\]
-yielding the exact solution
+As in the previous experiment, the reference solution is obtained by combining the classical d'Alembert formula with the method of images. The initial triangular profile is extended to an even $2L$-periodic function, $u_0^{\mathrm{ext}}(x)$, yielding the exact solution
 \[
 u(x,t)
 =
@@ -3755,44 +3686,17 @@ whose reflections preserve the sign of the wave. This construction exactly repro
     \caption{Comparison of FDTD and PSTD for propagating triangular pulse.}
 \end{figure}
 
-\begin{figure}[H]
-    \centering
-    \begin{subfigure}{0.48\textwidth} 
-        \centering 
-        \includegraphics[width=\textwidth]{Images/fdtd_snapshots/experiment_6/final_nodal_error_monolithic.png} 
-        \caption{Discretization error (FDTD).} 
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}{0.48\textwidth} 
-        \centering 
-        \includegraphics[width=\textwidth]{Images/pstd_snapshots/experiment_6/final_nodal_error_monolithic.png} 
-        \caption{Discretization error (PSTD).} 
-    \end{subfigure}
-    \caption{Convergence analysis for non-smooth propagating waves (Experiment 6). The left column illustrates the FDTD scheme, while the right column shows the PSTD scheme.}
-    \label{fig:experiment_6_convergence}
-\end{figure}
-
 \chapter{Acceleration of the Numerical Solvers and Inverse Problems}
 
 \section{Optimized Schwarz Waveform Relaxation}
 
-To solve the damped wave equation on large computational domains, we employ an overlapping Schwarz Waveform Relaxation (SWR) method. For the classical Schwarz Waveform Relaxation method, Dirichlet transmission conditions are employed, whereas for Optimized Schwarz Waveform Relaxation (OSWR) methods, we develop transmission operators that minimize the convergence factor. We employ Robin-like transmission conditions depending on two parameters $q$ and $r$. As the PSTD method only supports homogeneous Neumann conditions, we employ SWR only for FDTD.
+To solve the damped wave equation on large computational domains, we employ an overlapping Schwarz Waveform Relaxation (SWR) method. For the classical Schwarz Waveform Relaxation method, for which Dirichlet transmission conditions are employed, whereas for Optimized Schwarz Waveform Relaxation (OSWR) methods, we develop transmission operators that minimize the convergence factor by employing Robin-like transmission conditions depending on two parameters $q$ and $r$. As the PSTD method only supports homogeneous Neumann conditions, we employ SWR only for FDTD.
 
-\subsection{Algorithm}
-Let
-\[
-\Omega=(0,L)
-\]
-be decomposed into the two overlapping subdomains
-\[
-\Omega_1=(0,b),
-\qquad
-\Omega_2=(a,L),
-\]
-with
+\subsection{SWR Algorithm}
+Let $\Omega=(0,L)$ be decomposed into the two overlapping subdomains $\Omega_1=(0,b)$ and $\Omega_2=(a,L)$, with
 \[
 0<a<b<L,
-\qquad
+\qquad \text{and} \qquad
 \delta=b-a>0,
 \]
 where $\delta$ denotes the overlap width. Let $u$ and $v$ denote the solutions defined on the left ($\Omega_1$) and right ($\Omega_2$) subdomains, respectively.
@@ -3845,18 +3749,18 @@ q\,u_t^{(k)}(a,t)
 r\,u^{(k)}(a,t).
 \end{align*}
 
-The symbols $q,r\ge0$ are the transmission operator parameters that we want to optimize.
+The real numbers $q,r\ge0$ are the transmission parameters that we want to optimize.
 
 \subsection{Convergence Factor}
 
-To analyze the convergence of the algorithm, it is sufficient to consider the error equations. Since the exact solution satisfies the same equations, the forcing term, initial conditions and physical boundary data vanish. We therefore study
+To analyze the convergence of the algorithm, it is sufficient to consider the error equations. Since the exact solution satisfies the same equations, the forcing term, initial conditions and physical boundary data vanish. We therefore consider
 
 \begin{equation*}
 u_{tt}
 +\gamma u_t
 =
 c^2u_{xx}
-+\nu u_{xxt},
++\nu u_{xxt}, \qquad x \in (0,L), \ t > 0,
 \end{equation*}
 
 with homogeneous Neumann boundary conditions.
@@ -3866,7 +3770,7 @@ Applying the Laplace transform in time gives
 \begin{equation*}
 (c^2+\nu s)\widehat{u}_{xx}
 =
-(s^2+\gamma s)\widehat{u}.
+(s^2+\gamma s)\widehat{u}, \qquad s \in \mathbb{C}, \ x \in (0,L).
 \end{equation*}
 
 Introducing the Laplace-domain wavenumber
@@ -3963,7 +3867,7 @@ Using $L-a=b$ and $L-b=a$, the interface traces are
 \widehat{v}_x(b) &= -ikA_v\left(e^{ika}-e^{-ika}\right).
 \end{align*}
 
-Substituting into the Laplace-transformed Robin transmission conditions,
+Substituting into the Laplace-transformed Robin transmission conditions, we get that
 
 \begin{align*}
 (\partial_x+\Lambda)\widehat{u}^{(k+1)}(b)
@@ -4006,7 +3910,7 @@ A_u^{(k)}
 Denoting the bracketed quantities by
 \[
 F(b) = ik\left(e^{ikb}-e^{-ikb}\right)+\Lambda\left(e^{ikb}+e^{-ikb}\right),
-\qquad
+\qquad \text{and} \qquad
 H(a) = -ik\left(e^{ika}-e^{-ika}\right)+\Lambda\left(e^{ika}+e^{-ika}\right),
 \]
 the two equations decouple into a two-step recurrence
@@ -4091,23 +3995,34 @@ are actually resolved: $\omega_{\min}$ reflects the coarsest mode that fits in t
 
 \subsection{Numerical Experiments}
 
-To validate the theoretical convergence rates of the Optimized Schwarz Waveform Relaxation (OSWR) method, we evaluate the domain decomposition error over successive Schwarz iterations across six distinct experiments with varying smoothness and physical damping parameters. The domain $\Omega=(0,L)$ is split into two overlapping subdomains with an overlap size $\delta=L/10$. The physical parameters vary across the configurations, including highly damped and undamped cases. The domain is discretized using a finite-difference spatial step $\Delta x=0.05$ and time step $\Delta t=0.05$. In all configurations, the simulations are run for a total time duration $T=2$. It is important to note that for spacetime domain decomposition methods like SWR, the total number of iterations required to reach convergence inherently depends on this simulation duration $T$, as boundary information must propagate back and forth across the entire spacetime interface.
+We employ the monolithic FDTD scheme introduced in the previous chapter. To validate the theoretical convergence rates of the Optimized Schwarz Waveform Relaxation (OSWR) method, we evaluate the $L^\infty$ domain decomposition error (defined as the maximum absolute difference between the SWR solution and the monolithic FDTD reference solution) over successive Schwarz iterations across six distinct experiments:
+
+\begin{enumerate}
+    \item Smooth standing wave (undamped)
+    \item Non-smooth standing wave (undamped)
+    \item Smooth standing wave (damped)
+    \item Non-smooth standing wave (damped)
+    \item Smooth propagating pulse (undamped)
+    \item Non-smooth propagating pulse (undamped)
+\end{enumerate}
+
+The domain $\Omega=(0,L)$ is split into two overlapping subdomains with an overlap size $\delta=L/10$. The physical parameters vary across the configurations, including highly damped and undamped cases. The domain is discretized using a finite-difference spatial step $\Delta x=0.05$ and time step $\Delta t=0.05$. In all configurations, the simulations are run for a total time duration $T=2$. It is important to note that for spacetime domain decomposition methods like SWR, the total number of iterations required to reach convergence inherently depends on this simulation duration $T$, as boundary information must propagate back and forth across the entire spacetime interface.
 
 We compare the convergence of the SWR iteration using classical Robin transmission conditions ($q=1/c$, $r=0$) against the optimized Robin parameters derived from the theoretical min-max problem (Equation~\ref{eq:minmax}). Figure~\ref{fig:oswr_convergence} illustrates the $L^\infty$ error over successive Schwarz iterations, measured against the monolithic FDTD reference solution. The theoretically optimized Robin conditions do not substantially accelerate the convergence rate. As demonstrated in the subsequent experiments, this limited improvement occurs because a low viscoelastic damping coefficient was chosen for the current configurations.
 
 \begin{figure}[H]
-     \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/fdtd_snapshots/experiment_1_swr/swr_convergence.png} \caption{Smooth standing wave (undamped)} \end{subfigure}
+     \begin{subfigure}[t]{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/fdtd_snapshots/experiment_1_swr/swr_convergence.png} \caption{Smooth standing wave (undamped)} \end{subfigure}
     \hfill
-    \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/fdtd_snapshots/experiment_3_swr/swr_convergence.png} \caption{Smooth standing wave (damped)} \end{subfigure} \\
+    \begin{subfigure}[t]{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/fdtd_snapshots/experiment_3_swr/swr_convergence.png} \caption{Smooth standing wave (damped)} \end{subfigure} \\
     \vspace{0.3cm}
-    \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/fdtd_snapshots/experiment_2_swr/swr_convergence.png} \caption{Non-smooth standing wave (undamped)} \end{subfigure}
+    \begin{subfigure}[t]{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/fdtd_snapshots/experiment_2_swr/swr_convergence.png} \caption{Non-smooth standing wave (undamped)} \end{subfigure}
     \hfill
-    \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/fdtd_snapshots/experiment_4_swr/swr_convergence.png} \caption{Non-smooth standing wave (damped)} \end{subfigure} \\
+    \begin{subfigure}[t]{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/fdtd_snapshots/experiment_4_swr/swr_convergence.png} \caption{Non-smooth standing wave (damped)} \end{subfigure} \\
     \vspace{0.3cm}
-    \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/fdtd_snapshots/experiment_5_swr/swr_convergence.png} \caption{Smooth propagating pulse (undamped)} \end{subfigure}
+    \begin{subfigure}[t]{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/fdtd_snapshots/experiment_5_swr/swr_convergence.png} \caption{Smooth propagating pulse (undamped)} \end{subfigure}
     \hfill
-    \begin{subfigure}{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/fdtd_snapshots/experiment_6_swr/swr_convergence.png} \caption{Non-smooth propagating pulse (undamped)} \end{subfigure}
-    \caption{Convergence of the SWR iteration for classical vs optimized Robin transmission conditions under six different initial conditions. In all configurations, the theoretically optimized parameters strictly bound the contraction rate and significantly outperform the classical approach.}
+    \begin{subfigure}[t]{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/fdtd_snapshots/experiment_6_swr/swr_convergence.png} \caption{Non-smooth propagating pulse (undamped)} \end{subfigure}
+    \caption{Convergence of the SWR iteration for classical vs optimized Robin transmission conditions under six different initial conditions. In all configurations, the theoretically optimized parameters strictly bound the contraction rate and consistently provide a faster contraction of the error per iteration compared to the non-optimized parameters $q=1/c$ and $r=0$.}
     \label{fig:oswr_convergence}
 \end{figure}
 
@@ -4149,7 +4064,7 @@ In contrast, the Adaptive Rectangular Decomposition (ARD) approach can be succes
 
 \subsection{A Continuous Interpretation of ARD}
 
-To understand the ARD coupling mechanism, we turn to the immersed-layer distributional framework introduced in  ~\cite{eldredge_method_2022}. For simplicity, consider the one-dimensional domain
+To understand the ARD coupling mechanism, we turn to the immersed-layer distributional framework introduced in~\cite{eldredge_method_2022}. This framework provides a rigorous way to interpret discrete domain decomposition methods by formulating them as a single continuous partial differential equation across the entire domain, using singular distributions (such as Dirac deltas and their derivatives) to model the jump conditions and coupling forces at the artificial interfaces. For simplicity, consider the one-dimensional domain
 \[
 \Omega=[0,L]
 \]
@@ -4160,14 +4075,10 @@ split into two non-overlapping subdomains
 \]
 separated by the artificial interface
 \[
-\Gamma=L/2.
+\Gamma=\{L/2\}.
 \]
 
-Let $u$ denote the exact continuous solution and let $\bar u$ denote the piecewise field obtained by solving independently on each subdomain. By construction, homogeneous Neumann boundary conditions are imposed on the artificial interface,
-\[
-\partial_xu=0
-\qquad\text{on }\Gamma.
-\]
+Let $u$ denote the exact continuous solution and let $\bar u$ denote the piecewise field obtained by solving independently on $\Omega_1$ and $\Omega_2$. By construction, homogeneous Neumann boundary conditions $\partial_x u = 0$ are imposed on the artificial interface $\Gamma$.
 
 For a piecewise smooth function, the distributional identity
 \[
@@ -4179,7 +4090,7 @@ For a piecewise smooth function, the distributional identity
 +
 [u]\delta_\Gamma'
 \]
-holds. Since the Neumann interface condition enforces
+holds. Here, $[\cdot]_\Gamma$ denotes the jump operator across the interface $\Gamma$, while $\delta_\Gamma$ and $\delta_\Gamma'$ represent the Dirac delta distribution centered at $\Gamma$ and its distributional derivative, respectively. Since the Neumann interface condition enforces
 \[
 [\partial_xu]=0,
 \]
@@ -4217,7 +4128,7 @@ c^2[u]\delta_\Gamma'
 \nu[\dot u]\delta_\Gamma'.
 \end{equation*}
 
-Therefore, the independent Neumann subdomain solutions satisfy the original wave equation everywhere except at the artificial interface, where the missing physical coupling appears as a sum of two singular dipole distributions: a stiffness jump ($c^2[u]$) and a viscous jump ($\nu[\dot u]$). Recovering the exact monolithic solution is therefore equivalent to explicitly restoring this combined singular interface source.
+Therefore, the independent subdomain solutions satisfy the original wave equation everywhere except at the interface $\Gamma$, where the missing physical coupling appears as a sum of two singular dipole distributions: a stiffness jump ($c^2[u]$) and a viscous jump ($\nu[\dot u]$). Recovering the exact monolithic solution is therefore equivalent to explicitly restoring this combined singular interface source, effectively gluing the disconnected subdomains back together by enforcing the continuity of the fields across $\Gamma$.
 
 \subsection{A General Strang Splitting Formulation}
 
@@ -4235,7 +4146,7 @@ This relationship can be directly justified by recalling the distributional iden
 \[
 \underbrace{(L_h - L_h^{(\mathrm N)})}_{C_{\mathrm{res}}} \mathbf{u} \approx \bar{u}_{xx} - \overline{u_{xx}} = [u]\delta_\Gamma'.
 \]
-Consequently, the matrix $C_{\mathrm{res}}$ natively acts as the exact discrete analog of the singular dipole distribution. Applying this residual matrix to the state variables numerically reconstructs the required localized interface forces.
+Consequently, the operator $C_{\mathrm{res}}$ natively acts as the exact discrete analog of the singular dipole distribution. Applying this residual matrix to the state variables numerically reconstructs the required localized interface forces.
 
 With this operator defined, we cast the governing PDE as a first-order system in time. Defining the global state vector $\mathbf Z=[\mathbf u;\mathbf v]^T$, the full viscoelastic wave equation can be separated into two distinct evolution operators:
 \begin{equation*}
@@ -4256,7 +4167,7 @@ c^2C_{\mathrm{res}}\mathbf u+\nu C_{\mathrm{res}}\mathbf v
 The Drift operator $\mathcal{F}_{\mathrm{local}}(\mathbf Z)$ abstractly governs the uncoupled physics of the isolated subdomains under homogeneous Neumann boundary conditions, driven by the external physical source. We can treat the time integration of this local evolution as a generic black-box solver $\mathcal S_{\mathrm{local}}(\Delta t)$. 
 The Kick operator exclusively applies the localized interface correction forces required to restore the global monolithic solution.
 
-Because the interface correction depends on the instantaneous state, we decouple the operators using the symmetric Kick-Drift-Kick composition of Strang splitting~\cite{strang_construction_1968},
+Because the interface correction depends on the instantaneous state, we decouple the operators using the symmetric Kick-Drift-Kick composition of Strang splitting (Strang~\cite{strang_construction_1968}),
 \begin{equation*}
 e^{\Delta t(A+B)}
 =
@@ -4397,7 +4308,7 @@ where $D(\Delta t)$ denotes the exact modal propagator and $K(\Delta t/2)$ repre
 
 \subsubsection{Stability}
 
-The resulting stability limits reveal that the localized interface correction imposes only a mild restriction on the time step. Because the explicit correction operator involves the projection of global spectral modes onto a localized interface stencil, the exact maximum eigenvalue of the amplification matrix exhibits a minor dependence on the grid resolution $N$. This mesh-dependency arises from discrete spatial resonances between the highest-frequency global modes and the fixed interface stencil. To establish rigorous, mesh-independent stability bounds, a comprehensive numerical sweep of the amplification matrix was performed across all grid resolutions up to $N=800$. The absolute global minimum (worst-case) admissible Courant numbers for second-, fourth-, sixth-, and eighth-order interface operators are strictly bounded by
+The resulting stability limits reveal that the localized interface correction imposes only a mild restriction on the time step. Because the explicit correction operator involves the projection of global spectral modes onto a localized interface stencil, the exact maximum eigenvalue of the amplification matrix exhibits a minor dependence on the grid resolution $N$. This mesh-dependency arises from discrete spatial resonances between the highest-frequency global modes and the fixed interface stencil. To establish rigorous, mesh-independent stability bounds, a comprehensive numerical sweep of the amplification matrix $G$ (defined as the exact single-step transition matrix combining the modal propagator and interface correction) was performed across all grid resolutions up to $N=800$. The absolute global minimum (worst-case) admissible Courant numbers for second-, fourth-, sixth-, and eighth-order interface operators (referring to the spatial order of the finite-difference residual operator $C_{\text{res}}$) are strictly bounded by
 \[
 % These asymptotic worst-case bounds are computed using code/pstd/scripts/check_nx_trend.m
 \mathrm{CFL}_{\max}
@@ -4407,7 +4318,7 @@ The resulting stability limits reveal that the localized interface correction im
 1.017,\;
 0.991,
 \]
-respectively. The monotonic decrease reflects the increasing spectral radius of the higher-order interface operators: wider interface stencils strengthen the explicit coupling between neighboring subdomains and therefore produce a slightly more restrictive stability condition. Remarkably, the eighth-order interface correction asymptotically locks into a worst-case limit of $0.991$, remaining exceptionally close to the classical FDTD stability limit while providing substantially higher spatial accuracy at the interface.
+respectively. The monotonic decrease reflects the increasing spectral radius of the higher-order interface operators: wider interface stencils strengthen the explicit coupling between neighboring subdomains and therefore produce a slightly more restrictive stability condition. Remarkably, the eighth-order interface correction asymptotically locks into a worst-case limit of $0.991$, remaining exceptionally close to the classical FDTD stability limit while providing substantially higher spatial accuracy at the interface. It is worth noting that Courant numbers slightly greater than $1$ are possible because the CFL number is defined relative to the standard explicit FDTD stability limit, while the analytical modal propagator imposes no such intrinsic limit.
 
 When the medium incorporates viscoelastic damping ($\nu > 0$), the stability criteria shift fundamentally. The exact explicit evaluation of the viscous interface forces strictly bounds the numerical scheme by a parabolic dimensionless limit
 \[
@@ -4431,11 +4342,22 @@ For each spatial order of the interface correction operator, we perform two simu
 The empirical results strongly corroborate the spectral analysis. For time steps slightly below the maximum theoretical limit, the higher-order solvers correctly propagate the wave without any spurious amplification, and the maximum wave amplitude remains physically bounded (with a relative amplitude identically equal to $0.99$ due to dispersion). We note a minor exception for the second-order operator, which over exceedingly long simulations exhibits a delayed exponential growth even slightly below the numerically derived threshold, highlighting the extreme sensitivity of its spectral radius near the unit circle.
 
 % The following empirical divergence amplitudes at T=250 are computed using code/pstd/scripts/verify_cfl_empirical.m
-Conversely, when the time step slightly exceeds the theoretical limit, the instability becomes completely destructive across all spatial orders. When integrated over the long $T=250$ timeframe, even the mildly unstable lower-order operators blow up: the fourth-order operator reaches an amplitude of $\approx 10^{50}$, and the second-order operator reaches $\approx 10^{126}$. The wider sixth- and eighth-order operators exhibit far more aggressive growth rates, with their numerical solutions exploding to the double-precision floating-point limit ($\approx 10^{303}$). This numerical evidence confirms that the method is strictly conditionally stable, and that while wider interface stencils impose marginally tighter time step restrictions, violating the stability boundary will invariably lead to exponential divergence.
+Conversely, when the time step slightly exceeds the theoretical limit, the instability becomes completely destructive across all spatial orders. Of course, it is obvious that violating the stability boundary will invariably lead to exponential divergence; this empirical parameter sweep over the perturbation $\epsilon$ simply serves to plausibly verify the exact numerically derived threshold. When integrated over the long $T=250$ timeframe, even the mildly unstable lower-order operators blow up: the fourth-order operator reaches an amplitude of $\approx 10^{50}$, and the second-order operator reaches $\approx 10^{126}$. The wider sixth- and eighth-order operators exhibit far more aggressive growth rates, with their numerical solutions exploding to the double-precision floating-point limit ($\approx 10^{303}$).
 
 \subsubsection{Convergence of the Interface Correction Operator}
 
-To evaluate the accuracy of the proposed explicit interface correction operator, we quantify the domain decomposition error as a function of the interface spatial order and grid resolution. The domain $\Omega=(0,L)$ is decomposed into two non-overlapping subdomains, and the ARD interface operator is applied with varying stencil sizes (Order 2, 4, 6, and 8). The experiments encompass six configurations with differing source smoothness and damping profiles. The pulses are placed asymmetrically at $x=L/4$ to prevent artificial symmetry at the boundary.
+To evaluate the accuracy of the proposed explicit interface correction operator, we quantify the $L^\infty$ domain decomposition error (computed as the maximum absolute difference between the monolithic PSTD reference solution and the ARD-PSTD solution) as a function of the interface spatial order and grid resolution. The domain $\Omega=(0,L)$ is decomposed into two non-overlapping subdomains, and the ARD interface operator is applied with varying stencil sizes (Order 2, 4, 6, and 8). The experiments encompass the same six configurations with differing source smoothness and damping profiles utilized in the previous section:
+
+\begin{enumerate}
+    \item Smooth standing wave (undamped)
+    \item Non-smooth standing wave (undamped)
+    \item Smooth standing wave (damped)
+    \item Non-smooth standing wave (damped)
+    \item Smooth propagating pulse (undamped)
+    \item Non-smooth propagating pulse (undamped)
+\end{enumerate}
+
+For the propagating pulses (Experiments 5 and 6), they are placed asymmetrically at $x=L/4$ to prevent artificial symmetry at the boundary.
 
 Figure~\ref{fig:ard_convergence_dx} and Figure~\ref{fig:ard_convergence_order} present the $L^\infty$ domain decomposition error relative to the monolithic PSTD reference solution as a function of the grid resolution $\Delta x$ and the spatial order, respectively. 
 

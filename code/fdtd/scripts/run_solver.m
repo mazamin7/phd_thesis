@@ -1,4 +1,4 @@
-clear all; close all; clc;
+% clear all; close all; clc;
 addpath(genpath('../src'));
 
 %% Parameters
@@ -19,12 +19,23 @@ dt = 0.05;
 % bcType = 'robinBdf';
 % bcType = 'robinGhost';
 
-% experiment = 'standingWave'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 1;
-% experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 2;
-% experiment = 'standingWave'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0.5; nu = 0.005; exp_idx = 3;
-% experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0.5; nu = 0.005; exp_idx = 4;
-% experiment = 'smoothPulse'; L = 2; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 5;
-experiment = 'trianglePulse'; L = 2; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0; exp_idx = 6;
+if ~exist('exp_idx', 'var')
+    exp_idx = 1;
+end
+switch exp_idx
+    case 1
+        experiment = 'standingWave'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0;
+    case 2
+        experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0;
+    case 3
+        experiment = 'standingWave'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0.5; nu = 0.005;
+    case 4
+        experiment = 'trapezoidStandingWaveNeumann'; L = 1; T = 2; bcType = 'neumannGhost'; gamma = 0.5; nu = 0.005;
+    case 5
+        experiment = 'smoothPulse'; L = 2; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0;
+    case 6
+        experiment = 'trianglePulse'; L = 2; T = 2; bcType = 'neumannGhost'; gamma = 0; nu = 0;
+end
 
 % unused
 % experiment = 'triangleStandingWaveDirichlet'; T = 2; bcType = 'dirichlet'; gamma = 0.5; nu = 0.005;
@@ -164,7 +175,7 @@ end
 %% Animation and Snapshots
 
 % Create a subfolder based on the experiment index
-saveFolder = sprintf('snapshots/experiment_%d', exp_idx);
+saveFolder = sprintf('latex/Images/fdtd_snapshots/experiment_%d', exp_idx);
 if ~exist(saveFolder, 'dir')
     mkdir(saveFolder); 
 end
@@ -173,20 +184,19 @@ figure('Color', 'w');
 
 snapshotTimes = [0.2, 0.5, 1.0];
 
-% Plot the coarse node positions
-for i = 1:length(x_grid)
-    xline(x_grid(i), 'Color', [1, 0, 0, 0.3], 'LineWidth', 0.5);
-end
 hold on
 
 % Plot the numerical and exact solutions
 hNum = plot(x_fine, u_array_fine(:,1), 'b', 'LineWidth', 2);
 hExact = plot(x_fine, uExact(x_fine, t_grid(1)), 'r--', 'LineWidth', 2);
 
-% grid on;
+% grid on already set above
 box on;
 xlabel('x'); ylabel('u');
+xlim([0 L]);
 ylim([-1 1]);
+set(gca, 'XTick', x_grid);
+grid on;
 hDummy = plot(NaN, NaN, 'Color', [1, 0, 0, 0.5], 'LineWidth', 0.5);
 legend([hNum, hExact, hDummy], 'Numerical', 'Exact', 'Nodes', 'Location', 'best')
 
