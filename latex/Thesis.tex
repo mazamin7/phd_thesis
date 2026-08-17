@@ -3635,13 +3635,13 @@ u_0^{\mathrm{ext}}(x-ct)
 \frac12
 u_0^{\mathrm{ext}}(x+ct).
 \]
-Equivalently, this construction can be interpreted through the method of images as an infinite sequence of virtual reflected sources \cite[Chap.~3]{Strauss2009}. These image sources are located at
+Physically, this even periodic extension can be viewed as an infinite set of replicas located at
 \[
 x=2mL\pm\mu,
 \qquad
-m\in\mathbb Z,
+m\in\mathbb Z.
 \]
-whose reflections preserve the sign of the wave. This construction exactly reproduces the multiple reflections occurring at the Neumann boundaries. This experiment evaluates the propagation accuracy of the two schemes under repeated Neumann reflections. As in Experiment~1, the FDTD method exhibits the expected exponential convergence of the discretization error. Although the Gaussian pulse is not exactly represented by a finite cosine expansion, its cosine coefficients decay exponentially. Consequently, the PSTD method rapidly reaches machine precision.
+As observed by \citet[Sec.~4.2]{Olver2014}, when a pulse hits one of the ends, its reflection remains upright but becomes a mirror image of the original, preserving the sign of the wave. This construction exactly reproduces the multiple reflections induced by the homogeneous Neumann boundary conditions. This experiment evaluates the propagation accuracy of the two schemes under repeated Neumann reflections. As in Experiment~1, the FDTD method exhibits the expected exponential convergence of the discretization error. Although the Gaussian pulse is not exactly represented by a finite cosine expansion, its cosine coefficients decay exponentially. Consequently, the PSTD method rapidly reaches machine precision.
 
 \begin{figure}[H]
     \centering
@@ -3692,13 +3692,13 @@ u_0^{\mathrm{ext}}(x-ct)
 \frac12
 u_0^{\mathrm{ext}}(x+ct).
 \]
-Equivalently, this construction can be interpreted through the method of images as an infinite sequence of virtual reflected sources \cite[Chap.~3]{Strauss2009} located at
+Physically, this even periodic extension corresponds to an infinite set of replicas located at
 \[
 x=2mL\pm\mu,
 \qquad
-m\in\mathbb Z,
+m\in\mathbb Z.
 \]
-whose reflections preserve the sign of the wave. This construction exactly reproduces the multiple reflections induced by the homogeneous Neumann boundary conditions. This benchmark evaluates the behavior of the two methods for propagating solutions with limited spatial regularity and sharp gradients. The FDTD method again exhibits the expected exponential convergence of the discretization error. Since the solution is non-smooth, the cosine coefficients decay only algebraically, leading the PSTD method to exhibit algebraic convergence.
+As noted in \cite[Sec.~4.2]{Olver2014}, when a pulse hits one of the ends it reflects as an upright mirror image, preserving the sign of the wave. This construction exactly reproduces the multiple reflections induced by the homogeneous Neumann boundary conditions. This benchmark evaluates the behavior of the two methods for propagating solutions with limited spatial regularity and sharp gradients. The FDTD method again exhibits the expected exponential convergence of the discretization error. Since the solution is non-smooth, the cosine coefficients decay only algebraically, leading the PSTD method to exhibit algebraic convergence.
 
 \begin{figure}[H]
     \centering
