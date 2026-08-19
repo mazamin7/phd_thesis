@@ -411,7 +411,7 @@ Although the telegrapher damping term is not useful for reproducing atmospheric 
 \section{Damped Wave Equation}
 
 In this chapter we consider the one-dimensional damped wave equation
-\begin{equation}
+\begin{equation} \label{eq:wave}
 u_{tt}
 +\gamma u_t
 =
@@ -421,7 +421,6 @@ c^2u_{xx}
 f,
 \qquad
 x\in(0,L),\quad t>0,
-\label{eq:wave}
 \end{equation}
 where \(u(x,t)\) denotes the wave field, \(c>0\) is the wave propagation velocity [m/s], \(\gamma\ge0\) is the coefficient of telegrapher damping [1/s], and \(\nu\ge0\) is the coefficient of viscoelastic damping [m$^2$/s]. The source term is
 denoted by \(f(x,t)\).
@@ -572,7 +571,7 @@ Substituting these expressions into \eqref{eq:wave} gives
 -c^2k^2u
 -i\nu\omega k^2u.
 \end{equation*}
-Since \(u\neq0\), dividing \eqref{eq:subst_disp} by \(u\) yields
+Since \(u\neq0\), dividing by \(u\) yields
 \begin{equation*}
 -\omega^2+i\gamma\omega
 =
@@ -1153,7 +1152,7 @@ B_{\mathrm{int}}
 C_{\mathrm{int}}
 &=
 -\left(1-\frac{\gamma\Delta t}{2}\right)\mathbf{I}
-+
+-
 \frac{\nu\Delta t}{2\Delta x^2} \mathbf{D}_2,
 \end{align*}
 where $\mathbf{I}$ is the identity matrix and $\mathbf{D}_2 = \operatorname{tridiag}(1, -2, 1)$ is the standard discrete Laplacian matrix.
@@ -1250,13 +1249,13 @@ Substituting these relations into the interior scalar scheme \eqref{eq:fdtd_scal
 \begin{align*}
 [A_{\mathrm{bc}}]_{0, :} &= \left[ 1+\frac{\gamma\Delta t}{2}+\frac{\nu\Delta t}{\Delta x^2}, -\frac{\nu\Delta t}{\Delta x^2}, 0, \dots, 0 \right], \\
 [B_{\mathrm{bc}}]_{0, :} &= \left[ 2-\frac{2c^2\Delta t^2}{\Delta x^2}, \frac{2c^2\Delta t^2}{\Delta x^2}, 0, \dots, 0 \right], \\
-[C_{\mathrm{bc}}]_{0, :} &= \left[ -\left(1-\frac{\gamma\Delta t}{2}\right) - \frac{\nu\Delta t}{\Delta x^2}, \frac{\nu\Delta t}{\Delta x^2}, 0, \dots, 0 \right],
+[C_{\mathrm{bc}}]_{0, :} &= \left[ -\left(1-\frac{\gamma\Delta t}{2}\right) + \frac{\nu\Delta t}{\Delta x^2}, -\frac{\nu\Delta t}{\Delta x^2}, 0, \dots, 0 \right],
 \end{align*}
 and
 \begin{align*}
 [A_{\mathrm{bc}}]_{N, :} &= \left[ 0, \dots, 0, -\frac{\nu\Delta t}{\Delta x^2}, 1+\frac{\gamma\Delta t}{2}+\frac{\nu\Delta t}{\Delta x^2} \right], \\
 [B_{\mathrm{bc}}]_{N, :} &= \left[ 0, \dots, 0, \frac{2c^2\Delta t^2}{\Delta x^2}, 2-\frac{2c^2\Delta t^2}{\Delta x^2} \right], \\
-[C_{\mathrm{bc}}]_{N, :} &= \left[ 0, \dots, 0, \frac{\nu\Delta t}{\Delta x^2}, -\left(1-\frac{\gamma\Delta t}{2}\right) - \frac{\nu\Delta t}{\Delta x^2} \right].
+[C_{\mathrm{bc}}]_{N, :} &= \left[ 0, \dots, 0, -\frac{\nu\Delta t}{\Delta x^2}, -\left(1-\frac{\gamma\Delta t}{2}\right) + \frac{\nu\Delta t}{\Delta x^2} \right].
 \end{align*}
 
 The resulting boundary contribution incorporating the source terms is
@@ -4161,7 +4160,7 @@ c^2[u]\delta_\Gamma'
 \nu[\dot u]\delta_\Gamma'.
 \end{equation*}
 
-Therefore, the independent subdomain solutions satisfy the original wave equation everywhere except at the interface $\Gamma$, where the missing physical coupling appears as a sum of two singular dipole distributions: a stiffness jump ($c^2[u]$) and a viscous jump ($\nu[\dot u]$). Recovering the exact monolithic solution is therefore equivalent to explicitly restoring this combined singular interface source, effectively gluing the disconnected subdomains back together by enforcing the continuity of the fields across $\Gamma$.
+Therefore, the independent subdomain solutions satisfy the original wave equation everywhere except at the interface $\Gamma$, where the missing physical coupling appears as a sum of two singular dipole distributions: a stiffness jump ($c^2[u]$) and a viscous jump ($\nu[\dot u]$). Recovering the exact monolithic solution is therefore equivalent to explicitly restoring this combined singular interface source, effectively enforcing the continuity of the fields in the subdomains across $\Gamma$.
 
 \subsection{A General Strang Splitting Formulation}
 

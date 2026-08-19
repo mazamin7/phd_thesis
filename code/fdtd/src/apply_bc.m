@@ -295,31 +295,31 @@ end
 function rhs = neumannGhost_rhs(c,t,Nx,dx,dt,nu,gLeft,gRight)
 rhs = zeros(Nx,1);
 rhs(1) = -2*c^2*dt^2/dx * gLeft(t) - nu*dt/dx * (gLeft(t+dt) - gLeft(t-dt));
-rhs(end) = 2*c^2*dt^2/dx * gRight(t) - nu*dt/dx * (gRight(t+dt) - gRight(t-dt));
+rhs(end) = 2*c^2*dt^2/dx * gRight(t) + nu*dt/dx * (gRight(t+dt) - gRight(t-dt));
 end
 
 function rhs = robinGhost_rhs(c,t,Nx,dx,dt,nu,gLeft,gRight)
 rhs = zeros(Nx,1);
-rhs(1) = 2*c^2*dt^2/dx * gLeft(t) - nu*dt/dx * (gLeft(t+dt) - gLeft(t-dt));
-rhs(end) = 2*c^2*dt^2/dx * gRight(t) - nu*dt/dx * (gRight(t+dt) - gRight(t-dt));
+rhs(1) = 2*c^2*dt^2/dx * gLeft(t) + nu*dt/dx * (gLeft(t+dt) - gLeft(t-dt));
+rhs(end) = 2*c^2*dt^2/dx * gRight(t) + nu*dt/dx * (gRight(t+dt) - gRight(t-dt));
 end
 
 function rhs = robinNeumannGhost_rhs(c,t,Nx,dx,dt,nu,gLeft,gRight)
 rhs = zeros(Nx,1);
-rhs(1) = 2*c^2*dt^2/dx * gLeft(t) - nu*dt/dx * (gLeft(t+dt) - gLeft(t-dt));
-rhs(end) = 2*c^2*dt^2/dx * gRight(t) - nu*dt/dx * (gRight(t+dt) - gRight(t-dt));
+rhs(1) = 2*c^2*dt^2/dx * gLeft(t) + nu*dt/dx * (gLeft(t+dt) - gLeft(t-dt));
+rhs(end) = 2*c^2*dt^2/dx * gRight(t) + nu*dt/dx * (gRight(t+dt) - gRight(t-dt));
 end
 
 function rhs = neumannRobinGhost_rhs(c,t,Nx,dx,dt,nu,gLeft,gRight)
 rhs = zeros(Nx,1);
 rhs(1) = -2*c^2*dt^2/dx * gLeft(t) - nu*dt/dx * (gLeft(t+dt) - gLeft(t-dt));
-rhs(end) = 2*c^2*dt^2/dx * gRight(t) - nu*dt/dx * (gRight(t+dt) - gRight(t-dt));
+rhs(end) = 2*c^2*dt^2/dx * gRight(t) + nu*dt/dx * (gRight(t+dt) - gRight(t-dt));
 end
 
 function rhs = robinBdfNeumannGhost_rhs(c,t,Nx,dx,dt,nu,gLeft,gRight)
 rhs = zeros(Nx,1);
 rhs(1) = gLeft(t+dt);
-rhs(end) = 2*c^2*dt^2/dx * gRight(t) - nu*dt/dx * (gRight(t+dt) - gRight(t-dt));
+rhs(end) = 2*c^2*dt^2/dx * gRight(t) + nu*dt/dx * (gRight(t+dt) - gRight(t-dt));
 end
 
 function rhs = neumannGhostRobinBdf_rhs(c,t,Nx,dx,dt,nu,gLeft,gRight)
