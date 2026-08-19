@@ -3624,7 +3624,7 @@ while
 f(x,t)=0.
 \]
 
-The reference solution is obtained by applying d'Alembert's formula to the even $2L$-periodic extension of the initial data \cite[Sec.~4.2]{Olver2014}. More precisely, the initial condition is extended to an even $2L$-periodic function, $u_0^{\mathrm{ext}}(x)$, which automatically satisfies the homogeneous Neumann boundary conditions. The exact solution is therefore
+The reference solution is obtained by applying d'Alembert's formula to the even $2L$-periodic extension of the initial data \cite[Sec.~4.2]{olver_introduction_2014}. More precisely, the initial condition is extended to an even $2L$-periodic function, $u_0^{\mathrm{ext}}(x)$, which automatically satisfies the homogeneous Neumann boundary conditions. The exact solution is therefore
 \[
 u(x,t)
 =
@@ -3681,7 +3681,7 @@ while the initial velocity and forcing vanish,
 f(x,t)=0.
 \]
 
-As in the previous experiment, the reference solution is obtained by applying d'Alembert's formula to the even $2L$-periodic extension of the initial data \cite[Sec.~4.2]{Olver2014}. The initial triangular profile is extended to an even $2L$-periodic function, $u_0^{\mathrm{ext}}(x)$, yielding the exact solution
+As in the previous experiment, the reference solution is obtained by applying d'Alembert's formula to the even $2L$-periodic extension of the initial data \cite[Sec.~4.2]{olver_introduction_2014}. The initial triangular profile is extended to an even $2L$-periodic function, $u_0^{\mathrm{ext}}(x)$, yielding the exact solution
 \[
 u(x,t)
 =
@@ -3697,7 +3697,7 @@ x=2mL\pm\mu,
 \qquad
 m\in\mathbb Z.
 \]
-As noted in \cite[Sec.~4.2]{Olver2014}, when a pulse hits one of the ends it reflects as an upright mirror image, preserving the sign of the wave. This construction exactly reproduces the multiple reflections induced by the homogeneous Neumann boundary conditions. This benchmark evaluates the behavior of the two methods for propagating solutions with limited spatial regularity and sharp gradients. The FDTD method again exhibits the expected exponential convergence of the discretization error. Since the solution is non-smooth, the cosine coefficients decay only algebraically, leading the PSTD method to exhibit algebraic convergence.
+As noted in \cite[Sec.~4.2]{olver_introduction_2014}, when a pulse hits one of the ends it reflects as an upright mirror image, preserving the sign of the wave. This construction exactly reproduces the multiple reflections induced by the homogeneous Neumann boundary conditions. This benchmark evaluates the behavior of the two methods for propagating solutions with limited spatial regularity and sharp gradients. The FDTD method again exhibits the expected exponential convergence of the discretization error. Since the solution is non-smooth, the cosine coefficients decay only algebraically, leading the PSTD method to exhibit algebraic convergence.
 
 \begin{figure}[H]
     \centering
@@ -4649,7 +4649,7 @@ In conclusion, the integration of pseudo-spectral methods, advanced domain decom
 \chapter{Appendix A - Closed-form Expressions of the Modal Propagators}
 \label{app:A}
 
-This appendix derives the closed-form expressions of the matrices \(S_m\) and \(T_m\), respectively defined in \eqref{eq:modal_ODE_matrix_S} and \eqref{eq:modal_ODE_matrix_T}, associated with the exact time integration of the modal ordinary differential equations. For convenience, we recall their definitions:
+This appendix derives the closed-form expressions of the matrices \(S_m\) and \(T_m\), respectively introduced in Chapter 2, associated with the exact time integration of the modal ordinary differential equations. For convenience, we recall their definitions:
 \begin{equation*}
 S_m=e^{A_m\Delta t},
 \end{equation*}
