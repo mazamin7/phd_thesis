@@ -571,7 +571,7 @@ Substituting these expressions into \eqref{eq:wave} gives
 -c^2k^2u
 -i\nu\omega k^2u.
 \end{equation*}
-Since \(u\neq0\), dividing by \(u\) yields
+Since \(u\neq0\), dividing the above equation by \(u\) yields
 \begin{equation*}
 -\omega^2+i\gamma\omega
 =
@@ -4378,7 +4378,11 @@ Conversely, when the time step slightly exceeds the theoretical limit, the insta
 
 \subsubsection{Convergence of the Interface Correction Operator}
 
-To evaluate the accuracy of the proposed explicit interface correction operator, we quantify the $L^\infty$ domain decomposition error (computed as the maximum absolute difference between the monolithic PSTD reference solution and the ARD-PSTD solution) as a function of the interface spatial order and grid resolution. The domain $\Omega=(0,L)$ is decomposed into two non-overlapping subdomains, and the ARD interface operator is applied with varying stencil sizes (Order 2, 4, 6, and 8). The experiments encompass the same six configurations with differing source smoothness and damping profiles utilized in the previous section:
+To evaluate the accuracy of the proposed explicit interface correction operator, we quantify the $L^\infty$ domain decomposition error, defined as
+\begin{equation*}
+E_{\infty} = \max_{j,n} \left| u_{j,n}^{\text{mono}} - u_{j,n}^{\text{ARD}} \right|,
+\end{equation*}
+as a function of the interface spatial order and grid resolution. The domain $\Omega=(0,L)$ is decomposed into two non-overlapping subdomains, and the ARD interface operator is applied with varying stencil sizes (Order 2, 4, 6, and 8). The experiments encompass the same six configurations with differing source smoothness and damping profiles utilized in the previous section:
 
 \begin{enumerate}
     \item Smooth standing wave (undamped)
