@@ -3703,7 +3703,6 @@ This experiment investigates the effect of reduced spatial regularity on the con
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Smooth Propagating Waves (Undamped)}
-This experiment evaluates the propagation accuracy of the two schemes under repeated Neumann reflections. As in Experiment~1, the FDTD method exhibits the expected exponential convergence of the discretization error. Although the Gaussian pulse is not exactly represented by a finite cosine expansion, its cosine coefficients decay exponentially. Consequently, the PSTD method rapidly reaches machine precision.
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{fdtd_snapshots/experiment_5/snapshot_t_0.2000.png} \caption{FDTD $t=0.2$} \end{subfigure}
@@ -3726,7 +3725,6 @@ This experiment evaluates the propagation accuracy of the two schemes under repe
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection{Non-smooth Propagating Waves (Undamped)}
-This benchmark evaluates the behavior of the two methods for propagating solutions with limited spatial regularity and sharp gradients. The FDTD method again exhibits the expected exponential convergence of the discretization error. Since the solution is non-smooth, the cosine coefficients decay only algebraically, leading the PSTD method to exhibit algebraic convergence.
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{fdtd_snapshots/experiment_6/snapshot_t_0.2000.png} \caption{FDTD $t=0.2$} \end{subfigure}
@@ -4070,7 +4068,7 @@ We compare the convergence of the SWR iteration using classical Robin transmissi
     \hfill
     \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/fdtd_snapshots/experiment_4_swr/swr_convergence.png} \caption{Non-smooth standing wave (damped)} \end{subfigure} \\
     \vspace{0.3cm}
-    \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/fdtd_snapshots/experiment_5_swr/swr_convergence.png} \caption{Smooth propagating pulse (undamped) \\ ~} \end{subfigure}
+    \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/fdtd_snapshots/experiment_5_swr/swr_convergence.png} \caption{Smooth propagating pulse (undamped)} \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/fdtd_snapshots/experiment_6_swr/swr_convergence.png} \caption{Non-smooth propagating pulse (undamped)} \end{subfigure}
     \caption{Convergence of the SWR iteration for classical vs optimized Robin transmission conditions under six different initial conditions. In all configurations, the theoretically optimized parameters strictly bound the contraction rate and consistently provide a faster contraction of the error per iteration compared to the non-optimized parameters $q=1/c$ and $r=0$.}
@@ -4436,7 +4434,7 @@ Furthermore, Figure~\ref{fig:ard_convergence_order} illustrates the effect of in
     \hfill
     \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/pstd_snapshots/experiment_4_order/nodal_error_vs_monolithic_order.png} \caption{Non-smooth standing wave (damped)} \end{subfigure} \\
     \vspace{0.3cm}
-    \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/pstd_snapshots/experiment_5_order/nodal_error_vs_monolithic_order.png} \caption{Smooth propagating pulse (undamped) \\ ~} \end{subfigure}
+    \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/pstd_snapshots/experiment_5_order/nodal_error_vs_monolithic_order.png} \caption{Smooth propagating pulse (undamped)} \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/pstd_snapshots/experiment_6_order/nodal_error_vs_monolithic_order.png} \caption{Non-smooth propagating pulse (undamped)} \end{subfigure}
     \caption{Domain decomposition error versus spatial order of the correction operator, evaluated for a fixed grid resolution $N=400$.}
@@ -4519,7 +4517,7 @@ The network parameters and the physical variables are jointly updated by minimiz
 \end{align*}
 where the first term measures the Mean Squared Error (MSE) against the noisy observations, and the second term imposes an $L_1$ sparsity penalty on the initial condition to suppress localized spurious artifacts and alleviate the ill-posedness of the inverse problem. Crucially, the third term introduces a Sobolev $H^1$ smoothness regularization on the predicted initial condition, scaled directly by the physical viscoelastic damping parameter $\nu$. 
 
-The physical justification for this term arises from the modal decomposition of the governing wave equation. As derived in previous sections, the exact modal damping coefficient $d_m$ for the $m$-th spectral mode is given by $d_m = \gamma - \nu \lambda_m = \gamma + \nu k_m^2$, where $\lambda_m = -k_m^2$ is the Laplacian eigenvalue and $k_m$ is the corresponding discrete wavenumber. Because high-frequency modes attenuate at a rate proportional to $\nu k_m^2$, they are rapidly extinguished before reaching the sensors, leaving them entirely unconstrained by the data loss. This lack of constraint causes the SIREN network to introduce artificial high-frequency noise.
+The physical justification for this term arises from the modal decomposition of the governing wave equation. As derived in previous sections, the exact modal damping coefficient $d_m$ for the $m$-th spectral mode is given by $d_m = \gamma - \nu \lambda_m = \gamma + \nu k_m^2$, where $\lambda_m = -k_m^2$ is the Laplacian eigenvalue and $k_m$ is the corresponding discrete wavenumber. Because high-frequency modes attenuate at a rate proportional to $\nu k_m^2$, they are rapidly extinguished before reaching the sensors, leaving them entirely unconstrained by the data loss. This lack of constraint causes the SIREN network to hallucinate invisible high-frequency noise.
 
 To counteract this, we can explicitly analyze the spectral energy of the initial condition. For a one-dimensional domain $[0, L]$ with homogeneous Neumann boundary conditions, the initial condition $u_0(x)$ can be expanded into a discrete cosine series with modal coefficients $U_{0,m}$ and discrete wavenumbers $k_m = m\pi / L$:
 \begin{equation*}
@@ -4539,7 +4537,7 @@ By scaling this gradient penalty by $\nu$, our proposed regularization term beco
 \lambda_{\text{smooth}} \nu \left\| \frac{\partial u_0}{\partial x} \right\|_2^2 \propto \lambda_{\text{smooth}} \sum_{m} \nu k_m^2 |U_{0,m}|^2.
 \end{equation*}
 
-This derivation proves that penalizing the spatial gradient energy $\nu \|\partial_x u_0\|_2^2$ perfectly suppresses high-frequency artifacts proportionally to the exact physics governing the wave. Furthermore, because of Parseval's theorem, we are able to compute this mode-dependent penalty entirely in the spatial domain, gracefully avoiding the need for computationally expensive spectral transforms during the training loop. Gradients are then backpropagated through the numerical solver via automatic differentiation, seamlessly embedding the physical laws into the training process.
+This derivation proves that penalizing the spatial gradient energy $\nu \|\partial_x u_0\|_2^2$ perfectly suppresses high-frequency hallucinations proportionally to the exact physics governing the wave. Furthermore, because of Parseval's theorem, we are able to compute this mode-dependent penalty entirely in the spatial domain, gracefully avoiding the need for computationally expensive spectral transforms during the training loop. Gradients are then backpropagated through the numerical solver via automatic differentiation, seamlessly embedding the physical laws into the training process.
 
 To ensure stable and precise convergence during training, we deploy two independent Adam optimizers. Because the physical variables ($\tilde{\gamma}$, $\tilde{\nu}$) are mapped exponentially and govern macroscopic physical damping, their loss landscape is highly non-linear. Coupling their optimization momentum directly with the millions of SIREN weights often leads to severe oscillatory behavior or overshooting. By entirely decoupling the optimizers, we assert strict independent control over their learning rate trajectories using Cosine Annealing schedules.
 
@@ -4552,17 +4550,11 @@ While this work focuses on estimating the initial condition and the global dampi
 To validate the proposed Differentiable Physics Neural Network (DPNN) architecture and benchmark the performance of the exact PSTD solver against the conventional FDTD method within an inverse problem setting, we conduct a series of one-dimensional numerical experiments. The overarching goal is to simultaneously reconstruct an unknown initial pressure field $p_0(x)$ and accurately estimate the macroscopic viscoelastic damping parameters $\gamma$ and $\nu$ from sparse, noisy sensor measurements.
 
 The physical domain is defined over the interval $x \in [0, L]$ with $L = 2.0$\,m, simulated over a temporal window $T = 2.0$\,s. We employ a spatial resolution of $\Delta x = 0.05$\,m and a time step $\Delta t = 0.05$\,s. The true viscoelastic damping parameters governing the ground-truth data generation are set to $\gamma = 0.1$ and $\nu = 0.005$. The wave propagation is recorded by $N_{\text{sensors}} = 10$ sensors randomly distributed across the physical domain. To simulate realistic and challenging acquisition conditions, independent Gaussian noise is superimposed on the sensor data, yielding a Signal-to-Noise Ratio (SNR) of 30\,dB.
-For all experiments, we impose homogeneous Neumann boundary conditions at both ends of the domain, $\partial_x u(0,t) = \partial_x u(L,t) = 0$, and assume a zero initial velocity field, $\partial_t u(x,0) = 0$, with no external forcing, $f(x,t) = 0$.
 The initial condition $p_0(x)$ is parameterized by a SIREN network consisting of 3 hidden layers with 32 features each. The optimization is performed over 500 epochs using two independent Adam optimizers for the neural network weights and the physical parameters, leveraging the Cosine Annealing schedules discussed previously. The loss function regularization weights are strictly fixed across all experiments to $\lambda_{\mathrm{data}} = 1.0$, $\lambda_{\text{sp}} = 0.005$, and $\lambda_{\text{smooth}} = 0.1$. 
 We evaluate the robustness of the regularized inversion framework against three increasingly challenging initial conditions.
 
 \newpage
 \subsubsection{Experiment 1: Standing Waves}
-In the first configuration, the initial condition is defined as a superposition of the first five cosine modes,
-\[
-u(x,0) = \sum_{m=1}^{5} \cos\left(\frac{m \pi x}{L}\right).
-\]
-
 The standing waves experiment provides a baseline evaluation of spectral recovery. Because the physical damping rapidly extinguishes higher-order modes, the highest frequencies of the standing wave are barely registered by the sparse sensor array. Figure~\ref{fig:0_metrics} illustrates the robust convergence of both solvers, with the physical parameters $\gamma$ and $\nu$ converging to values close to the true ones. Figure~\ref{fig:0_u0} confirms that the PSTD and FDTD solvers can successfully recover the continuous initial condition. The spacetime evolution (Figure~\ref{fig:0_spacetime}) highlights how closely both the FDTD and PSTD match the ground truth.
 \begin{figure}[H]
     \centering
@@ -4587,11 +4579,6 @@ The standing waves experiment provides a baseline evaluation of spectral recover
 
 \newpage
 \subsubsection{Experiment 2: Smooth Pulses}
-In the second configuration, the initial condition is a smooth Gaussian pulse centered at $\mu = L/2$ with width parameter $\sigma = L/20$. To exactly satisfy the homogeneous Neumann boundary conditions without truncation artifacts, it is constructed as an even $2L$-periodic extension,
-\[
-u(x,0) = \sum_{m=-5}^{5} \frac{1}{2} \exp\left(-\frac{1}{2}\left(\frac{x - (2mL + \mu)}{\sigma}\right)^2\right) + \frac{1}{2} \exp\left(-\frac{1}{2}\left(\frac{x - (2mL - \mu)}{\sigma}\right)^2\right).
-\]
-
 The smooth pulse initial condition introduces spatial sparsity, activating the $L_1$ regularization. The results (Figures~\ref{fig:1_metrics} to~\ref{fig:1_spacetime}) show that the combination of sparsity and Sobolev smoothness elegantly prevents spurious ringing in the void regions, allowing the neural network to strictly localize the energy of the pulses. The two methods perform equally well.
 \begin{figure}[H]
     \centering
@@ -4616,12 +4603,7 @@ The smooth pulse initial condition introduces spatial sparsity, activating the $
 
 \newpage
 \subsubsection{Experiment 3: Triangle Pulses (Non-smooth)}
-The final experiment considers a non-smooth triangular pulse, also centered at $\mu = L/2$ with support determined by $\sigma = L/20$. Similar to the Gaussian pulse, it is constructed using an even $2L$-periodic extension,
-\[
-u(x,0) = \sum_{m=-5}^{5} \frac{1}{2} \max\left(1 - \frac{|x - (2mL + \mu)|}{\sigma}, 0\right) + \frac{1}{2} \max\left(1 - \frac{|x - (2mL - \mu)|}{\sigma}, 0\right).
-\]
-
-The final experiment pushes the DPNN framework to its limits by forcing the SIREN network, an inherently infinitely differentiable ($C^\infty$) function, to fit a $C^0$ non-smooth initial condition. Figures~\ref{fig:2_metrics} to~\ref{fig:2_spacetime} showcase the remarkable robustness of the carefully calibrated Sobolev $H^1$ regularization, which helps suppressing unphysical high-frequency artifacts without over-smoothing the genuine macroscopic sharp edges of the triangle pulses. The PSTD solver's capacity to transport these sharp gradients without numerical dispersion yields a significantly higher fidelity spacetime reconstruction than the standard FDTD approach, which instead shows high-frequency artifacts.
+The final experiment pushes the DPNN framework to its limits by forcing the SIREN network, an inherently infinitely differentiable ($C^\infty$) function, to fit a $C^0$ non-smooth initial condition. Figures~\ref{fig:2_metrics} to~\ref{fig:2_spacetime} showcase the remarkable robustness of the carefully calibrated Sobolev $H^1$ regularization, which helps suppressing unphysical high-frequency hallucinations without over-smoothing the genuine macroscopic sharp edges of the triangle pulses. The PSTD solver's capacity to transport these sharp gradients without numerical dispersion yields a significantly higher fidelity spacetime reconstruction than the standard FDTD approach, which instead shows high-frequency artifacts.
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Images/dpnn/2_Triangle_metrics.pdf}
@@ -4652,7 +4634,7 @@ The first major contribution of this work was the derivation and analysis of a f
 
 To scale these methods across distributed computing architectures, we investigated two distinct domain decomposition paradigms. First, we derived the Optimized Schwarz Waveform Relaxation (OSWR) method for the damped wave equation. Through a rigorous continuous min-max analysis, we computed optimal Robin transmission conditions that significantly accelerated the iteration contraction rate compared to classical approaches. Subsequently, we extended the Adaptive Rectangular Decomposition (ARD) method to both FDTD and PSTD frameworks. By replacing traditional interface boundary conditions with a localized, explicit correction operator, we circumvented the need for iterative solvers while maintaining conditional stability. We demonstrated that extending the spatial order of the correction operator yields excellent convergence for smooth wavefields, while properly isolating spectral noise for highly discontinuous profiles.
 
-Finally, we bridged the gap between forward numerical modeling and inverse problem solving by introducing a Differentiable Physics Neural Network (DPNN) architecture. By directly embedding the exact, differentiable PSTD solver into the training loop of a Sinusoidal Representation Network (SIREN), we successfully reconstructed unknown, non-smooth initial pressure fields while jointly recovering the macroscopic physical damping parameters from sparse sensor data. A mathematically rigorously derived Sobolev $H^1$ smoothness penalty gracefully suppressed high-frequency artifacts without smearing out sharp discontinuities, significantly outperforming purely data-driven black-box inversions.
+Finally, we bridged the gap between forward numerical modeling and inverse problem solving by introducing a Differentiable Physics Neural Network (DPNN) architecture. By directly embedding the exact, differentiable PSTD solver into the training loop of a Sinusoidal Representation Network (SIREN), we successfully reconstructed unknown, non-smooth initial pressure fields while jointly recovering the macroscopic physical damping parameters from sparse sensor data. A mathematically rigorously derived Sobolev $H^1$ smoothness penalty gracefully suppressed high-frequency hallucinations without smearing out sharp discontinuities, significantly outperforming purely data-driven black-box inversions.
 
 In conclusion, the integration of pseudo-spectral methods, advanced domain decomposition techniques, and differentiable physics provides a robust, scalable, and highly accurate framework for modeling and reversing complex wave phenomena. Future work will focus on extending these methodologies to higher spatial dimensions, exploring heterogeneous media where modal decomposition becomes coupled, and applying the DPNN architecture to real-world acoustic and medical imaging scenarios.
 
