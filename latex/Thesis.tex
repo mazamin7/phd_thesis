@@ -76,13 +76,14 @@
 %\usepackage[square, numbers, sort&compress]{natbib} % Square brackets, citing references with numbers, citations sorted by appearance in the text and compressed
 \usepackage[authoryear]{natbib}
 %\bibliographystyle{abbrvnat} % You may use a different style adapted to your field
-\bibliographystyle{unsrtnat}
+\bibliographystyle{unsrtnat-nourl}
 
 % OTHER PACKAGES
 \usepackage{pdfpages} % To include a pdf file
 \usepackage{afterpage}
 \usepackage{lipsum} % DUMMY PACKAGE
 \usepackage{fancyhdr} % For the headers
+\usepackage{comment}
 
 \fancyhf{}
 
@@ -128,11 +129,11 @@
 \puttitle{
 	title=Domain Decomposition and Differentiable Physics for the Viscoelastic Wave Equation, % Title of the thesis
 	name=Gerardo Cicalese, % Author Name and Surname
-	course=Mathematical Models and Methods in Engineering - Modelli Matematici e Metodi per l'Ingegneria, % Study Programme (in Italian)
+	course=Mathematical Models and Methods in Engineering - Modelli e Metodi Matematici per l'Ingegneria, % Study Programme (in Italian)
 	ID  = 10776504,  % Student ID number (numero di matricola)
 	advisor= Prof. Ilario Mazzieri, % Supervisor name
 	coadvisor={Prof. Gabriele Ciaramella, Prof. Fabio Antonacci}, % Co-Supervisor name, remove this line if there is none
-	academicyear={2025-26},  % Academic Year
+	academicyear={39},  % Academic Year
 } % These info will be put into your Title page 
 
 %----------------------------------------------------------------------------
@@ -347,9 +348,9 @@ The final contribution concerns the solution of inverse problems and combines do
 \section{Organization of the Thesis}
 The remainder of the thesis is organized as follows.
 
-Chapter~2 motivates the choice of the partial differential equation considered throughout the thesis, namely the damped wave equation. Its physical properties are then discussed, including the associated dispersion relation and attenuation law, different types of boundary conditions, and its eigenfunction decomposition. The numerical methods employed in the subsequent chapters are subsequently presented, namely the Finite-Difference Time-Domain (FDTD) method and the Pseudospectral Time-Domain (PSTD) formulation underlying Adaptive Rectangular Decomposition (ARD), together with their analysis and numerical validation.
+Chapter~2 motivates the choice of the partial differential equation considered throughout the thesis, namely the damped wave equation. Its physical properties are then discussed, including the associated dispersion relation and attenuation law, different types of boundary conditions, and its eigenfunction decomposition. The numerical methods employed in the subsequent chapters are subsequently presented, namely the Finite-Difference Time-Domain (FDTD) method and the Pseudospectral Time-Domain (PSTD) formulation underlying Adaptive Rectangular Decomposition (ARD), together with their analysis and numerical experiments.
 
-Chapter~3 presents the proposed acceleration techniques. It first develops Optimized Schwarz Waveform Relaxation (OSWR) methods for the damped wave equation, including the theoretical convergence analysis, the derivation of optimized transmission conditions, and their numerical validation. The chapter then introduces an extension of Adaptive Rectangular Decomposition to damped wave propagation and analyzes its accuracy and computational performance. Finally, a Differentiable Physics Neural Network (DPNN) architecture based on the proposed ARD solver is presented for sound field reconstruction, and its performance is assessed through numerical experiments.
+Chapter~3 presents the proposed acceleration techniques. It first develops Optimized Schwarz Waveform Relaxation (OSWR) methods for the damped wave equation, including the theoretical convergence analysis, the derivation of optimized transmission conditions, and their numerical experiments. The chapter then introduces an extension of Adaptive Rectangular Decomposition to damped wave propagation and analyzes its accuracy and computational performance. Finally, a Differentiable Physics Neural Network (DPNN) architecture based on the proposed ARD solver is presented for sound field reconstruction, and its performance is assessed through numerical experiments.
 
 Chapter~4 summarizes the main conclusions of the thesis and discusses possible directions for future research.
 
@@ -4478,7 +4479,7 @@ Furthermore, Figure~\ref{fig:ard_convergence_order} illustrates the effect of in
     \label{fig:ard_convergence_order}
 \end{figure}
 
-\subsubsection{3D Numerical Validation}
+\subsubsection{3D Numerical Experiments}
 
 To demonstrate the capability of the proposed ARD solver in higher dimensions, we simulate the damped wave equation on a 3D computational domain composed of three interconnected rectangular subdomains. The physical dimensions are defined using a uniform spatial discretization step $\Delta h = 0.2$\,m. The three connected regions are parameterized by their grid offsets $(x_0, y_0, z_0)$ and grid dimensions $(N_x, N_y, N_z)$, yielding the sequence of connected subdomains depicted in Figure~\ref{fig:ard_3d_geometry}. 
 \begin{figure}[H]
@@ -5291,9 +5292,10 @@ d_m^2+4c^2\lambda_m>0,
 \end{equation*}
 the discriminant \(\delta_m\) is real, and equation~\eqref{eq:SmUnified} directly provides the overdamped propagator in terms of hyperbolic functions. No further specialization is required.
 
+\begin{comment}
 \chapter{Appendix B}
 It may be necessary to include another appendix to better organize the presentation of supplementary material.
-
+\end{comment}
 
 % LIST OF FIGURES
 \listoffigures
@@ -5301,6 +5303,7 @@ It may be necessary to include another appendix to better organize the presentat
 % LIST OF TABLES
 \listoftables
 
+\begin{comment}
 % LIST OF SYMBOLS
 % Write out the List of Symbols in this page
 \chapter*{List of Symbols} % You have to include a chapter for your list of symbols (
@@ -5312,10 +5315,11 @@ It may be necessary to include another appendix to better organize the presentat
         $\bm{u}_f$ & fluid displacement & m \\[2px]
     \end{tabular}
 \end{table}
+\end{comment}
 
 % ACKNOWLEDGEMENTS
 \chapter*{Acknowledgements}
-Here you might want to acknowledge someone.
+\lipsum[0-3]
 
 \cleardoublepage
 
