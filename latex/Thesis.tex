@@ -4102,9 +4102,44 @@ To definitively validate the theoretical min-max optimization problem (Equation~
     \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=\textwidth]{Images/fdtd_snapshots/swr_parameters/swr_empirical_error.png} \caption{Measured empirical error.} \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=\textwidth]{Images/fdtd_snapshots/swr_parameters/swr_predicted_rho.png} \caption{Predicted max convergence factor.} \end{subfigure}
-    \caption{Comparison of the empirically measured optimum error versus the theoretical continuous optimum over the parameter space $(q,r)$. The theoretically predicted optimal parameters match the numerical optimum.}
+    \caption{Comparison of the empirically measured optimum error versus the theoretical continuous optimum over the parameter space $(q,r)$.}
     \label{fig:oswr_empirical_vs_theoretical}
 \end{figure}
+
+\subsection{Extension to Two-Dimensional Domains}
+
+The convergence analysis and optimization of the Schwarz Waveform Relaxation method can be naturally extended to higher-dimensional domains. Let us consider the damped wave equation in two spatial dimensions $(x, y)$, where the domain is partitioned along the $x$-axis into two overlapping subdomains $\Omega_1 = (0, b) \times (0, L_y)$ and $\Omega_2 = (a, L_x) \times (0, L_y)$.
+
+The error equations for the 2D problem are given by
+\begin{equation*}
+u_{tt} + \gamma u_t = c^2 (u_{xx} + u_{yy}) + \nu (u_{xxt} + u_{yyt}), \qquad (x,y) \in \Omega, \ t > 0.
+\end{equation*}
+
+Applying a Fourier transform along the transverse $y$-direction (with spatial wavenumber $k_y$) and a Laplace transform in time (with complex frequency $s$), the transformed error equation reduces to an ordinary differential equation in $x$:
+\begin{equation*}
+(s^2 + \gamma s) \hat{u} = (c^2 + \nu s) (\hat{u}_{xx} - k_y^2 \hat{u}).
+\end{equation*}
+Rearranging the terms, we obtain the characteristic equation governing the spatial modes along the decomposition axis:
+\begin{equation*}
+\hat{u}_{xx} = K(s, k_y)^2 \hat{u},
+\end{equation*}
+where the modified dispersion relation is defined as
+\begin{equation*}
+K(s, k_y) = \sqrt{ \frac{s^2 + \gamma s}{c^2 + \nu s} + k_y^2 }.
+\end{equation*}
+
+This structure is mathematically equivalent to the one-dimensional case, with the continuous spectral argument $K(s)$ simply replaced by $K(s, k_y)$. Consequently, the analytical expression for the convergence factor $\rho(s, k_y; q, r)$ mirrors the 1D derivation perfectly. The transmission parameters $(q, r)$ can therefore be optimized for two-dimensional problems by minimizing the maximum of the convergence factor across the relevant range of both the temporal frequencies $\omega$ (where $s = i\omega$) and the transverse spatial frequencies $k_y$ supported by the underlying numerical grid.
+
+To definitively validate this extended theoretical framework, we implement the overlapping decomposition for the FDTD method on a 2D Cartesian grid. The subdomains exchange data via the second-order BDF Robin discretization applied independently along each row of the artificial interfaces. The experiment is conducted on a $\Omega = [0, \pi] \times [0, \pi]$ domain discretized with a $30 \times 30$ grid. The domain is split into two overlapping subdomains with an overlap size of $\delta = 2 \Delta x$. To rigorously test the robustness of the optimized parameters across difficult dissipative regimes, we configure the simulation with a significant viscoelastic damping factor ($\nu = 1.0$) alongside a baseline telegrapher damping ($\gamma = 0.5$). We employ as initial conditions a superposition of several high-frequency spatial modes of the form $\sum_{m,n} (mn)^{-2} \sin(m x) \sin(n y)$.
+
+Figure~\ref{fig:oswr_convergence_comparison_2d} tracks the global $L_\infty$ error as a function of the Schwarz iteration count. It compares the convergence history of the unoptimized classical Robin transmission conditions ($q=1/c, r=0$) against the optimally tuned parameters $q^\ast$ and $r^\ast$. Utilizing the numerically optimized transmission condition parameters significantly accelerates the solver convergence.
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Images/fdtd_snapshots/swr_parameters/swr_convergence_comparison_2d.png}
+    \caption{Comparison of the convergence rates of the SWR iteration for the 2D wave equation between unoptimized classical Robin parameters and the theoretically optimized configuration. The optimized parameters rapidly contract the iteration error towards the spatial discretization floor.}
+    \label{fig:oswr_convergence_comparison_2d}
+\end{figure}
+
 
 \section{Adaptive Rectangular Decomposition}
 \label{sec:ard}

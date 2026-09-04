@@ -1,0 +1,10 @@
+﻿addpath('src');
+L = 1; T = 2; dx = L/100; dt = 0.5*dx; c = 1.0; gamma = 0.5; nu = 0; q = 1/c; r = 0;
+uExact = @(x,t) cos(pi*x) .* exp(-0.5*t) .* cos(t);
+u0_fun = @(x) uExact(x,0);
+v0_fun = @(x) zeros(size(x));
+f_fun = @(x,t) zeros(size(x));
+[~,~,u_mono] = solver(u0_fun, v0_fun, f_fun, dx, dt, L, T, c, gamma, nu, 'neumannGhost', 0, 0, @(t)0, @(t)0);
+[~,~,u_iter] = swr_solver(u0_fun, v0_fun, f_fun, dx, dt, L, T, c, gamma, nu, q, r, L/5, 10);
+err = norm(u_iter(:,end,end) - u_mono(:,end), inf);
+fprintf('1D Error floor: %.4e\n', err);
