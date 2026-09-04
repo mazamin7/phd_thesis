@@ -4443,6 +4443,135 @@ Furthermore, Figure~\ref{fig:ard_convergence_order} illustrates the effect of in
     \label{fig:ard_convergence_order}
 \end{figure}
 
+\subsubsection{3D Numerical Validation}
+
+To demonstrate the capability of the proposed ARD solver in higher dimensions, we simulate the damped wave equation on a 3D computational domain composed of three interconnected rectangular subdomains. The physical dimensions are defined using a uniform spatial discretization step $\Delta h = 0.2$\,m. The three connected regions are parameterized by their grid offsets $(x_0, y_0, z_0)$ and grid dimensions $(N_x, N_y, N_z)$, yielding the sequence of connected subdomains depicted in Figure~\ref{fig:ard_3d_geometry}. 
+\begin{figure}[H]
+    \centering
+    \begin{tikzpicture}[scale=1.5,
+        sd/.style={draw, thick, fill=blue!10},
+        dim/.style={latex-latex, thin}
+        ]
+        
+        % Axes
+        \draw[->] (-0.5,0) -- (6.5,0) node[right] {$x$ (m)};
+        \draw[->] (0,-0.5) -- (0,6.5) node[above] {$y$ (m)};
+        
+        % Subdomain 1
+        \draw[sd] (0,0) rectangle (6,2);
+        
+        % Subdomain 2
+        \draw[sd] (0.4,2) rectangle (5.6,4);
+        
+        % Subdomain 3
+        \draw[sd] (1.0,4) rectangle (5.0,6);
+        
+        % Grid or ticks
+        \foreach \x in {1,2,3,4,5,6} \draw (\x,0.05) -- (\x,-0.05) node[below] {\footnotesize \x};
+        \foreach \y in {2,4,6} \draw (0.05,\y) -- (-0.05,\y) node[left] {\footnotesize \y};
+        \draw (0.4, 2.05) -- (0.4, 1.95) node[below] {\footnotesize 0.4};
+        \draw (5.6, 2.05) -- (5.6, 1.95) node[below] {\footnotesize 5.6};
+        
+        % Indicate Z thickness
+        \node[anchor=west] at (5, 5.5) {$L_z = 2.0$\,m};
+        
+        % Source location
+        \fill[red] (3,5) circle (1.5pt) node[right, text=red, font=\footnotesize] {Source};
+        
+    \end{tikzpicture}
+    \caption{Top-down ($x$-$y$ plane) projection of the 3D computational domain. The geometry consists of three interconnected subdomains forming a sequence of narrowing corridors, with a uniform thickness $L_z = 2.0$\,m in the $z$-direction.}
+    \label{fig:ard_3d_geometry}
+\end{figure}
+This geometric configuration mimics a complex architectural layout. The physical parameters are set to a wave speed $c = 1$\,m/s and zero telegrapher damping ($\gamma = 0$). 
+
+Instead of a non-zero initial condition, the system is excited from rest by a time-dependent Gaussian point source located at physical coordinates $(x_s, y_s, z_s) = (3.0, 5.0, 0.6)$\,m, which corresponds to grid index $(15, 25, 3)$ situated in the center of Subdomain 3. The time-varying injection signal is defined as
+\[
+S(t) = A \exp\left(-\pi^2 \left( \frac{2 \, \mathrm{CFL} \, t}{6} - 2.0 \right)^2 \right),
+\]
+where $\mathrm{CFL} = c \frac{\Delta t}{\Delta h}$ is the Courant--Friedrichs--Lewy (CFL) number and $A = 10^9$. 
+To simulate an open environment, the outer boundaries of the domain are truncated using a Perfectly Matched Layer (PML) tuned for partial absorption with a reflection coefficient of $0.5$.
+
+To evaluate the solver's response to frequency-dependent dissipation, we conduct the simulation across three different viscoelastic damping coefficients: $\nu \in \{2 \times 10^{-6}, 4 \times 10^{-6}, 10^{-5}\}$. 
+
+Figure~\ref{fig:ard_3d_snapshots} illustrates the temporal evolution of the 3D wavefield. Snapshots are captured at $t=0.04$\,s, $t=0.08$\,s, and $t=0.12$\,s for each damping configuration. As the wave propagates through the interconnected corridors, the ARD solver accurately resolves the interface transitions without introducing artificial reflections. Furthermore, the progressive attenuation and smoothing of the wavefronts scale consistently with the imposed viscoelastic parameter $\nu$, validating the accuracy of the multi-domain pseudospectral time-domain (PSTD) formulation in 3D.
+
+\begin{figure}[H]
+    \centering
+    % ROW 1: t = 0.04s
+    \begin{subfigure}[t]{0.32\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\textwidth]{Images/ard_3d/nu2_t04.png}
+        \caption{$\nu = 2\cdot 10^{-6}$, $t=0.04$\,s}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.32\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\textwidth]{Images/ard_3d/nu4_t04.png}
+        \caption{$\nu = 4\cdot 10^{-6}$, $t=0.04$\,s}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.32\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\textwidth]{Images/ard_3d/nu10_t04.png}
+        \caption{$\nu = 10^{-5}$, $t=0.04$\,s}
+    \end{subfigure}
+    
+    \vspace{0.5cm} % Add some vertical space between rows
+
+    % ROW 2: t = 0.08s
+    \begin{subfigure}[t]{0.32\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\textwidth]{Images/ard_3d/nu2_t08.png}
+        \caption{$\nu = 2\cdot 10^{-6}$, $t=0.08$\,s}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.32\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\textwidth]{Images/ard_3d/nu4_t08.png}
+        \caption{$\nu = 4\cdot 10^{-6}$, $t=0.08$\,s}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.32\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\textwidth]{Images/ard_3d/nu10_t08.png}
+        \caption{$\nu = 10^{-5}$, $t=0.08$\,s}
+    \end{subfigure}
+    
+    \vspace{0.5cm}
+
+    % ROW 3: t = 0.12s
+    \begin{subfigure}[t]{0.32\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\textwidth]{Images/ard_3d/nu2_t12.png}
+        \caption{$\nu = 2\cdot 10^{-6}$, $t=0.12$\,s}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.32\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\textwidth]{Images/ard_3d/nu4_t12.png}
+        \caption{$\nu = 4\cdot 10^{-6}$, $t=0.12$\,s}
+    \end{subfigure}
+    \hfill
+    \begin{subfigure}[t]{0.32\textwidth}
+        \vspace{0pt}
+        \centering
+        \includegraphics[width=\textwidth]{Images/ard_3d/nu10_t12.png}
+        \caption{$\nu = 10^{-5}$, $t=0.12$\,s}
+    \end{subfigure}
+    
+    \caption{3D ARD numerical experiment inside a multi-corridor geometry. The snapshots compare the wave propagation at three different time steps (rows) and three different viscoelastic damping configurations (columns). The solver seamlessly handles the internal boundaries between the three rectangular subdomains.}
+    \label{fig:ard_3d_snapshots}
+\end{figure}
+
+
 \section{Differentiable Physics Neural Networks for Inverse Problems}
 \label{sec:dpnn}
 In this section, we introduce a Differentiable Physics Neural Network (DPNN) architecture designed to solve joint inverse problems. Specifically, we consider the task of simultaneously reconstructing an unknown initial pressure field $u_0(x)$ and estimating the macroscopic physical damping parameters $\gamma$ and $\nu$ from sparse, noisy sensor measurements over time.
