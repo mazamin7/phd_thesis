@@ -4527,7 +4527,7 @@ S(t) = A \exp\left(-\pi^2 \left( \frac{2 \, \mathrm{CFL} \, t}{6} - 2.0 \right)^
 where $\mathrm{CFL} = c \frac{\Delta t}{\Delta h}$ is the Courant--Friedrichs--Lewy (CFL) number and $A = 10^9$. 
 To simulate an open environment, the outer boundaries of the domain are truncated using a Perfectly Matched Layer (PML) tuned for partial absorption with a reflection coefficient of $0.5$.
 
-To evaluate the solver's response to frequency-dependent dissipation, we conduct the simulation across three different viscoelastic damping coefficients: $\nu \in \{2 \times 10^{-6}, 4 \times 10^{-6}, 10^{-5}\}$. 
+To evaluate the solver's response to frequency-dependent dissipation, we conduct the simulation across three different viscoelastic damping coefficients: $\nu \in \{2 \times 10^{-6}, 10^{-5}\}$. 
 
 Figure~\ref{fig:ard_3d_snapshots} illustrates the temporal evolution of the 3D wavefield. Snapshots are captured at $t=0.04$\,s, $t=0.08$\,s, and $t=0.12$\,s for each damping configuration. As the wave propagates through the interconnected corridors, the ARD solver accurately resolves the interface transitions without introducing artificial reflections. Furthermore, the progressive attenuation and smoothing of the wavefronts scale consistently with the imposed viscoelastic parameter $\nu$, validating the accuracy of the multi-domain pseudospectral time-domain (PSTD) formulation in 3D.
 
@@ -4541,69 +4541,45 @@ Figure~\ref{fig:ard_3d_snapshots} illustrates the temporal evolution of the 3D w
         \caption{$\nu = 2\cdot 10^{-6}$, $t=0.04$\,s}
     \end{subfigure}
     \hfill
+    % ROW 2: t = 0.08s
     \begin{subfigure}[t]{0.32\textwidth}
-        \vspace{0pt}
-        \centering
-        \includegraphics[width=\textwidth]{Images/ard_3d/nu4_t04.png}
-        \caption{$\nu = 4\cdot 10^{-6}$, $t=0.04$\,s}
+    	\vspace{0pt}
+    	\centering
+    	\includegraphics[width=\textwidth]{Images/ard_3d/nu2_t08.png}
+    	\caption{$\nu = 2\cdot 10^{-6}$, $t=0.08$\,s}
     \end{subfigure}
-    \hfill
+    % ROW 3: t = 0.12s
     \begin{subfigure}[t]{0.32\textwidth}
-        \vspace{0pt}
-        \centering
-        \includegraphics[width=\textwidth]{Images/ard_3d/nu10_t04.png}
-        \caption{$\nu = 10^{-5}$, $t=0.04$\,s}
+    	\vspace{0pt}
+    	\centering
+    	\includegraphics[width=\textwidth]{Images/ard_3d/nu2_t12.png}
+    	\caption{$\nu = 2\cdot 10^{-6}$, $t=0.12$\,s}
     \end{subfigure}
     
     \vspace{0.5cm} % Add some vertical space between rows
-
-    % ROW 2: t = 0.08s
+    
     \begin{subfigure}[t]{0.32\textwidth}
-        \vspace{0pt}
-        \centering
-        \includegraphics[width=\textwidth]{Images/ard_3d/nu2_t08.png}
-        \caption{$\nu = 2\cdot 10^{-6}$, $t=0.08$\,s}
+    	\vspace{0pt}
+    	\centering
+    	\includegraphics[width=\textwidth]{Images/ard_3d/nu10_t04.png}
+    	\caption{$\nu = 10^{-5}$, $t=0.04$\,s}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.32\textwidth}
-        \vspace{0pt}
-        \centering
-        \includegraphics[width=\textwidth]{Images/ard_3d/nu4_t08.png}
-        \caption{$\nu = 4\cdot 10^{-6}$, $t=0.08$\,s}
+    	\vspace{0pt}
+    	\centering
+    	\includegraphics[width=\textwidth]{Images/ard_3d/nu10_t08.png}
+    	\caption{$\nu = 10^{-5}$, $t=0.08$\,s}
     \end{subfigure}
     \hfill
     \begin{subfigure}[t]{0.32\textwidth}
-        \vspace{0pt}
-        \centering
-        \includegraphics[width=\textwidth]{Images/ard_3d/nu10_t08.png}
-        \caption{$\nu = 10^{-5}$, $t=0.08$\,s}
+    	\vspace{0pt}
+    	\centering
+    	\includegraphics[width=\textwidth]{Images/ard_3d/nu10_t12.png}
+    	\caption{$\nu = 10^{-5}$, $t=0.12$\,s}
     \end{subfigure}
     
-    \vspace{0.5cm}
-
-    % ROW 3: t = 0.12s
-    \begin{subfigure}[t]{0.32\textwidth}
-        \vspace{0pt}
-        \centering
-        \includegraphics[width=\textwidth]{Images/ard_3d/nu2_t12.png}
-        \caption{$\nu = 2\cdot 10^{-6}$, $t=0.12$\,s}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[t]{0.32\textwidth}
-        \vspace{0pt}
-        \centering
-        \includegraphics[width=\textwidth]{Images/ard_3d/nu4_t12.png}
-        \caption{$\nu = 4\cdot 10^{-6}$, $t=0.12$\,s}
-    \end{subfigure}
-    \hfill
-    \begin{subfigure}[t]{0.32\textwidth}
-        \vspace{0pt}
-        \centering
-        \includegraphics[width=\textwidth]{Images/ard_3d/nu10_t12.png}
-        \caption{$\nu = 10^{-5}$, $t=0.12$\,s}
-    \end{subfigure}
-    
-    \caption{3D ARD numerical experiment inside a multi-corridor geometry. The snapshots compare the wave propagation at three different time steps (rows) and three different viscoelastic damping configurations (columns). The solver seamlessly handles the internal boundaries between the three rectangular subdomains.}
+    \caption{3D ARD numerical experiment inside a multi-corridor geometry. The snapshots compare the wave propagation at three different time steps (columns) and two different viscoelastic damping configurations (rows). The solver seamlessly handles the internal boundaries between the three rectangular subdomains.}
     \label{fig:ard_3d_snapshots}
 \end{figure}
 
