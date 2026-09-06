@@ -50,22 +50,22 @@ for exp_idx = 1:6
         % FDTD
         dt_f = 0.9 * dx / c;
         addpath('code/fdtd/src');
-        [~,~,u_array_f,~,~,~] = solver(u0_fun,v0_fun,f_fun,dx,dt_f,L,T,c,gamma,nu,bcType,q,r);
+        [~,t_grid_f,u_array_f,~,~,~] = solver(u0_fun,v0_fun,f_fun,dx,dt_f,L,T,c,gamma,nu,bcType,q,r);
         rmpath('code/fdtd/src');
         
         x_nodes_f = linspace(0, L, N(k)+1)';
-        exact_vals_f = reshape(uExact(x_nodes_f, T), [], 1);
+        exact_vals_f = reshape(uExact(x_nodes_f, t_grid_f(end)), [], 1);
         err_f = u_array_f(:,end) - exact_vals_f;
         fdtd_err(exp_idx, k) = sqrt(dx * sum(err_f.^2));
         
         % PSTD
         dt_p = 0.9*dx/c;
         addpath('code/pstd/src');
-        [~,~,u_array_p,~,~,~] = solver(u0_fun,v0_fun,f_fun,dx,dt_p,L,T,c,gamma,nu,bcType,q,r);
+        [~,t_grid_p,u_array_p,~,~,~] = solver(u0_fun,v0_fun,f_fun,dx,dt_p,L,T,c,gamma,nu,bcType,q,r);
         rmpath('code/pstd/src');
         
         x_nodes_p = ((0:N(k)-1)+0.5)'*dx;
-        exact_vals_p = reshape(uExact(x_nodes_p, T), [], 1);
+        exact_vals_p = reshape(uExact(x_nodes_p, t_grid_p(end)), [], 1);
         err_p = u_array_p(:,end) - exact_vals_p;
         pstd_err(exp_idx, k) = sqrt(dx * sum(err_p.^2));
     end
