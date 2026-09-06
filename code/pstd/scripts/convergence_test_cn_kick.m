@@ -37,12 +37,12 @@ for j = 1:length(orders)
         f_fun  = @(x,t) zeros(size(x));
         
         % Run CN Strang Splitting
-        [x_grid, ~, ~, ~, u_ard, ~, ~, ~, ~] = ard_solver_cn_kick( ...
+        [x_grid, t_grid, ~, ~, u_ard, ~, ~, ~, ~] = ard_solver_cn_kick( ...
             u0_fun, v0_fun, f_fun, ...
             dx, dt, L, T, c, gamma, nu, bcType, q, r, space_order);
             
         u_final = u_ard(:, end);
-        u_ref = uExact(x_grid, T);
+        u_ref = uExact(x_grid, t_grid(end));
         
         err = max(abs(u_final - u_ref));
         errors(i, j) = err;
