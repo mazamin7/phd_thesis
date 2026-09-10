@@ -143,26 +143,113 @@
 \setcounter{page}{1} % Set page counter to 1
 
 % ABSTRACT IN ENGLISH
-\chapter*{Abstract} 
-This thesis presents a mathematical and computational framework to accelerate the forward simulation and inverse modeling of wave propagation in damped viscoelastic media. Explicit numerical solvers for the damped wave equation are bottlenecked by conditional stability bounds and temporal dispersion errors arising from mixed spatio-temporal derivatives. To address these limitations, we derive an uncoupled Pseudo-Spectral Time Domain (PSTD) solver based on an analytic modal propagator. By casting the wave dynamics into spectral space, this formulation bypasses implicit global solves and eliminates temporal dispersion, yielding unconditionally stable time integration for the uncoupled homogeneous problem.
+\chapter*{Abstract}
 
-To scale these solvers across parallel architectures, we investigate two domain decomposition paradigms. First, we develop an Optimized Schwarz Waveform Relaxation (OSWR) method. Through a continuous min-max analysis, we compute optimized Robin transmission conditions that accelerate the iterative contraction rate compared to classical approaches. Second, we extend the Adaptive Rectangular Decomposition (ARD) method to both finite-difference and pseudo-spectral frameworks. By replacing boundary operators with an explicit, localized interface correction, we circumvent iterative linear algebra while preserving conditional stability. We analyze the spectral properties of higher-order correction stencils, demonstrating their accuracy on smooth wavefields while highlighting limitations for discontinuous profiles.
+Accurate acoustic simulation is important in applications such as
+room and architectural acoustics design, Acoustic Virtual Reality,
+and sound field reconstruction. In these settings, the acoustic
+response may need to be evaluated repeatedly, making the computational
+cost of accurate wave-based simulation a major limitation. This thesis
+addresses this challenge through the development of efficient numerical
+and differentiable methods for the damped viscoelastic wave equation.
 
-Finally, we leverage these analytic propagators to solve inverse problems by introducing a Differentiable Physics Neural Network (DPNN) architecture. By embedding the differentiable PSTD solver into the backpropagation loop of a Sinusoidal Representation Network (SIREN), we simultaneously reconstruct unknown, non-smooth initial pressure fields and recover macroscopic viscoelastic damping parameters from sparse sensor data. A Sobolev $H^1$ smoothness regularization is derived from the physical modal damping profile, suppressing high-frequency artifacts without blurring discontinuities. Overall, the integration of modal propagators, domain decomposition techniques, and physics-informed deep learning provides a scalable foundation for acoustic modeling and medical imaging applications.
-\\
-\\
-\textbf{Keywords:} Viscoelastic Wave Equation, Pseudo-Spectral Time Domain, Domain Decomposition, Optimized Schwarz Waveform Relaxation, Adaptive Rectangular Decomposition, Differentiable Physics Neural Networks, Inverse Problems
+A Finite-Difference Time-Domain (FDTD) solver is first introduced for
+the damped viscoelastic wave equation. Although the formulation is
+standard and does not introduce new numerical techniques, it provides
+a baseline for the analysis and validation of the methods developed
+subsequently. In this framework, an Optimized Schwarz Waveform
+Relaxation (OSWR) method is developed using parameterized Robin-like
+transmission conditions. The resulting domain decomposition approach
+is investigated within the FDTD framework and provides an effective
+iterative coupling between subdomains.
+
+A Pseudo-Spectral Time-Domain (PSTD) solver is then developed for
+rectangular domains with homogeneous Neumann boundary conditions,
+using an analytic modal propagator. The cosine spectral representation
+decouples the spatial problem into independent modal equations, which
+are integrated exactly in time for the homogeneous problem. This yields
+unconditionally stable temporal propagation without temporal
+discretization error in the modal dynamics. Since the resulting PSTD
+formulation is not directly compatible with the OSWR domain
+decomposition approach considered for FDTD, the Adaptive Rectangular
+Decomposition (ARD) method is adopted to overcome the limitations of
+the PSTD solver in a decomposed domain. Its coupling mechanism is
+derived from the distributional decomposition of the Laplacian and
+implemented as a localized explicit interface correction. The
+stability and accuracy of higher-order corrections are analyzed.
+
+The resulting modal propagators are finally embedded in a
+Differentiable Physics Neural Network (DPNN) for sound field
+reconstruction. The framework jointly reconstructs unknown initial
+pressure fields and estimates viscoelastic damping parameters from
+sparse noisy measurements.
+
+The proposed methods provide complementary strategies for accelerating
+accurate wave-based simulations and their repeated use in forward and
+inverse acoustic problems.
+
+\textbf{Keywords:} Viscoelastic Wave Equation, Finite-Difference
+Time-Domain, Pseudo-Spectral Time-Domain, Domain Decomposition,
+Optimized Schwarz Waveform Relaxation, Adaptive Rectangular
+Decomposition, Differentiable Physics Neural Networks, Sound Field
+Reconstruction, Inverse Problems
+
 
 % ABSTRACT IN ITALIAN
-\chapter*{Abstract in lingua italiana}
-Questa tesi presenta un quadro matematico e computazionale per accelerare la simulazione numerica e la modellazione inversa della propagazione delle onde in mezzi viscoelastici smorzati. I risolutori numerici espliciti per l'equazione delle onde smorzata sono limitati da condizioni di stabilità e da errori di dispersione temporale derivanti da derivate miste spazio-temporali. Per superare queste limitazioni, viene derivato un risolutore Pseudo-Spettrale nel Dominio del Tempo (PSTD) disaccoppiato, basato su un propagatore modale analitico. Trasformando le dinamiche d'onda nello spazio spettrale, questa formulazione evita la necessità di sistemi lineari impliciti globali ed elimina la dispersione temporale, ottenendo un'integrazione temporale incondizionatamente stabile per il problema omogeneo.
+\chapter*{Abstract}
 
-Per scalare questi risolutori su architetture parallele, vengono esaminati due paradigmi di decomposizione di dominio. In primo luogo, viene sviluppato un metodo di Rilassamento d'Onda di Schwarz Ottimizzato (OSWR). Attraverso un'analisi continua di tipo min-max, si calcolano condizioni di trasmissione Robin ottimizzate che accelerano il tasso di contrazione iterativa rispetto agli approcci classici. In secondo luogo, il metodo della Decomposizione Rettangolare Adattativa (ARD) viene esteso ai framework alle differenze finite e pseudo-spettrali. Sostituendo gli operatori di frontiera con una penalizzazione di interfaccia locale ed esplicita, si evita del tutto l'algebra lineare iterativa, preservando la stabilità condizionale. Le proprietà spettrali degli stencil di penalizzazione di ordine superiore vengono analizzate, dimostrando la loro accuratezza su campi d'onda lisci ed evidenziandone i limiti per profili discontinui.
+La simulazione acustica accurata è importante in applicazioni quali
+la progettazione dell'acustica degli ambienti e dell'architettura,
+l'Acoustic Virtual Reality e la ricostruzione del campo acustico. In
+questi contesti, la risposta acustica può dover essere valutata
+ripetutamente, rendendo il costo computazionale delle simulazioni
+accurate basate sulle onde una delle principali limitazioni. Questa
+tesi affronta tale problema attraverso lo sviluppo di metodi numerici
+efficienti e differenziabili per l'equazione delle onde
+viscoelastiche smorzate.
 
-Infine, questi propagatori analitici vengono sfruttati per risolvere problemi inversi introducendo un'architettura di Rete Neurale Differentiable Physics (DPNN). Inserendo il risolutore PSTD differenziabile all'interno del ciclo di retropropagazione di una Rete a Rappresentazione Sinusoidale (SIREN), è possibile ricostruire simultaneamente campi di pressione iniziali incogniti e recuperare i parametri macroscopici di smorzamento viscoelastico a partire da dati di sensori sparsi. Viene derivata una regolarizzazione di smoothness Sobolev $H^1$ giustificata dal profilo di smorzamento modale fisico, in grado di sopprimere artefatti ad alta frequenza senza sfocare le discontinuità. Complessivamente, l'integrazione di propagatori modali, tecniche di decomposizione del dominio e deep learning orientato alla fisica fornisce una base scalabile per applicazioni di modellazione acustica di nuova generazione.
-\\
-\\
-\textbf{Parole chiave:} Equazione delle Onde Viscoelastica, Metodi Pseudospettrali nel Dominio del Tempo, Decomposizione di Dominio, Rilassamento d'Onda di Schwarz Ottimizzato, Decomposizione Rettangolare Adattativa, Reti Neurali Differentiable Physics, Problemi Inversi % Keywords (italian)
+Viene innanzitutto introdotto un solutore Finite-Difference Time-Domain
+(FDTD) per l'equazione delle onde viscoelastiche smorzata. Sebbene la
+formulazione sia standard e non introduca nuove tecniche numeriche,
+essa fornisce una baseline per l'analisi e la validazione dei metodi
+sviluppati successivamente. In questo contesto viene sviluppato un
+metodo Optimized Schwarz Waveform Relaxation (OSWR) mediante
+condizioni di trasmissione di tipo Robin parametrizzate. Il metodo di
+domain decomposition risultante viene studiato nel framework FDTD e
+fornisce un coupling iterativo efficace tra i diversi subdomini.
+
+Successivamente viene sviluppato un solutore Pseudo-Spectral
+Time-Domain (PSTD) per domini rettangolari con condizioni al contorno
+omogenee di Neumann, basato su un propagatore modale analitico. La
+rappresentazione spettrale in coseni disaccoppia il problema spaziale
+in equazioni modali indipendenti, che vengono integrate esattamente nel
+tempo per il problema omogeneo. Ciò consente una propagazione temporale
+incondizionatamente stabile, senza errori di discretizzazione
+temporale nella dinamica modale. Poiché la formulazione PSTD ottenuta
+non è direttamente compatibile con l'approccio di domain decomposition
+OSWR considerato per FDTD, il metodo Adaptive Rectangular Decomposition
+(ARD) viene adottato per superare le limitazioni del solutore PSTD in
+un dominio decomposto. Il suo meccanismo di coupling è derivato dalla
+decomposizione distribuzionale del Laplaciano e implementato come una
+correzione esplicita localizzata all'interfaccia. Vengono inoltre
+analizzate la stabilità e l'accuratezza delle correzioni di ordine
+superiore.
+
+Infine, i propagatori modali ottenuti vengono integrati in una
+Differentiable Physics Neural Network (DPNN) per la ricostruzione del
+campo acustico. Il framework ricostruisce simultaneamente campi di
+pressione iniziali incogniti e stima i parametri di smorzamento
+viscoelastico a partire da misure sparse e rumorose.
+
+I metodi proposti forniscono strategie complementari per accelerare
+simulazioni accurate basate sulle onde e il loro utilizzo ripetuto in
+problemi acustici forward e inverse.
+
+\textbf{Keywords:} Equazione delle Onde Viscoelastiche, Finite-Difference
+Time-Domain, Pseudo-Spectral Time-Domain, Domain Decomposition,
+Optimized Schwarz Waveform Relaxation, Adaptive Rectangular
+Decomposition, Differentiable Physics Neural Networks, Ricostruzione
+del Campo Sonoro, Problemi Inversi
 
 %----------------------------------------------------------------------------
 %	LIST OF CONTENTS/FIGURES/TABLES/SYMBOLS
@@ -3589,7 +3676,7 @@ This metric measures the global discrepancy, encompassing both the projection er
 For the FDTD method we choose $\Delta t = \Delta x/c$ (which corresponds to the stability limit), while for the PSTD method we choose $\Delta t = 0.9\Delta x/c$ (this choice avoids the `magic step' where $\text{CFL}=1$ gives superconvergence, ensuring a fair evaluation of the generic numerical dispersion rather than a special-case exactness).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Smooth Standing Wave (Undamped)}
+\subsection*{Smooth Standing Wave (Undamped)}
 This benchmark verifies the accuracy of both schemes for smooth standing-wave solutions. In one spatial dimension, when the CFL condition satisfies $c\Delta t=\Delta x$, the undamped FDTD scheme reduces to the leapfrog method and exhibits the expected exponential convergence of the discretization error (\cite{bilbao_numerical_2009}). Since the exact solution is entirely contained in the span of the retained cosine modes, the PSTD method reproduces the spatial solution exactly and the numerical error is reduced to machine precision.
 
 \begin{figure}[H]
@@ -3634,7 +3721,7 @@ This benchmark verifies the accuracy of both schemes for smooth standing-wave so
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Non-smooth Standing Wave (Undamped)}
+\subsection*{Non-smooth Standing Wave (Undamped)}
 This experiment investigates the effect of reduced spatial regularity on the convergence of the two methods. As in the previous experiment, the FDTD method exhibits the expected exponential convergence of the discretization error. Since the cosine coefficients of non-smooth functions decay algebraically rather than exponentially, the PSTD method exhibits algebraic convergence.
 
 \begin{figure}[H]
@@ -3659,7 +3746,7 @@ This experiment investigates the effect of reduced spatial regularity on the con
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Smooth Standing Wave (Damped)}
+\subsection*{Smooth Standing Wave (Damped)}
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{fdtd_snapshots/experiment_3/snapshot_t_0.2000.png} \caption{FDTD $t=0.2$} \end{subfigure}
@@ -3681,7 +3768,7 @@ This experiment investigates the effect of reduced spatial regularity on the con
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Non-smooth Standing Wave (Damped)}
+\subsection*{Non-smooth Standing Wave (Damped)}
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{fdtd_snapshots/experiment_4/snapshot_t_0.2000.png} \caption{FDTD $t=0.2$} \end{subfigure}
@@ -3703,7 +3790,7 @@ This experiment investigates the effect of reduced spatial regularity on the con
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Smooth Propagating Waves (Undamped)}
+\subsection*{Smooth Propagating Waves (Undamped)}
 This experiment evaluates the propagation accuracy of the two schemes under repeated Neumann reflections. As in Experiment~1, the FDTD method exhibits the expected exponential convergence of the discretization error. Although the Gaussian pulse is not exactly represented by a finite cosine expansion, its cosine coefficients decay exponentially. Consequently, the PSTD method rapidly reaches machine precision.
 \begin{figure}[H]
     \centering
@@ -3726,7 +3813,7 @@ This experiment evaluates the propagation accuracy of the two schemes under repe
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-\subsection{Non-smooth Propagating Waves (Undamped)}
+\subsection*{Non-smooth Propagating Waves (Undamped)}
 This benchmark evaluates the behavior of the two methods for propagating solutions with limited spatial regularity and sharp gradients. The FDTD method again exhibits the expected exponential convergence of the discretization error. Since the solution is non-smooth, the cosine coefficients decay only algebraically, leading the PSTD method to exhibit algebraic convergence.
 \begin{figure}[H]
     \centering
