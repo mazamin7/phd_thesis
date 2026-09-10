@@ -1319,13 +1319,13 @@ As noted in \cite[Sec.~4.2]{olver_introduction_2014}, when a pulse hits one of t
 In this section, we derive and analyze an FDTD scheme for the damped wave equation, following the approach described in \cite{bilbao_numerical_2009}, Chapter 6, \S6.2. For simplicity, we derive the method in one spatial dimension. The extension to higher dimensions is obtained by replacing the second spatial derivative by the corresponding discrete Laplacian \cite[Chapter 11]{bilbao_numerical_2009}.
 
 The finite-difference time-domain (FDTD) method approximates the wave equation by replacing the continuous derivatives with finite difference operators on a discrete grid. For the damped wave equation, a standard explicit centered-difference scheme is given by:
-\begin{equation}
+\begin{multline}
 \label{eq:fdtd_scheme}
 \frac{u_i^{n+1} - 2u_i^n + u_i^{n-1}}{\Delta t^2}
 - c^2 \frac{u_{i+1}^n - 2u_i^n + u_{i-1}^n}{\Delta x^2}
 + \gamma \frac{u_i^{n+1} - u_i^{n-1}}{2\Delta t}
-- \nu \frac{u_{i+1}^n - 2u_i^n + u_{i-1}^n - (u_{i+1}^{n-1} - 2u_i^{n-1} + u_{i-1}^{n-1})}{\Delta t \Delta x^2} = 0,
-\end{equation}
+\\- \nu \frac{u_{i+1}^n - 2u_i^n + u_{i-1}^n - (u_{i+1}^{n-1} - 2u_i^{n-1} + u_{i-1}^{n-1})}{\Delta t \Delta x^2} = 0,
+\end{multline}
 where $u_i^n \approx u(i\Delta x, n\Delta t)$. This leads to an explicit update equation for $u_i^{n+1}$ in terms of the fields at time steps $n$ and $n-1$.
 
 
