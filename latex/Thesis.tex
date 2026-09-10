@@ -4183,7 +4183,16 @@ Figure~\ref{fig:oswr_nu_sweep} illustrates the behavior of the SWR convergence a
     \label{fig:oswr_optimized_params}
 \end{figure}
 
-To definitively validate the theoretical min-max optimization problem (Equation~\ref{eq:minmax}), we perform an exhaustive numerical sweep over a 2D grid of Robin parameters $(q, r)$. For each configuration, we run the SWR iteration and extract the empirical maximum error after a fixed number of iterations. We then evaluate the analytical convergence factor $\rho$ over the same parameter space. Figure~\ref{fig:oswr_empirical_vs_theoretical} compares the empirically measured optimal parameters against the analytically predicted continuous optimum. The location of the minimum of the convergence factor lies in a region of minima of the empirical error, confirming the validity of the analytical derivation and the resulting parameter optimization framework.
+To provide a broader overview of how both damping parameters jointly affect the domain decomposition performance, Figure~\ref{fig:oswr_rho_opt_map} illustrates the optimal continuous convergence factor $\rho_{\mathrm{opt}}$ computed across a 2D parameter space varying both the baseline Telegrapher damping $\gamma$ and the viscoelastic damping $\nu$. The map evaluates $\rho_{\mathrm{opt}}$ by sweeping $\gamma \in [0, 5]$ and $\nu \in [10^{-3}, 10^{1}]$ over a $30 \times 30$ grid. The other physical and numerical parameters remain fixed at their baseline values ($c=1$, $L=1$, $T=2$, $\Delta t=0.05$, and overlap $\delta=L/10$).
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.8\textwidth]{Images/fdtd_snapshots/swr_parameters/swr_rho_opt_map.png}
+    \caption{2D map of the optimal continuous convergence factor $\rho_{\mathrm{opt}}$ as a function of the Telegrapher damping $\gamma$ and the viscoelastic damping $\nu$.}
+    \label{fig:oswr_rho_opt_map}
+\end{figure}
+
+To definitively validate the theoretical min-max optimization problem (Equation~\ref{eq:minmax}), we perform an exhaustive numerical sweep over a 2D grid of Robin parameters $(q, r)$. For this visualization, we explicitly configure the non-smooth standing wave experiment with a baseline Telegrapher damping of $\gamma=0.5$ and a highly viscous damping coefficient ($\nu=2$) to ensure the optimal parameter basin is clearly pronounced. All other settings ($c=1$, $L=1$, $T=2$, $\Delta x=\Delta t=0.05$, $\delta=L/10$) are preserved. For each $(q,r)$ configuration, we run the SWR iteration and extract the empirical maximum error after a fixed number of iterations. We then evaluate the analytical convergence factor $\rho$ over the same parameter space. Figure~\ref{fig:oswr_empirical_vs_theoretical} compares the empirically measured optimal parameters against the analytically predicted continuous optimum. The location of the minimum of the convergence factor lies in a region of minima of the empirical error, confirming the validity of the analytical derivation and the resulting parameter optimization framework.
 
 \begin{figure}[H]
     \centering
