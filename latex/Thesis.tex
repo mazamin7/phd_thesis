@@ -4281,9 +4281,9 @@ separated by the artificial interface
 \Gamma=\{L/2\}.
 \]
 
-Let $u$ denote the exact continuous solution and let $\bar u$ denote the piecewise field obtained by solving independently on $\Omega_1$ and $\Omega_2$. By construction, homogeneous Neumann boundary conditions $\partial_x u = 0$ are imposed on the artificial interface $\Gamma$.
+Let $u$ denote the exact continuous solution. To formalize the decomposition, we introduce the overline notation $\overline{(\cdot)}$ to denote the piecewise assembly of a function or its classical derivatives from the independent subdomain solutions. Thus, $\bar{u}$ is the piecewise field obtained by solving independently on $\Omega_1$ and $\Omega_2$, while $\overline{u_x}$ and $\overline{u_{xx}}$ represent the piecewise fields constructed from their classical first and second spatial derivatives, respectively. Conversely, a derivative subscript applied outside the bar, such as $\bar{u}_x$ or $\bar{u}_{xx}$, denotes the global distributional derivative of the assembled piecewise field $\bar{u}$ over the entire domain $\Omega$. By construction, homogeneous Neumann boundary conditions $\partial_x u = 0$ are imposed on the artificial interface $\Gamma$.
 
-For a piecewise smooth function, the distributional identity
+Under this framework, taking the first distributional derivative of the piecewise field yields $\bar{u}_x = \overline{u_x} + [u]\delta_\Gamma$, where $[\cdot]_\Gamma$ denotes the jump operator across the interface $\Gamma$ applied to the assembled field, and $\delta_\Gamma$ is the Dirac delta distribution centered at $\Gamma$. Taking the distributional derivative a second time results in the identity
 \[
 \bar u_{xx}
 =
@@ -4291,9 +4291,9 @@ For a piecewise smooth function, the distributional identity
 +
 [\partial_xu]\delta_\Gamma
 +
-[u]\delta_\Gamma'
+[u]\delta_\Gamma',
 \]
-holds. Here, $[\cdot]_\Gamma$ denotes the jump operator across the interface $\Gamma$, while $\delta_\Gamma$ and $\delta_\Gamma'$ represent the Dirac delta distribution centered at $\Gamma$ and its distributional derivative, respectively. Since the Neumann interface condition enforces
+where $\delta_\Gamma'$ represents the distributional derivative of the Dirac delta. Since the Neumann interface condition enforces
 \[
 [\partial_xu]=0,
 \]
