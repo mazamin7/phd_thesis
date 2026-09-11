@@ -1,4 +1,4 @@
-function [qOpt, rOpt, rhoOpt] = get_optimal_robin_params(c, gamma, nu, a, b, T, dx, dt)
+function [qOpt, rOpt, rhoOpt] = get_optimal_robin_params(c, gamma, nu, a, b, T, dx, dt, x0_guess)
 % GET_OPTIMAL_ROBIN_PARAMS  Optimize Robin transmission parameters (q,r)
 % for OSWR applied to the damped wave equation (Neumann boundary case).
 %
@@ -7,6 +7,7 @@ function [qOpt, rOpt, rhoOpt] = get_optimal_robin_params(c, gamma, nu, a, b, T, 
 %   a, b         : interface locations of the overlapping subdomains
 %   T            : simulation time window
 %   dx, dt       : mesh size and time step
+%   x0_guess     : (optional) initial guess for [q, r]
 %
 % Outputs:
 %   qOpt, rOpt   : optimized Robin parameters
@@ -22,7 +23,11 @@ function [qOpt, rOpt, rhoOpt] = get_optimal_robin_params(c, gamma, nu, a, b, T, 
     % ------------------------------------------------------------
     % Initial guess and bounds
     % ------------------------------------------------------------
-    x0 = [1/c, gamma/(2*c)];   % [q0, r0]
+    if nargin < 9 || isempty(x0_guess)
+        x0 = [1/c, gamma/(2*c)];   % [q0, r0]
+    else
+        x0 = x0_guess;
+    end
     lb = [0, 0];               % positivity constraint
 
     % ------------------------------------------------------------

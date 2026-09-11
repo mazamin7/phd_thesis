@@ -4192,6 +4192,26 @@ To provide a broader overview of how both damping parameters jointly affect the 
     \label{fig:oswr_rho_opt_map}
 \end{figure}
 
+To further understand the behavior of the min-max optimization, we can examine how the optimal Robin parameters $(q_{\mathrm{opt}}, r_{\mathrm{opt}})$ vary as a mapping from the physical damping parameters $\gamma$ and $\nu$. Figure~\ref{fig:swr_qr_mapping_all} presents a scatter plot of the optimal parameters computed over the entire parameter space $\gamma \in [0, 5]$ and $\nu \in [10^{-3}, 10^{1}]$.
+
+To better distinguish the individual effects of the Telegrapher damping $\gamma$ and the viscoelastic damping $\nu$, we parameterize the trajectories of the optimal $(q,r)$ values. Figure~\ref{fig:swr_qr_mapping_gamma_curves} displays the trajectories obtained by holding $\gamma$ constant at discrete levels while continuously sweeping $\nu$. The color of each dot indicates the associated value of $\nu$ on a logarithmic scale. Conversely, Figure~\ref{fig:swr_qr_mapping_nu_curves} illustrates the complementary set of curves formed by holding $\nu$ constant while sweeping $\gamma$, with the color indicating the value of $\gamma$. This parametric mapping demonstrates that $\nu$ and $\gamma$ exert distinct, non-degenerate influences on the optimal Robin parameters.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.75\textwidth]{Images/fdtd_snapshots/swr_parameters/swr_qr_mapping_all.png}
+    \caption{Mapping of the optimal parameters $(q, r)$ across the dense grid of $(\gamma, \nu)$.}
+    \label{fig:swr_qr_mapping_all}
+\end{figure}
+
+\begin{figure}[H]
+    \centering
+    \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=\textwidth]{Images/fdtd_snapshots/swr_parameters/swr_qr_mapping_gamma_curves.png} \caption{Constant $\gamma$ curves sweeping $\nu$.} \label{fig:swr_qr_mapping_gamma_curves} \end{subfigure}
+    \hfill
+    \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=\textwidth]{Images/fdtd_snapshots/swr_parameters/swr_qr_mapping_nu_curves.png} \caption{Constant $\nu$ curves sweeping $\gamma$.} \label{fig:swr_qr_mapping_nu_curves} \end{subfigure}
+    \caption{Parametric trajectories of the optimal parameters $(q, r)$ in response to continuous variations of a single physical damping parameter.}
+    \label{fig:swr_qr_mapping_curves}
+\end{figure}
+
 To definitively validate the theoretical min-max optimization problem (Equation~\ref{eq:minmax}), we perform an exhaustive numerical sweep over a 2D grid of Robin parameters $(q, r)$. For this visualization, we explicitly configure the non-smooth standing wave experiment with a baseline Telegrapher damping of $\gamma=0.5$ and a highly viscous damping coefficient ($\nu=2$) to ensure the optimal parameter basin is clearly pronounced. All other settings ($c=1$, $L=1$, $T=2$, $\Delta x=\Delta t=0.05$, $\delta=L/10$) are preserved. For each $(q,r)$ configuration, we run the SWR iteration and extract the empirical maximum error after a fixed number of iterations. We then evaluate the analytical convergence factor $\rho$ over the same parameter space. Figure~\ref{fig:oswr_empirical_vs_theoretical} compares the empirically measured optimal parameters against the analytically predicted continuous optimum. The location of the minimum of the convergence factor lies in a region of minima of the empirical error, confirming the validity of the analytical derivation and the resulting parameter optimization framework.
 
 \begin{figure}[H]

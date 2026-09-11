@@ -19,10 +19,24 @@ nu_vals = logspace(-3, 1, N_points); % from 0.001 to 10
 [Gamma, Nu] = meshgrid(gamma_vals, nu_vals);
 RhoOpt_map = zeros(N_points, N_points);
 
+% For initial guess continuity
+q_prev = zeros(N_points, N_points);
+r_prev = zeros(N_points, N_points);
+
 fprintf('Starting 2D grid sweep over (gamma, nu)...\n');
 for i = 1:N_points
     for j = 1:N_points
-        [qOpt, rOpt, rhoOpt] = get_optimal_robin_params(c, Gamma(i,j), Nu(i,j), a, b, T, dx, dt);
+        if i == 1 && j == 1
+            x0_guess = [];
+        elseif i == 1
+            x0_guess = [q_prev(i, j-1), r_prev(i, j-1)];
+        else
+            x0_guess = [q_prev(i-1, j), r_prev(i-1, j)];
+        end
+        
+        [qOpt, rOpt, rhoOpt] = get_optimal_robin_params(c, Gamma(i,j), Nu(i,j), a, b, T, dx, dt, x0_guess);
+        q_prev(i,j) = qOpt;
+        r_prev(i,j) = rOpt;
         RhoOpt_map(i,j) = rhoOpt;
     end
     fprintf('Row %d/%d completed.\n', i, N_points);
