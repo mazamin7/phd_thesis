@@ -4813,7 +4813,6 @@ For all experiments, we impose homogeneous Neumann boundary conditions at both e
 The initial condition $p_0(x)$ is parameterized by a SIREN network consisting of 3 hidden layers with 32 features each. The optimization is performed over 500 epochs using two independent Adam optimizers for the neural network weights and the physical parameters, leveraging the Cosine Annealing schedules discussed previously. The loss function regularization weights are strictly fixed across all experiments to $\lambda_{\mathrm{data}} = 1.0$, $\lambda_{\text{sp}} = 0.005$, and $\lambda_{\text{smooth}} = 0.1$. 
 We evaluate the robustness of the regularized inversion framework against three increasingly challenging initial conditions.
 
-\newpage
 \subsubsection{Experiment 1: Standing Waves}
 In the first configuration, the initial condition is defined as a superposition of the first five cosine modes,
 \[
@@ -4842,7 +4841,6 @@ The standing waves experiment provides a baseline evaluation of spectral recover
     \label{fig:0_spacetime}
 \end{figure}
 
-\newpage
 \subsubsection{Experiment 2: Smooth Pulses}
 In the second configuration, the initial condition is a smooth Gaussian pulse centered at $\mu = L/2$ with width parameter $\sigma = L/20$. To exactly satisfy the homogeneous Neumann boundary conditions without truncation artifacts, it is constructed as an even $2L$-periodic extension,
 \[
@@ -4871,7 +4869,6 @@ The smooth pulse initial condition introduces spatial sparsity, activating the $
     \label{fig:1_spacetime}
 \end{figure}
 
-\newpage
 \subsubsection{Experiment 3: Triangle Pulses (Non-smooth)}
 The final experiment considers a non-smooth triangular pulse, also centered at $\mu = L/2$ with support determined by $\sigma = L/20$. Similar to the Gaussian pulse, it is constructed using an even $2L$-periodic extension,
 \[
