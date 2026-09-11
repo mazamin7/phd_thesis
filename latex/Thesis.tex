@@ -4307,13 +4307,13 @@ this simplifies to
 \label{eq:dist_deriv}
 \end{equation}
 
-Because the Neumann interface condition holds at all times, the temporal derivative also satisfies $[\partial_x\dot u]=0$, meaning the exact same distributional identity applies to the mixed viscous term:
+Because the Neumann interface condition holds at all times, the temporal derivative also satisfies $[\partial_x u_t]=0$, meaning the exact same distributional identity applies to the mixed viscous term:
 \begin{equation*}
 \bar u_{txx}
 =
 \overline{u_{txx}}
 +
-[\dot u]\delta_\Gamma'.
+[u_t]\delta_\Gamma'.
 \end{equation*}
 
 Consequently, the full viscoelastic wave equation over the decomposed domain becomes
@@ -4328,10 +4328,10 @@ c^2\overline{u_{xx}}
 +
 c^2[u]\delta_\Gamma'
 +
-\nu[\dot u]\delta_\Gamma'.
+\nu[u_t]\delta_\Gamma'.
 \end{equation*}
 
-Therefore, the independent subdomain solutions satisfy the original wave equation everywhere except at the interface $\Gamma$, where the missing physical coupling appears as a sum of two singular dipole distributions: a stiffness jump ($c^2[u]$) and a viscous jump ($\nu[\dot u]$). Recovering the exact monolithic solution is therefore equivalent to explicitly restoring this combined singular interface source, effectively enforcing the continuity of the fields in the subdomains across $\Gamma$.
+Therefore, the independent subdomain solutions satisfy the original wave equation everywhere except at the interface $\Gamma$, where the missing physical coupling appears as a sum of two singular dipole distributions: a stiffness jump ($c^2[u]$) and a viscous jump ($\nu[u_t]$). Recovering the exact monolithic solution is therefore equivalent to explicitly restoring this combined singular interface source, effectively enforcing the continuity of the fields in the subdomains across $\Gamma$.
 
 \subsection{A General Strang Splitting Formulation}
 
