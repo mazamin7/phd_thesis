@@ -2779,6 +2779,7 @@ Similarly, the modal counterpart of the global force vector in state space form 
 \end{equation*}
 
 \subsection{Time Integration Scheme for the General Case}
+\label{sec:pstd_general_damping}
 Let's consider the general case, without assuming $\gamma=\nu=0$ as before.
 
 For each mode, introduce the modal velocity
@@ -3678,7 +3679,7 @@ For the FDTD method we choose $\Delta t = \Delta x/c$ (which corresponds to the 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Smooth Standing Wave (Undamped)}
-This benchmark verifies the accuracy of both schemes for smooth standing-wave solutions. In one spatial dimension, when the CFL condition satisfies $c\Delta t=\Delta x$, the undamped FDTD scheme reduces to the leapfrog method and \textcolor{red}{exhibits exact numerical propagation with machine-precision discretization error} \citep{bilbao_numerical_2009}. Since the exact solution is entirely contained in the span of the retained cosine modes, the PSTD method reproduces the spatial solution exactly and the numerical error is reduced to machine precision.
+This benchmark verifies the accuracy of both schemes for smooth standing-wave solutions. \textcolor{red}{In one spatial dimension, when the CFL condition satisfies $c\Delta t=\Delta x$, the undamped FDTD leapfrog scheme exhibits exact numerical propagation on a uniform grid \citep{bilbao_numerical_2009}; at our chosen operational CFL number ($0.9$), it exhibits regular second-order algebraic convergence ($L_2$ error $\sim 3.63 \times 10^{-8}$ at $N=800$). For the PSTD solver, because the continuous initial profile projects entirely onto the fundamental cosine mode ($m=1$) and uncoupled modes evolve independently according to Proposition~\ref{prop:stability}, the spatial discretization introduces zero projection error and the exact modal propagator maintains machine-precision accuracy ($10^{-15}$ to $10^{-14}$) across all mesh resolutions (Table~\ref{tab:convergence_analysis}). Figures~\ref{fig:exp1_snapshots} and~\ref{fig:exp1_spacetime} illustrate the resulting temporal evolution.}
 
 \begin{figure}[H]
     \centering
@@ -3689,6 +3690,7 @@ This benchmark verifies the accuracy of both schemes for smooth standing-wave so
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{pstd_snapshots/experiment_1/snapshot_t_0.5000.png} \caption{PSTD $t=0.5$} \end{subfigure}
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{pstd_snapshots/experiment_1/snapshot_t_1.0000.png} \caption{PSTD $t=1.0$} \end{subfigure}
     \caption{Snapshots of the smooth undamped standing wave.}
+    \label{fig:exp1_snapshots}
 \end{figure}
 
 \begin{figure}[H]
@@ -3697,6 +3699,7 @@ This benchmark verifies the accuracy of both schemes for smooth standing-wave so
     \hfill
     \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=\textwidth]{pstd_snapshots/experiment_1/spacetime_solution.png} \caption{PSTD spacetime.} \end{subfigure}
     \caption{Comparison of FDTD and PSTD for smooth undamped standing wave.}
+    \label{fig:exp1_spacetime}
 \end{figure}
 
 \begin{table}[H]
@@ -3723,7 +3726,7 @@ This benchmark verifies the accuracy of both schemes for smooth standing-wave so
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection*{Non-smooth Standing Wave (Undamped)}
-This experiment investigates the effect of reduced spatial regularity on the convergence of the two methods. As in the previous experiment, the FDTD method exhibits the \textcolor{red}{expected second-order algebraic convergence} of the discretization error. Since the cosine coefficients of non-smooth functions decay algebraically rather than exponentially, the PSTD method exhibits algebraic convergence.
+This experiment investigates the effect of reduced spatial regularity on the convergence of the two methods, considering a continuous trapezoidal profile with slope discontinuities ($u_0 \in H^1(0,L) \setminus C^1$). \textcolor{red}{Due to the corner singularities, the FDTD convergence rate drops from second order to approximately first order ($\approx 1.03$, error $\sim 3.93 \times 10^{-4}$ at $N=800$), in agreement with the piecewise linear interpolation bounds of Proposition~\ref{prop:piecewise_linear}. For the PSTD solver, the non-smooth profile causes the cosine expansion coefficients to decay only algebraically ($O(m^{-2})$), yielding algebraic convergence without exponential spectral accuracy. Nevertheless, as seen in Table~\ref{tab:convergence_analysis} and Figures~\ref{fig:exp2_snapshots} and~\ref{fig:exp2_spacetime}, PSTD retains an error more than one order of magnitude lower than FDTD at all resolutions.}
 
 \begin{figure}[H]
     \centering
@@ -3734,6 +3737,7 @@ This experiment investigates the effect of reduced spatial regularity on the con
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{pstd_snapshots/experiment_2/snapshot_t_0.5000.png} \caption{PSTD $t=0.5$} \end{subfigure}
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{pstd_snapshots/experiment_2/snapshot_t_1.0000.png} \caption{PSTD $t=1.0$} \end{subfigure}
     \caption{Snapshots of the non-smooth undamped standing wave.}
+    \label{fig:exp2_snapshots}
 \end{figure}
 
 \begin{figure}[H]
@@ -3742,12 +3746,15 @@ This experiment investigates the effect of reduced spatial regularity on the con
     \hfill
     \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=\textwidth]{pstd_snapshots/experiment_2/spacetime_solution.png} \caption{PSTD spacetime.} \end{subfigure}
     \caption{Comparison of FDTD and PSTD for non-smooth undamped standing wave.}
+    \label{fig:exp2_spacetime}
 \end{figure}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection*{Smooth Standing Wave (Damped)}
+\textcolor{red}{Here we introduce physical dissipation ($\gamma = 0.5\,\text{s}^{-1}$, $\nu = 0.005\,\text{m}^2/\text{s}$) to evaluate the damped formulations. As reported in Table~\ref{tab:convergence_analysis}, FDTD exhibits standard second-order convergence ($\approx 1.92$, error $\sim 2.89 \times 10^{-7}$ at $N=800$), governed by the centered truncation errors of the $\gamma u_t$ and $\nu u_{xxt}$ stencils. In contrast, PSTD preserves the machine-precision behavior observed in Experiment~1 ($\sim 10^{-15}$ to $10^{-14}$): because the initial condition remains confined to mode $m=1$, the state transition matrix $S_m(\Delta t) = e^{A_m \Delta t}$ derived in Section~\ref{sec:pstd_general_damping} integrates both damping mechanisms analytically without any time-stepping error. The resulting damped envelope is captured without phase lag or artificial attenuation (Figures~\ref{fig:exp3_snapshots} and~\ref{fig:exp3_spacetime}).}
+
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{fdtd_snapshots/experiment_3/snapshot_t_0.2000.png} \caption{FDTD $t=0.2$} \end{subfigure}
@@ -3757,6 +3764,7 @@ This experiment investigates the effect of reduced spatial regularity on the con
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{pstd_snapshots/experiment_3/snapshot_t_0.5000.png} \caption{PSTD $t=0.5$} \end{subfigure}
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{pstd_snapshots/experiment_3/snapshot_t_1.0000.png} \caption{PSTD $t=1.0$} \end{subfigure}
     \caption{Snapshots of the smooth damped standing wave.}
+    \label{fig:exp3_snapshots}
 \end{figure}
 
 \begin{figure}[H]
@@ -3765,11 +3773,14 @@ This experiment investigates the effect of reduced spatial regularity on the con
     \hfill
     \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=\textwidth]{pstd_snapshots/experiment_3/spacetime_solution.png} \caption{PSTD spacetime.} \end{subfigure}
     \caption{Comparison of FDTD and PSTD for smooth damped standing wave.}
+    \label{fig:exp3_spacetime}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection*{Non-smooth Standing Wave (Damped)}
+\textcolor{red}{This benchmark combines the non-smooth trapezoidal profile of Experiment~2 with the physical dissipation of Experiment~3. Comparing the convergence data of Table~\ref{tab:convergence_analysis} between Experiments~2 and~4 highlights the regularizing effect of the viscoelastic term: because $\nu u_{xxt}$ attenuates spatial frequencies quadratically as $\nu k_m^2$, the sharp corner discontinuities are rapidly damped out for $t > 0$. This physical smoothing restores the formal second-order convergence of FDTD ($\approx 2.22$), reducing the error at $N=800$ by nearly three orders of magnitude ($5.97 \times 10^{-7}$) compared to the undamped case. Similarly, PSTD benefits from the decay of high spectral modes, achieving an asymptotic rate of $\approx 1.58$ and accurately reproducing the smoothed wave crests (Figures~\ref{fig:exp4_snapshots} and~\ref{fig:exp4_spacetime}).}
+
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{fdtd_snapshots/experiment_4/snapshot_t_0.2000.png} \caption{FDTD $t=0.2$} \end{subfigure}
@@ -3779,6 +3790,7 @@ This experiment investigates the effect of reduced spatial regularity on the con
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{pstd_snapshots/experiment_4/snapshot_t_0.5000.png} \caption{PSTD $t=0.5$} \end{subfigure}
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{pstd_snapshots/experiment_4/snapshot_t_1.0000.png} \caption{PSTD $t=1.0$} \end{subfigure}
     \caption{Snapshots of the non-smooth damped standing wave.}
+    \label{fig:exp4_snapshots}
 \end{figure}
 
 \begin{figure}[H]
@@ -3787,12 +3799,13 @@ This experiment investigates the effect of reduced spatial regularity on the con
     \hfill
     \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=\textwidth]{pstd_snapshots/experiment_4/spacetime_solution.png} \caption{PSTD spacetime.} \end{subfigure}
     \caption{Comparison of FDTD and PSTD for non-smooth damped standing wave.}
+    \label{fig:exp4_spacetime}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection*{Smooth Propagating Waves (Undamped)}
-This experiment evaluates the propagation accuracy of the two schemes under repeated Neumann reflections. As in Experiment~1, the FDTD method exhibits the \textcolor{red}{expected second-order algebraic convergence} of the discretization error. Although the Gaussian pulse is not exactly represented by a finite cosine expansion, its cosine coefficients decay exponentially. Consequently, the PSTD method rapidly reaches machine precision.
+This experiment evaluates the propagation accuracy of the two schemes for a traveling Gaussian pulse subject to repeated Neumann boundary reflections. \textcolor{red}{As in Experiment~1, the FDTD method exhibits second-order algebraic convergence ($\approx 2.05$, error $\sim 2.16 \times 10^{-6}$ at $N=800$). Although the Gaussian pulse is spatially localized, its cosine expansion coefficients decay exponentially (spectrally); for $N \ge 100$, spectral truncation errors fall below floating-point precision, allowing PSTD to achieve machine-precision accuracy ($\sim 10^{-15}$, Table~\ref{tab:convergence_analysis}). Furthermore, as shown in the spacetime diagram of Figure~\ref{fig:exp5_spacetime}, PSTD transports the pulse across multiple reflections with strictly zero numerical dispersion, avoiding the phase lag that subtly broadens the FDTD waveform (Figure~\ref{fig:exp5_snapshots}).}
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{fdtd_snapshots/experiment_5/snapshot_t_0.2000.png} \caption{FDTD $t=0.2$} \end{subfigure}
@@ -3802,6 +3815,7 @@ This experiment evaluates the propagation accuracy of the two schemes under repe
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{pstd_snapshots/experiment_5/snapshot_t_0.5000.png} \caption{PSTD $t=0.5$} \end{subfigure}
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{pstd_snapshots/experiment_5/snapshot_t_1.0000.png} \caption{PSTD $t=1.0$} \end{subfigure}
     \caption{Snapshots of the Gaussian pulse.}
+    \label{fig:exp5_snapshots}
 \end{figure}
 
 \begin{figure}[H]
@@ -3810,12 +3824,13 @@ This experiment evaluates the propagation accuracy of the two schemes under repe
     \hfill
     \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=\textwidth]{pstd_snapshots/experiment_5/spacetime_solution.png} \caption{PSTD spacetime.} \end{subfigure}
     \caption{Comparison of FDTD and PSTD for propagating Gaussian pulse.}
+    \label{fig:exp5_spacetime}
 \end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection*{Non-smooth Propagating Waves (Undamped)}
-This benchmark evaluates the behavior of the two methods for propagating solutions with limited spatial regularity and sharp gradients. The FDTD method again exhibits the \textcolor{red}{expected second-order algebraic convergence} of the discretization error. Since the solution is non-smooth, the cosine coefficients decay only algebraically, leading the PSTD method to exhibit algebraic convergence.
+This benchmark evaluates propagating wavepacket transport for a non-smooth triangular pulse with a sharp derivative discontinuity. \textcolor{red}{Similar to the standing wave in Experiment~2, the lack of spatial regularity restricts FDTD convergence to first order ($\approx 0.92$, error $\sim 3.46 \times 10^{-3}$ at $N=800$, Table~\ref{tab:convergence_analysis}). Furthermore, numerical dispersion in FDTD generates spurious high-frequency ripples that trail behind the propagating wavefront (Figure~\ref{fig:exp6_spacetime}). In contrast, PSTD maintains an error roughly two orders of magnitude lower ($\sim 8.19 \times 10^{-5}$), preserving the wavepacket shape and transporting sharp gradients without dispersion-induced trailing oscillations (Figure~\ref{fig:exp6_snapshots}).}
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{fdtd_snapshots/experiment_6/snapshot_t_0.2000.png} \caption{FDTD $t=0.2$} \end{subfigure}
@@ -3825,6 +3840,7 @@ This benchmark evaluates the behavior of the two methods for propagating solutio
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{pstd_snapshots/experiment_6/snapshot_t_0.5000.png} \caption{PSTD $t=0.5$} \end{subfigure}
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{pstd_snapshots/experiment_6/snapshot_t_1.0000.png} \caption{PSTD $t=1.0$} \end{subfigure}
     \caption{Snapshots of the triangular pulse.}
+    \label{fig:exp6_snapshots}
 \end{figure}
 
 \begin{figure}[H]
@@ -3833,7 +3849,21 @@ This benchmark evaluates the behavior of the two methods for propagating solutio
     \hfill
     \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=\textwidth]{pstd_snapshots/experiment_6/spacetime_solution.png} \caption{PSTD spacetime.} \end{subfigure}
     \caption{Comparison of FDTD and PSTD for propagating triangular pulse.}
+    \label{fig:exp6_spacetime}
 \end{figure}
+
+\subsection*{Comparative Synthesis and Critical Discussion}
+\textcolor{red}{The six benchmark configurations provide a comprehensive, systematic comparison between the Finite-Difference Time-Domain (FDTD) scheme and the Pseudo-Spectral Time-Domain (PSTD) formulation across different spatial regularities and physical damping regimes. Several key conclusions and critical insights emerge from the quantitative results summarized in Table~\ref{tab:convergence_analysis}:}
+
+\begin{itemize}
+    \item \textcolor{red}{\textbf{Exact temporal integration vs. algebraic truncation error}: For any problem whose continuous solution is spanned by a finite set of cosine modes (such as the smooth standing waves in Experiments~1 and~3), the PSTD method achieves machine-precision accuracy ($10^{-15}$ to $10^{-14}$) regardless of whether physical damping is present. This confirms that the modal transition matrix $S_m = e^{A_m \Delta t}$ eliminates temporal discretization error entirely. In contrast, the FDTD scheme introduces second-order algebraic truncation errors ($O(\Delta t^2 + \Delta x^2)$), requiring substantial grid refinement to achieve comparable accuracy.}
+
+    \item \textcolor{red}{\textbf{Numerical dispersion and wavepacket transport}: In the propagating pulse benchmarks (Experiments~5 and~6), the PSTD solver exhibits zero numerical dispersion for all resolved spatial frequencies, transporting wavepackets across repeated boundary reflections with faithful preservation of both amplitude and phase. In contrast, standard FDTD introduces phase-velocity errors that produce spurious high-frequency ripples trailing behind sharp wavefronts (visible in the spacetime plots of Figures~\ref{fig:exp5_spacetime} and~\ref{fig:exp6_spacetime}).}
+
+    \item \textcolor{red}{\textbf{The regularizing impact of viscoelastic damping}: The comparative convergence rates between undamped and damped configurations highlight the fundamental difference between telegrapher and viscoelastic dissipation. While telegrapher damping ($\gamma$) attenuates all modes uniformly, viscoelastic damping ($\nu$) scales quadratically with wavenumber ($\nu k^2$). For non-smooth profiles (Experiments~2 and~4), this selective dissipation extinguishes the singular high-frequency components that otherwise degrade finite-difference stencils to first-order accuracy, allowing FDTD to recover second-order convergence.}
+
+    \item \textcolor{red}{\textbf{Trade-offs in computational complexity and geometric flexibility}: While PSTD offers vast advantages in dispersion-free propagation and analytical temporal stepping, it fundamentally relies on the Discrete Cosine Transform, restricting its direct application to simple Cartesian domains with homogeneous Neumann boundary conditions. Evaluating the DCT incurs an $\mathcal{O}(N \log N)$ computational cost per time step, compared to the strictly local $\mathcal{O}(N)$ stencil updates of explicit FDTD. Furthermore, local geometric features, complex boundary geometries, and spatially varying medium parameters cannot be straightforwardly accommodated in a global spectral basis. This fundamental trade-off directly motivates the domain decomposition and Adaptive Rectangular Decomposition (ARD) frameworks developed in Chapter~3, where the computational domain is partitioned into regular rectangular blocks that leverage the efficiency of PSTD internally while exchanging interface conditions across boundaries.}
+\end{itemize}
 
 \chapter{Acceleration of the Numerical Solvers and Inverse Problems}
 
