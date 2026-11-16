@@ -4473,7 +4473,15 @@ The ARD construction extends naturally and optimally to the pseudo-spectral disc
 
 For each subdomain, the solution is expanded in the DCT basis, yielding the uncoupled modal state vectors $\mathbf Z_{1,m}$ and $\mathbf Z_{2,m}$. The local Drift operator is simply the exact state-transition matrix $S_m(\Delta t)$ derived in the previous section \eqref{eq:modal_general_update}, incorporating the analytical propagation of the damped modal oscillators and the external physical forcing via the $T_m$ matrix.
 
-The complete ARD-PSTD algorithm executes the following sequence at each time step $t_n$:
+{\color{red}
+\paragraph{Initialization ($n=0$).}
+The time-stepping scheme is initialized from the prescribed physical initial displacement $\mathbf{u}_0$ and velocity $\mathbf{v}_0$ sampled on the discrete grid. The initial modal states $\mathbf{U}_m^0$ and $\mathbf{V}_m^0$ on each subdomain are obtained directly by applying the forward DCT:
+\begin{equation*}
+    \mathbf{U}_m^0 = \mathcal{D} \{ \mathbf{u}_0 \} \quad \text{and} \quad \mathbf{V}_m^0 = \mathcal{D} \{ \mathbf{v}_0 \},
+\end{equation*}
+yielding the initial state vector $\mathbf{Z}_m^0 = [\mathbf{U}_m^0, \mathbf{V}_m^0]^T$.}
+
+At each time step $t_n$, the complete ARD-PSTD algorithm executes the following Strang-split sequence:
 
 \begin{enumerate}
 
