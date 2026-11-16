@@ -3841,6 +3841,7 @@ This benchmark evaluates the behavior of the two methods for propagating solutio
 To solve the damped wave equation on large computational domains, we employ an overlapping Schwarz Waveform Relaxation (SWR) method. For the classical Schwarz Waveform Relaxation method, for which Dirichlet transmission conditions are employed, whereas for Optimized Schwarz Waveform Relaxation (OSWR) methods, we develop transmission operators that minimize the convergence factor by employing Robin-like transmission conditions depending on two parameters $q$ and $r$. As the PSTD method only supports homogeneous Neumann conditions, we employ SWR only for FDTD.
 
 \subsection{SWR Algorithm}
+\textcolor{red}{As is standard in domain decomposition theory (\cite{quarteroni_domain_1999,gander_optimized_2007,dolean_introduction_2015}), we analyze a canonical two-subdomain configuration to analytically derive the convergence factor and optimize the transmission parameters at the interface, which readily generalizes to multi-subdomain partitions. The spatial overlap $\delta = b - a > 0$ is introduced to provide geometric error contraction, significantly accelerating the iterative exchange of boundary traces across iterations.}
 Let $\Omega=(0,L)$ be decomposed into the two overlapping subdomains $\Omega_1=(0,b)$ and $\Omega_2=(a,L)$, with
 \[
 0<a<b<L,
@@ -4225,7 +4226,7 @@ To definitively validate the theoretical min-max optimization problem (Equation~
 
 \subsection{Extension to Two-Dimensional Domains}
 
-The convergence analysis and optimization of the Schwarz Waveform Relaxation method can be naturally extended to higher-dimensional domains. Let us consider the damped wave equation in two spatial dimensions $(x, y)$, where the domain is partitioned along the $x$-axis into two overlapping subdomains $\Omega_1 = (0, b) \times (0, L_y)$ and $\Omega_2 = (a, L_x) \times (0, L_y)$.
+The convergence analysis and optimization of the Schwarz Waveform Relaxation method can be naturally extended to higher-dimensional domains. Let us consider the damped wave equation in two spatial dimensions $(x, y)$, where the domain is partitioned along the $x$-axis \textcolor{red}{(allowing the transverse $y$-direction to be decoupled via a spatial Fourier transform)} into two overlapping subdomains $\Omega_1 = (0, b) \times (0, L_y)$ and $\Omega_2 = (a, L_x) \times (0, L_y)$ \textcolor{red}{sharing the overlap width $\delta = b - a > 0$}.
 
 The error equations for the 2D problem are given by
 \begin{equation*}
