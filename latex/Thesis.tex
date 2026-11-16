@@ -292,9 +292,9 @@ These models enabled the determination of absorption coefficients for a range of
 Scale models are expensive and time-consuming, and their use is limited by the frequency dependence of both boundary impedance and atmospheric absorption. Geometric similarity alone is not sufficient: the required frequency scaling means that it is often impossible to find model materials whose impedance or absorption spectra exactly reproduce those of the full-scale surfaces after scaling. Additional corrections or statistical extrapolations are therefore required (\cite{hunt_investigation_1939}). Computational acoustics therefore became an attractive alternative.
 
 \subsection{Geometrical Methods}
-The first computational methods emerged around 1970 with the ray tracing technique, a \emph{geometrical} method. Geometrical acoustics assumes that sound propagates along straight lines (rays) and reflects off surfaces geometrically, much like light in optics. Mathematically, this assumption is justified because, in the high-frequency limit, the wave equation reduces asymptotically to the eikonal equation, whose characteristic curves are precisely these sound rays. Exploiting this framework, the ray tracing technique launches a large number of rays from a source and tracks their specular reflections at the boundaries. This makes the computation of room impulse responses fast (\cite{krokstad_calculating_1968,schroeder_digital_1970,schroeder_computer_1973}) and also enables sound source identification (\cite{luzzato_simple_1986}).
+The first computational methods emerged around 1970 with the ray tracing technique, a \emph{geometrical} method. Geometrical acoustics assumes that sound propagates along straight lines (rays) and reflects off surfaces geometrically, much like light in optics. Mathematically, this assumption is justified because, in the high-frequency limit, the wave equation reduces asymptotically to the eikonal equation\footnote{\textcolor{red}{The eikonal equation, $\|\nabla S(\mathbf{x})\|^2 = 1/c^2$, governs the spatial evolution of the wavefront phase $S(\mathbf{x})$ in the high-frequency limit of the wave equation (\cite{potter_numerical_2023}).}}, whose characteristic curves are precisely these sound rays. Exploiting this framework, the ray tracing technique launches a large number of rays from a source and tracks their specular reflections at the boundaries. This makes the computation of room impulse responses fast (\cite{krokstad_calculating_1968,schroeder_digital_1970,schroeder_computer_1973}) and also enables sound source identification (\cite{luzzato_simple_1986}).
 
-Most classical formulations of the ray tracing technique treat the rays as incoherent. However, treating sound simply as energy rays that sum together ignores its coherent wave nature. In reality, the superposition of sound waves depends heavily on their phase. Without tracking phase information, a model cannot predict whether intersecting waves will constructively amplify or destructively cancel, making it impossible to describe crucial acoustic phenomena like interference effects and standing waves (\cite{funkhouser_beam_1998,kuttruff_acoustics_2007,kuttruff_room_2009}).
+Most classical formulations of the ray tracing technique treat the rays as incoherent\footnote{\textcolor{red}{In acoustic modeling, an incoherent formulation adds only acoustic energy while discarding wave phase, whereas a coherent formulation tracks the superposition of complex acoustic pressures with their respective phases.}}. However, treating sound simply as energy rays that sum together ignores its coherent wave nature. In reality, the superposition of sound waves depends heavily on their phase. Without tracking phase information, a model cannot predict whether intersecting waves will constructively amplify or destructively cancel, making it impossible to describe crucial acoustic phenomena like interference effects and standing waves (\cite{funkhouser_beam_1998,kuttruff_acoustics_2007,kuttruff_room_2009}).
 
 Furthermore, the eikonal equation itself does not model diffusion or diffraction, so the ray tracing technique alone ignores these phenomena.
 
@@ -304,7 +304,7 @@ The reverberation tail is associated with a diffuse reverberant field characteri
 
 Ignoring diffraction is a serious limitation in acoustics: a considerable portion of the wavelengths of interest is often of the same order of magnitude as the dimensions of obstacles found in rooms, meaning that the incident sound is not only specularly reflected but also diffracted around edges. This limitation particularly affects accuracy at low frequencies and in small and medium-sized rooms (\cite{funkhouser_beam_1998,kuttruff_acoustics_2007,kuttruff_room_2009,pind_acoustic_2018}).
 
-To account for phase and diffraction, diffraction-corrected and phase-aware formulations of the ray tracing technique were developed. For example, in \cite{deregowski_theory_1983}, the ray tracing technique is coupled with the Kirchhoff--Fresnel diffraction formula, and the rays carry acoustic pressure with both amplitude and phase information. However, even in later far-field approaches such as \cite{nakagawa_improved_1993}, these remain simplified diffraction theories and are still far less accurate than wave-based methods.
+To account for phase and diffraction, diffraction-corrected and phase-aware formulations of the ray tracing technique were developed. For example, in \cite{deregowski_theory_1983}, the ray tracing technique is coupled with the Kirchhoff--Fresnel diffraction formula\footnote{\textcolor{red}{The Kirchhoff--Fresnel diffraction formula is a boundary-integral formulation that represents the diffracted acoustic field as a superposition of secondary spherical wavelets originating from an unobstructed wavefront or aperture (\cite{deregowski_theory_1983}).}}, and the rays carry acoustic pressure with both amplitude and phase information. However, even in later far-field approaches such as \cite{nakagawa_improved_1993}, these remain simplified diffraction theories and are still far less accurate than wave-based methods.
 
 The image-source method, developed around 1980, is another geometrical method in which reflections are represented by virtual sound sources. It does not model diffraction and is naturally suited to simple geometries such as rectangles, polyhedra, or curved boundaries approximated locally by planar facets. The reason is that virtual sound sources are obtained by reflecting the physical source with respect to planes representing the boundaries (\cite{allen_image_1979,borish_extension_1984,kirszenstein_image_1984,heinz_binaural_1993}).
 
@@ -315,7 +315,7 @@ The limitations of both the ray tracing technique and the image-source method in
 In general, geometrical methods are less accurate than wave-based methods. For instance, \cite{kleiner_speech_1978} shows that geometrical acoustics coupled with statistical acoustics is unable to predict speech intelligibility in a theater.
 
 \subsection{Wave-Based Methods}
-Wave-based methods such as the Finite Element Method (FEM) and the Boundary Element Method (BEM) for the Helmholtz equation, i.e., the steady-state form of the wave equation, also emerged around 1970, although some precursors of BEM can be found in \cite{chen_sound_1963,chertock_sound_1964,copley_integral_1967,schenck_improved_1968}. These methods are based on a finite-element discretization of the domain (FEM) or of the boundary (BEM), followed by the solution of a matrix system to predict the pressure field from the forcing terms. As a consequence, FEM is more suitable for interior problems, while BEM for exterior problems, where discretizing the entire domain would be inefficient (\cite{filippi_theoretical_1983}). Useful theoretical references and reviews include \cite{filippi_theoretical_1983,seybert_review_1985,kipp_prediction_1985,ihlenburg_finite_1995}.
+Wave-based methods such as the Finite Element Method (FEM) and the Boundary Element Method (BEM) for the Helmholtz equation\footnote{\textcolor{red}{The Helmholtz equation, $\Delta u + k^2 u = 0$, is the time-harmonic form of the wave equation, where $k = \omega/c$ denotes the acoustic wavenumber.}}, also emerged around 1970, although some precursors of BEM can be found in \cite{chen_sound_1963,chertock_sound_1964,copley_integral_1967,schenck_improved_1968}. These methods are based on a finite-element discretization of the domain (FEM) or of the boundary (BEM), followed by the solution of a matrix system to predict the pressure field from the forcing terms. As a consequence, FEM is more suitable for interior problems, while BEM for exterior problems, where discretizing the entire domain would be inefficient (\cite{filippi_theoretical_1983}). Useful theoretical references and reviews include \cite{filippi_theoretical_1983,seybert_review_1985,kipp_prediction_1985,ihlenburg_finite_1995}.
 
 Despite their computational cost, these methods have been used in applications ranging from predicting acoustic radiation from vibrating bodies to studying resonances in arbitrarily shaped enclosures such as automobiles and reactive mufflers (\cite{craggs_use_1972,shuku_analysis_1973,petyt_finite_1976,kagawa_finiteelement_1976,joppa_finite_1978,richards_simplified_1979,cederfeldt_use_1982,nefske_application_1984}), as well as accurately modeling the diffraction of sound around barriers (\cite{seznec_diffraction_1980}).
 
@@ -375,39 +375,39 @@ For linear differential equations, this discretization results in a linear algeb
 
 Finite-Difference Time-Domain (FDTD) methods extend this framework to initial value problems (IVPs), namely time-dependent partial differential equations. In addition to the spatial discretization described above, the time variable is discretized into successive time levels, and the solution is advanced from the prescribed initial conditions by repeatedly applying a finite-difference approximation of the time derivatives. For example, a first-order-in-time partial differential equation results in a discretization of the form $A \, \mathbf{x}^{n+1} = B \, \mathbf{x}^n + C \, \mathbf{b}^{n+1}$. Schemes for which $A = I$ are referred to as explicit schemes; otherwise, they are referred to as implicit schemes.
 
-The discretization introduces numerical errors and constraints that must be carefully analyzed. In particular, explicit schemes are generally conditionally stable and are therefore subject to a Courant--Friedrichs--Lewy (CFL) stability condition. Moreover, the finite-difference approximation introduces truncation errors that affect the accuracy of the solution and, in wave-propagation problems, may produce numerical dispersion, causing waves of different wavelengths to propagate at incorrect speeds. The design and analysis of stable, accurate, and low-dispersion schemes therefore play a central role in finite-difference methods.
+The discretization introduces numerical errors and constraints that must be carefully analyzed. In particular, explicit schemes are generally conditionally stable and are therefore subject to a Courant--Friedrichs--Lewy (CFL) stability condition\footnote{\textcolor{red}{The Courant--Friedrichs--Lewy (CFL) condition is a necessary stability criterion for explicit time-stepping schemes, requiring the numerical domain of dependence to contain the physical domain of dependence of the underlying differential equation (\cite{courant1928partiellen}).}}. Moreover, the finite-difference approximation introduces truncation errors that affect the accuracy of the solution and, in wave-propagation problems, may produce numerical dispersion, causing waves of different wavelengths to propagate at incorrect speeds. The design and analysis of stable, accurate, and low-dispersion schemes therefore play a central role in finite-difference methods.
 
 For further details, the reader may refer to \cite{bilbao_numerical_2009,bergman_computational_2018}.
 %
 \subsection{Finite Element and Spectral Methods}
 In the Finite Element Method (FEM), the governing partial differential equation is first reformulated in its weak (variational) form and then projected onto a finite-dimensional approximation space spanned by local basis functions. As a result, the unknown field is approximated as a linear combination of these basis functions, and the problem reduces to determining the corresponding expansion coefficients (\cite{bergman_computational_2018}).
 
- Unlike finite-difference methods, where the spatial derivatives are approximated directly by finite-difference formulas on a Cartesian grid, finite element and spectral methods both approximate the unknown field as a linear combination of basis functions. In the Finite Element Method (FEM), these basis functions have local support, and the governing equation is projected onto the corresponding finite-dimensional approximation space through its weak formulation. In spectral methods, by contrast, the basis functions have global support over the computational domain, so that the solution is represented by a single global interpolant and the spatial derivatives are obtained by differentiating this interpolant.
+ Unlike finite-difference methods, where the spatial derivatives are approximated directly by finite-difference formulas on a Cartesian grid, finite element and spectral methods both approximate the unknown field as a linear combination of basis functions. In the Finite Element Method (FEM), these basis functions have local support\footnote{\textcolor{red}{In the Finite Element Method, local support means that each basis function vanishes identically outside a small localized sub-element of the domain.}}, and the governing equation is projected onto the corresponding finite-dimensional approximation space through its weak formulation. In spectral methods, by contrast, the basis functions have global support over the spatial computational domain $\Omega$, so that the solution is represented by a single global interpolant\footnote{\textcolor{red}{In spectral methods, global support means that the basis functions extend across the entire spatial domain $\Omega$ ($\operatorname{supp}(\phi_k) = \overline{\Omega}$). The solution is represented by a global interpolating expansion (or interpolant) $\mathcal{I}_N u(x)$ matching the nodal values of the field, and the spatial derivatives are obtained by differentiating this interpolant directly.}} and the spatial derivatives are obtained by differentiating this interpolant.
 
-Because of their global approximation, Fourier spectral methods, namely spectral methods based on trigonometric interpolants, can be interpreted as infinite-order finite-difference schemes on uniform grids. For sufficiently smooth solutions, they exhibit spectral, often exponential, convergence and very low numerical dispersion (\cite{hesthaven_spectral_2007}).
+Because of their global approximation, Fourier spectral methods, namely spectral methods based on trigonometric interpolants, can be interpreted as infinite-order finite-difference schemes on uniform grids. For sufficiently smooth solutions, they exhibit spectral, often exponential, convergence\footnote{\textcolor{red}{Spectral convergence indicates that the discretization error decays faster than any polynomial power $\mathcal{O}(N^{-p})$ for smooth ($C^\infty$) solutions, and at an exponential rate $\mathcal{O}(e^{-c N})$ when the solution is analytic.}} and very low numerical dispersion\footnote{\textcolor{red}{Numerical dispersion refers to artificial phase velocity errors where numerical wave modes propagate at speeds deviating from the physical wave speed $c$, causing phase lag and wave distortion.}} (\cite{hesthaven_spectral_2007}).
 
-The choice of interpolant should be compatible with the boundary conditions and the geometry of the domain. For periodic problems, a natural choice is given by trigonometric interpolants, such as trigonometric Lagrange polynomials, which represent Fourier modes exactly up to the Nyquist limit and therefore require only two grid points per wavelength in principle. For non-periodic boundary conditions, one typically uses orthogonal polynomials of Jacobi type, such as Chebyshev or Legendre polynomials, whose associated collocation nodes are generally non-uniform. For further details, the reader may refer to \cite{hesthaven_spectral_2007,fornberg_practical_1996}.
+The choice of interpolant should be compatible with the boundary conditions and the geometry of the domain. For periodic problems, a natural choice is given by trigonometric interpolants, such as trigonometric Lagrange polynomials, which represent Fourier modes exactly up to the Nyquist limit and therefore require only two grid points per wavelength in principle. For non-periodic boundary conditions, one typically uses orthogonal polynomials of Jacobi type, such as Chebyshev or Legendre polynomials, whose associated \textcolor{red}{collocation nodes (the discrete interpolation grid points where the governing differential equation is enforced)} are generally non-uniform. For further details, the reader may refer to \cite{hesthaven_spectral_2007,fornberg_practical_1996}.
 
-The expansion coefficients can be determined in several ways. As summarized in \cite{fornberg_practical_1996}, the three classical approaches are the tau, Galerkin, and collocation methods. In all cases, one substitutes the truncated expansion into the governing equation and considers the resulting residual. The methods differ in how this residual is treated. In the tau method, the boundary conditions are enforced explicitly, and the residual is required to be orthogonal to as many basis functions as possible. In the Galerkin method, the basis is first modified so that the boundary conditions are satisfied identically, and the residual is then required to be orthogonal to the resulting test space. In the collocation method, the boundary conditions are again enforced explicitly, but the residual is required to vanish at a suitable set of collocation points. Spectral methods based on collocation are commonly referred to as pseudospectral methods.
+The expansion coefficients can be determined in several ways. As summarized in \cite{fornberg_practical_1996}, \textcolor{red}{the classical approaches include Galerkin and collocation methods. In both cases}, one substitutes the truncated expansion into the governing equation and considers the resulting residual. In the Galerkin method, the basis is first modified so that the boundary conditions are satisfied identically, and the residual is then required to be orthogonal to the resulting test space. In the collocation method, the boundary conditions are again enforced explicitly, but the residual is required to vanish at a suitable set of collocation points. Spectral methods based on collocation are commonly referred to as pseudospectral methods.
 
-As finite-difference methods can be extended to time-dependent problems, yielding the Finite-Difference Time-Domain (FDTD) method, pseudospectral methods can likewise be extended to time-dependent problems, yielding the Pseudospectral Time-Domain (PSTD) method. For example, in \cite{hornikx_extended_2010}, a PSTD method is used to solve the linearized Euler equations. The solution is represented spatially by a global interpolant on a uniform Cartesian grid, the governing equations are enforced pointwise at the grid nodes, and spatial derivatives are evaluated by differentiating the interpolant, typically through fast transforms such as the FFT. The resulting evolution problem is then advanced in time using a Runge--Kutta scheme.
+As finite-difference methods can be extended to time-dependent problems, yielding the Finite-Difference Time-Domain (FDTD) method, pseudospectral methods can likewise be extended to time-dependent problems, yielding the Pseudospectral Time-Domain (PSTD) method. For example, in \cite{hornikx_extended_2010}, a PSTD method is used to solve the linearized Euler equations. The solution is represented spatially by a global interpolant on a uniform Cartesian grid, the governing equations are enforced pointwise at the grid nodes, and spatial derivatives are evaluated by differentiating the interpolant, typically through fast transforms such as the FFT. The resulting evolution problem is then advanced in time using a Runge--Kutta scheme\footnote{\textcolor{red}{Runge--Kutta methods are a family of single-step, multi-stage time-marching schemes that evaluate intermediate vector-field stages within each time step $[t^n, t^{n+1}]$ to attain high-order temporal accuracy without requiring previous time levels (\cite{quarteroni_numerical_2007}).}}.
 %
 \section{Acceleration Techniques for Wave-Based Numerical Solvers}
 As we have seen, wave-based numerical solvers can be prohibitively expensive. For this reason, a substantial body of literature has been devoted to reducing their computational cost while preserving their accuracy. In this section, we review the main classes of acceleration techniques that are consistent with the methods developed later in this thesis.
 %
 \subsection{Preconditioning and Krylov Methods}
-One of the standard ways to accelerate wave-based numerical solvers is through preconditioning. The systems of equations arising from FEM discretizations can be very large; however, the corresponding matrices are typically sparse and reflect the local nature of the underlying discretization. Preconditioning exploits this structure by transforming a linear system into an equivalent one with more favorable spectral properties, allowing iterative solvers to converge more rapidly. A systematic review of preconditioning techniques can be found in \cite{chen_matrix_2005}.
+One of the standard ways to accelerate wave-based numerical solvers is through preconditioning\footnote{\textcolor{red}{In iterative linear solvers, preconditioning consists in transforming a linear system $A\mathbf{x}=\mathbf{b}$ into an equivalent system, such as $M^{-1}A\mathbf{x} = M^{-1}\mathbf{b}$, where the preconditioner matrix $M \approx A$ is inexpensive to invert and reduces the condition number of the system (\cite{chen_matrix_2005}).}}. The systems of equations arising from FEM discretizations can be very large; however, the corresponding matrices are typically sparse and reflect the local nature of the underlying discretization. Preconditioning exploits this structure by transforming a linear system into an equivalent one with more favorable spectral properties, allowing iterative solvers to converge more rapidly. A systematic review of preconditioning techniques can be found in \cite{chen_matrix_2005}.
 
-Another important class of techniques for accelerating the solution of linear systems is given by Krylov methods. Krylov methods are iterative algorithms that approximate the solution of a linear system by projecting the problem onto a sequence of low-dimensional subspaces generated by repeated matrix--vector products with the system matrix. Examples include the Conjugate Gradient method and GMRES. These methods are particularly attractive for FEM discretizations because they rely only on matrix--vector products and therefore exploit matrix sparsity efficiently. For the theoretical framework of Krylov methods, the reader may refer to \cite{liesen_krylov_2012}.
+Another important class of techniques for accelerating the solution of linear systems is given by Krylov methods\footnote{\textcolor{red}{A Krylov subspace method computes approximations to $A\mathbf{x}=\mathbf{b}$ from the subspace $\mathcal{K}_m(A, \mathbf{r}_0) = \operatorname{span}\{\mathbf{r}_0, A\mathbf{r}_0, \dots, A^{m-1}\mathbf{r}_0\}$ generated by powers of $A$ applied to the initial residual $\mathbf{r}_0$ (\cite{liesen_krylov_2012}).}}. Krylov methods are iterative algorithms that approximate the solution of a linear system by projecting the problem onto a sequence of low-dimensional subspaces generated by repeated matrix--vector products with the system matrix. Examples include the Conjugate Gradient method and GMRES. These methods are particularly attractive for FEM discretizations because they rely only on matrix--vector products and therefore exploit matrix sparsity efficiently. For the theoretical framework of Krylov methods, the reader may refer to \cite{liesen_krylov_2012}.
 
 \subsection{Domain Decomposition Methods}
 Up to this point, we have discussed techniques for accelerating the solution of linear systems. We now turn our attention to methods specifically designed to accelerate the numerical solution of partial differential equations.
 
-Domain decomposition methods are based on partitioning the computational domain into partially overlapping or non-overlapping subdomains so that the solution in each subdomain can be computed independently and, consequently, in parallel (\cite{quarteroni_domain_1999}). A classical example is the Schwarz method, in which the subdomain problems are solved iteratively using interface data computed from neighboring subdomains at the previous iteration. A related approach is the Optimized Schwarz method, where suitable transmission conditions are designed to improve the convergence rate of the iteration. Classical Schwarz methods are mainly associated with stationary problems (\cite{dolean_introduction_2015}).
+Domain decomposition methods are based on partitioning the computational domain into partially overlapping or non-overlapping subdomains so that the solution in each subdomain can be computed independently and, consequently, in parallel (\cite{quarteroni_domain_1999}). A classical example is the Schwarz method, in which the subdomain problems are solved iteratively using interface data computed from neighboring subdomains at the previous iteration. A related approach is the Optimized Schwarz method, where suitable transmission conditions\footnote{\textcolor{red}{Transmission conditions are artificial boundary conditions prescribed along the internal interfaces separating adjacent subdomains to exchange boundary traces and normal fluxes during the iterations.}} are designed to improve the convergence rate of the iteration. Classical Schwarz methods are mainly associated with stationary problems (\cite{dolean_introduction_2015}).
 
 For evolution problems, a natural extension is Schwarz Waveform Relaxation, in which the solution is computed over the entire space--time domain within each subdomain, using interface data from the previous iteration. Optimized Schwarz Waveform Relaxation further improves convergence by selecting suitable transmission conditions (\cite{barth_schwarz_2008}). A large body of literature is devoted to the application and analysis of Optimized Schwarz Waveform Relaxation methods for different classes of partial differential equations, making this approach a particularly attractive candidate for our purposes (\cite{gander_optimal_1999,martin_optimized_2005,gander_optimized_2007,al-khaleel_optimized_2024,ciaramella_convergence_2024}).
 
-Another approach is Adaptive Rectangular Decomposition (ARD), a numerical solver for the wave equation that partitions the computational domain into non-overlapping rectangular subdomains (\cite{raghuvanshi_efficient_2009}). Within each subdomain, a pseudospectral formulation is employed: the solution is expanded in a discrete cosine transform of type II (DCT-II) basis defined on a staggered uniform Cartesian grid (\cite{rao_discrete_1990}), and the evolution problem is advanced using the exact time-marching scheme presented in \cite{cieslinski_exact_2011}. The basis functions satisfy homogeneous Neumann boundary conditions by construction, making them well suited to the local subdomain problems. To model partial or total absorption at the outer boundaries, ARD couples this pseudospectral discretization with a perfectly matched layer (PML).
+Another approach is Adaptive Rectangular Decomposition (ARD), a numerical solver for the wave equation that partitions the computational domain into non-overlapping rectangular subdomains (\cite{raghuvanshi_efficient_2009}). Within each subdomain, a pseudospectral formulation is employed: the solution is expanded in a discrete cosine transform of type II (DCT-II)\footnote{\textcolor{red}{The Discrete Cosine Transform (DCT) is a discrete Fourier-related transform mapping real-valued sequences directly to real coefficients without complex arithmetic, which can be computed with $\mathcal{O}(N \log N)$ complexity via fast algorithms analogous to the FFT (\cite{rao_discrete_1990}).}} basis defined on a staggered uniform Cartesian grid (\cite{rao_discrete_1990}), and the evolution problem is advanced using the exact time-marching scheme presented in \cite{cieslinski_exact_2011}. The basis functions satisfy homogeneous Neumann boundary conditions by construction, making them well suited to the local subdomain problems. To model partial or total absorption at the outer boundaries, ARD couples this pseudospectral discretization with a perfectly matched layer (PML)\footnote{\textcolor{red}{A perfectly matched layer (PML) is an artificial absorbing layer designed to attenuate outgoing waves without generating spurious reflections at computational boundaries (\cite{grote2010efficient}).}}.
 
 The advantage of ARD is that, provided that the spatial discretization adequately resolves the solution, the subdomain evolution is propagated without additional time-discretization error, which makes the method particularly attractive for our purposes. The only source of error comes from the subdomain communication scheme.
 
@@ -1541,7 +1541,7 @@ that is,
 \\
 u_x(L,t)&=g_{\mathrm R}(t),
 \end{align*}
-ghost nodes are introduced outside the computational domain and eliminated through the second-order accurate centered approximations
+ghost nodes\footnote{\textcolor{red}{Ghost nodes are fictitious grid points placed outside the physical domain, e.g., $x_{-1}$ and $x_N$, whose values are determined by mirroring internal values to satisfy boundary conditions.}} are introduced outside the computational domain and eliminated through the second-order accurate centered approximations
 \begin{equation*}
 -\frac{u_{1}^n-u_{-1}^n}{2\Delta x}
 =
@@ -1615,7 +1615,7 @@ ru
 g.
 \end{equation*}
 
-Second-order backward differentiation formulas (BDF2) are used for both spatial and temporal derivatives. At time $t^{n+1}$, the boundary conditions are discretized using one-sided 3-point finite differences for the normal derivative and the BDF2 formula for the time derivative:
+Second-order Backward Differentiation Formulas (BDF2)\footnote{\textcolor{red}{The second-order Backward Differentiation Formula (BDF2) approximates the first time derivative through the discrete operator $\delta_t^{\text{BDF2}} u^{n+1} = \frac{3u^{n+1}-4u^n+u^{n-1}}{2\Delta t}$.}} are used for the temporal derivatives, alongside second-order one-sided three-point finite differences for the spatial derivatives. At time $t^{n+1}$, the boundary conditions are discretized as:
 \begin{align*}
 \frac{3u_{0}^{n+1}-4u_{1}^{n+1}+u_{2}^{n+1}}{2\Delta x}
 +
@@ -1708,7 +1708,7 @@ In this section we analyze the derived interior scheme and reconstruction strate
 
 \begin{proposition}[Consistency and accuracy]
 Assume that the exact solution $u$ is sufficiently smooth. Then the proposed finite-difference scheme is consistent with \eqref{eq:wave} and is
-second-order accurate in both space and time. More precisely, the local truncation error satisfies
+second-order accurate in both space and time. More precisely, the local truncation error\footnote{\textcolor{red}{The local truncation error $\tau$ is the algebraic residual obtained by applying the discrete difference operator to the exact smooth continuous solution, measuring the one-step discretization error (\cite{bilbao_numerical_2009}).}} satisfies
 \begin{equation*}
 \tau
 =
@@ -1770,7 +1770,7 @@ proving that the scheme is consistent and second-order accurate in both space an
 
 \begin{proposition}[Von Neumann stability]
 Assume that the damping coefficients satisfy $\gamma,\nu\ge0$. Then the
-proposed finite-difference scheme is Von Neumann stable if and only if the
+proposed finite-difference scheme is Von Neumann stable\footnote{\textcolor{red}{Von Neumann stability analysis examines the linear numerical stability of finite-difference schemes on uniform grids by decomposing the discrete field into Fourier spatial modes $u_j^n = \xi^n e^{\mathrm{i}kj\Delta x}$, requiring that the modal growth factor satisfies $|\xi| \le 1$ for all real wavenumbers $k$ (\cite{bilbao_numerical_2009}).}} if and only if the
 Courant number satisfies
 \begin{equation*}
     \sigma=\frac{c\Delta t}{\Delta x}\le1.
@@ -1854,7 +1854,7 @@ Introducing the dimensionless parameters
 \qquad
 \beta=\frac{\nu\Delta t}{2\Delta x^2},
 \end{equation*}
-we obtain the amplification polynomial
+we obtain the \textcolor{red}{characteristic equation for the amplification factor $\xi$}:
 \begin{equation*}
 (1+\alpha+2\beta\delta)\xi^2
 -2(1-\sigma^2\delta)\xi
@@ -2202,7 +2202,7 @@ i=0,\ldots,N-1.
 \end{equation*}
 Consequently, the physical boundaries are located half a grid spacing outside the first and last computational nodes, i.e., $x_{-1/2}=0$ and $x_{N-1/2}=L$.
 
-The interior finite-difference stencil remains unchanged and is therefore still given by
+The interior finite-difference stencil \footnote{\textcolor{red}{In finite-difference methods, a computational stencil refers to the geometric arrangement of neighboring grid points sampled to approximate a differential operator at a target location, and is often used interchangeably with "finite-difference operator" or local difference formula.}} remains unchanged and is therefore still given by
 \begin{equation*}
 \frac{
 u_{i+1}-2u_i+u_{i-1}
@@ -3194,7 +3194,7 @@ represented by the retained cosine modes.
 
 In practice, evaluating the series directly at every point is unnecessary.
 Instead, a dense sampling of the same interpolant is efficiently obtained by
-appending zeros to the modal coefficient vector,
+spectral zero-padding\footnote{\textcolor{red}{Spectral zero-padding consists in appending zeros to the high-frequency modal coefficient vector, which evaluates the represented trigonometric interpolant on a denser grid via exact sinc-like interpolation without altering the underlying continuous polynomial.}},
 \[
 \widehat{\mathbf U}_n
 =
@@ -3677,7 +3677,7 @@ For the FDTD method we choose $\Delta t = \Delta x/c$ (which corresponds to the 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Smooth Standing Wave (Undamped)}
-This benchmark verifies the accuracy of both schemes for smooth standing-wave solutions. In one spatial dimension, when the CFL condition satisfies $c\Delta t=\Delta x$, the undamped FDTD scheme reduces to the leapfrog method and exhibits the expected exponential convergence of the discretization error (\cite{bilbao_numerical_2009}). Since the exact solution is entirely contained in the span of the retained cosine modes, the PSTD method reproduces the spatial solution exactly and the numerical error is reduced to machine precision.
+This benchmark verifies the accuracy of both schemes for smooth standing-wave solutions. In one spatial dimension, when the CFL condition satisfies $c\Delta t=\Delta x$, the undamped FDTD scheme reduces to the leapfrog method and \textcolor{red}{exhibits exact numerical propagation with machine-precision discretization error} (\cite{bilbao_numerical_2009}). Since the exact solution is entirely contained in the span of the retained cosine modes, the PSTD method reproduces the spatial solution exactly and the numerical error is reduced to machine precision.
 
 \begin{figure}[H]
     \centering
@@ -3722,7 +3722,7 @@ This benchmark verifies the accuracy of both schemes for smooth standing-wave so
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection*{Non-smooth Standing Wave (Undamped)}
-This experiment investigates the effect of reduced spatial regularity on the convergence of the two methods. As in the previous experiment, the FDTD method exhibits the expected exponential convergence of the discretization error. Since the cosine coefficients of non-smooth functions decay algebraically rather than exponentially, the PSTD method exhibits algebraic convergence.
+This experiment investigates the effect of reduced spatial regularity on the convergence of the two methods. As in the previous experiment, the FDTD method exhibits the \textcolor{red}{expected second-order algebraic convergence} of the discretization error. Since the cosine coefficients of non-smooth functions decay algebraically rather than exponentially, the PSTD method exhibits algebraic convergence.
 
 \begin{figure}[H]
     \centering
@@ -3791,7 +3791,7 @@ This experiment investigates the effect of reduced spatial regularity on the con
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection*{Smooth Propagating Waves (Undamped)}
-This experiment evaluates the propagation accuracy of the two schemes under repeated Neumann reflections. As in Experiment~1, the FDTD method exhibits the expected exponential convergence of the discretization error. Although the Gaussian pulse is not exactly represented by a finite cosine expansion, its cosine coefficients decay exponentially. Consequently, the PSTD method rapidly reaches machine precision.
+This experiment evaluates the propagation accuracy of the two schemes under repeated Neumann reflections. As in Experiment~1, the FDTD method exhibits the \textcolor{red}{expected second-order algebraic convergence} of the discretization error. Although the Gaussian pulse is not exactly represented by a finite cosine expansion, its cosine coefficients decay exponentially. Consequently, the PSTD method rapidly reaches machine precision.
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{fdtd_snapshots/experiment_5/snapshot_t_0.2000.png} \caption{FDTD $t=0.2$} \end{subfigure}
@@ -3814,7 +3814,7 @@ This experiment evaluates the propagation accuracy of the two schemes under repe
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \subsection*{Non-smooth Propagating Waves (Undamped)}
-This benchmark evaluates the behavior of the two methods for propagating solutions with limited spatial regularity and sharp gradients. The FDTD method again exhibits the expected exponential convergence of the discretization error. Since the solution is non-smooth, the cosine coefficients decay only algebraically, leading the PSTD method to exhibit algebraic convergence.
+This benchmark evaluates the behavior of the two methods for propagating solutions with limited spatial regularity and sharp gradients. The FDTD method again exhibits the \textcolor{red}{expected second-order algebraic convergence} of the discretization error. Since the solution is non-smooth, the cosine coefficients decay only algebraically, leading the PSTD method to exhibit algebraic convergence.
 \begin{figure}[H]
     \centering
     \begin{subfigure}{0.3\textwidth} \centering \includegraphics[width=\textwidth]{fdtd_snapshots/experiment_6/snapshot_t_0.2000.png} \caption{FDTD $t=0.2$} \end{subfigure}
@@ -4410,7 +4410,61 @@ Because the residual matrix $C_{\mathrm{res}}$ acts as a localized spatial secon
 
 To particularize this general framework for the FDTD method, the implicit local solver must satisfy two essential requirements: it must natively enforce homogeneous Neumann boundaries, and it must operate on (or be mathematically equivalent to) the first-order state space $\mathbf Z$ to allow for the instantaneous velocity updates prescribed by the Kick operator.
 
-For the purely undamped wave equation, standard explicit leapfrog FDTD is mathematically equivalent to a first-order Velocity Verlet scheme, making the Strang-split ARD integration straightforward. However, for the viscoelastic wave equation, maintaining numerical stability necessitates an implicit or semi-implicit time-stepping scheme (such as Crank-Nicolson) for the mixed derivative $\mathbf u_{txx}$. While it is theoretically possible to construct a strictly localized, block-diagonal implicit FDTD Drift step, perfectly preserving the exact centered dispersion properties and stability limits of the monolithic FDTD scheme within a Strang-split, first-order framework introduces significant algorithmic complexity. Therefore, we omit the explicit FDTD particularization here and proceed directly to the pseudo-spectral discretization, where the state-space mapping is analytically exact.
+{\color{red}
+For the purely undamped wave equation, the standard explicit leapfrog
+FDTD scheme (cfr. \cite{bilbao_numerical_2009}) is algebraically equivalent to the staggered-velocity
+formulation of the second-order Velocity Verlet integrator
+(\cite{swope1982computer}), making the Strang-split ARD integration straightforward. Indeed, after spatial
+discretization, the wave equation can be written as
+\begin{equation}
+	\ddot{\mathbf{u}}_h = \mathcal{L}_h \mathbf{u}_h,
+\end{equation}
+where $\mathcal{L}_h$ denotes the discrete spatial wave operator.
+Introducing the velocity variable
+$\mathbf{v}_h = \dot{\mathbf{u}}_h$, we obtain the first-order system
+\begin{equation}
+	\begin{cases}
+		\dot{\mathbf{u}}_h = \mathbf{v}_h,\\
+		\dot{\mathbf{v}}_h = \mathcal{L}_h\mathbf{u}_h.
+	\end{cases}
+\end{equation}
+Applying the Velocity Verlet scheme gives
+\begin{equation}
+	\begin{aligned}
+		\mathbf{v}_h^{n+\frac{1}{2}}
+		&= \mathbf{v}_h^n
+		+ \frac{\Delta t}{2}\mathcal{L}_h\mathbf{u}_h^n,\\
+		\mathbf{u}_h^{n+1}
+		&= \mathbf{u}_h^n
+		+ \Delta t\,\mathbf{v}_h^{n+\frac{1}{2}},\\
+		\mathbf{v}_h^{n+1}
+		&= \mathbf{v}_h^{n+\frac{1}{2}}
+		+ \frac{\Delta t}{2}\mathcal{L}_h\mathbf{u}_h^{n+1}.
+	\end{aligned}
+\end{equation}
+Equivalently, using a staggered representation of the velocity,
+\begin{equation}
+	\begin{aligned}
+		\mathbf{v}_h^{n+\frac{1}{2}}
+		&= \mathbf{v}_h^{n-\frac{1}{2}}
+		+ \Delta t\,\mathcal{L}_h\mathbf{u}_h^n,\\
+		\mathbf{u}_h^{n+1}
+		&= \mathbf{u}_h^n
+		+ \Delta t\,\mathbf{v}_h^{n+\frac{1}{2}}.
+	\end{aligned}
+\end{equation}
+Eliminating the intermediate velocity yields
+\begin{equation}
+		\mathbf{u}_h^{n+1}
+		-2\mathbf{u}_h^n
+		+\mathbf{u}_h^{n-1}
+		=
+		\Delta t^2\mathcal{L}_h\mathbf{u}_h^n,
+\end{equation}
+which is precisely the standard explicit leapfrog FDTD
+discretization of the undamped wave equation.}
+
+However, for the viscoelastic wave equation, maintaining numerical stability necessitates an implicit or semi-implicit time-stepping scheme (such as Crank--Nicolson\footnote{\textcolor{red}{The Crank--Nicolson method is a second-order, unconditionally stable implicit time-stepping scheme based on the trapezoidal quadrature rule, evaluating spatial differential operators as an average across time levels $t^n$ and $t^{n+1}$ (\cite{quarteroni_numerical_2007}).}}) for the mixed derivative $\mathbf u_{txx}$. While it is theoretically possible to construct a strictly localized, block-diagonal implicit FDTD Drift step, perfectly preserving the exact centered dispersion properties and stability limits of the monolithic FDTD scheme within a Strang-split, first-order framework introduces significant algorithmic complexity. Therefore, we omit the explicit FDTD particularization here and proceed directly to the pseudo-spectral discretization, where the state-space mapping is analytically exact.
 
 \subsection{Application to PSTD}
 
@@ -4511,7 +4565,7 @@ where $D(\Delta t)$ denotes the exact modal propagator and $K(\Delta t/2)$ repre
 
 \subsubsection{Stability}
 
-The resulting stability limits reveal that the localized interface correction imposes only a mild restriction on the time step. Because the explicit correction operator involves the projection of global spectral modes onto a localized interface stencil, the exact maximum eigenvalue of the amplification matrix exhibits a minor dependence on the grid resolution $N$. This mesh-dependency arises from discrete spatial resonances between the highest-frequency global modes and the fixed interface stencil. To establish rigorous, mesh-independent stability bounds, a comprehensive numerical sweep of the amplification matrix $G$ (defined as the exact single-step transition matrix combining the modal propagator and interface correction) was performed across all grid resolutions up to $N=800$. The absolute global minimum (worst-case) admissible Courant numbers for second-, fourth-, sixth-, and eighth-order interface operators (referring to the spatial order of the finite-difference residual operator $C_{\text{res}}$) are strictly bounded by
+The resulting stability limits reveal that the localized interface correction imposes only a mild restriction on the time step. Because the explicit correction operator involves the projection of global spectral modes onto a localized interface stencil\footnote{\textcolor{red}{In finite-difference methods, a computational stencil refers to the geometric arrangement of neighboring grid points sampled to approximate a differential operator. Here, an \emph{interface stencil} specifically denotes the local finite-difference operator straddling the artificial boundary between adjacent subdomains to evaluate the coupling correction $C_{\text{res}}$.}}, the exact maximum eigenvalue of the amplification matrix exhibits a minor dependence on the grid resolution $N$. This mesh-dependency arises from discrete spatial resonances between the highest-frequency global modes and the fixed interface stencil. To establish rigorous, mesh-independent stability bounds, a comprehensive numerical sweep of the amplification matrix $G$ (defined as the exact single-step transition matrix combining the modal propagator and interface correction) was performed across all grid resolutions up to $N=800$. The absolute global minimum (worst-case) admissible Courant numbers for second-, fourth-, sixth-, and eighth-order interface operators (referring to the spatial order of the finite-difference residual operator $C_{\text{res}}$) are strictly bounded by
 \[
 % These asymptotic worst-case bounds are computed using code/pstd/scripts/check_nx_trend.m
 \mathrm{CFL}_{\max}
@@ -4798,7 +4852,18 @@ By scaling this gradient penalty by $\nu$, our proposed regularization term beco
 
 This derivation proves that penalizing the spatial gradient energy $\nu \|\partial_x u_0\|_2^2$ perfectly suppresses high-frequency artifacts proportionally to the exact physics governing the wave. Furthermore, because of Parseval's theorem, we are able to compute this mode-dependent penalty entirely in the spatial domain, gracefully avoiding the need for computationally expensive spectral transforms during the training loop. Gradients are then backpropagated through the numerical solver via automatic differentiation, seamlessly embedding the physical laws into the training process.
 
-To ensure stable and precise convergence during training, we deploy two independent Adam optimizers. Because the physical variables ($\tilde{\gamma}$, $\tilde{\nu}$) are mapped exponentially and govern macroscopic physical damping, their loss landscape is highly non-linear. Coupling their optimization momentum directly with the millions of SIREN weights often leads to severe oscillatory behavior or overshooting. By entirely decoupling the optimizers, we assert strict independent control over their learning rate trajectories using Cosine Annealing schedules.
+To ensure stable and precise convergence during training, we deploy two independent Adam optimizers. Because the physical variables ($\tilde{\gamma}$, $\tilde{\nu}$) are mapped exponentially and govern macroscopic physical damping, their loss landscape is highly non-linear. Coupling their optimization momentum directly with the millions of SIREN weights often leads to severe oscillatory behavior or overshooting. By entirely decoupling the optimizers, \textcolor{red}{we enforce independent control over the learning-rate trajectories of the different trainable components by assigning each of them a separate Cosine Annealing schedule (\cite{loshchilov2017sgdr}). Specifically, the learning rate associated with component $k$ is updated according to
+	\begin{equation}
+		\eta_k(t) =
+		\eta_{k,\min}
+		+ \frac{1}{2}
+		\left(\eta_{k,\max}-\eta_{k,\min}\right)
+		\left[
+		1+\cos\left(\pi\frac{t}{T_k}\right)
+		\right],
+		\qquad 0\leq t\leq T_k,
+	\end{equation}
+where $\eta_{k,\max}$, $\eta_{k,\min}$, and $T_k$ denote, respectively, the initial learning rate, the minimum learning rate, and the annealing period for component $k$. These parameters are independently specified, enabling separate control of the learning-rate evolution of each component.}
 
 The network weights are optimized with a conservative initial learning rate of $10^{-3}$, smoothly decaying to a minimum cap of $10^{-5}$. Conversely, the unconstrained physical parameters are initialized with an aggressive learning rate of $10^{-1}$ to rapidly traverse the parameter space and escape bad local minima, but are strictly annealed down to a minimum cap of $10^{-3}$. This deliberate dual-scheduling strategy ensures that the physics parameters can swiftly reach the correct attenuation regime and subsequently lock onto the true damping coefficients without violently oscillating during the final training epochs.
 

@@ -1,0 +1,691 @@
+================================================================================
+AUDIT OF UNDEFINED AND UNREFERENCED TECHNICAL TERMS IN THE PHD THESIS
+Document Source: latex/Thesis.tex
+================================================================================
+
+CRITICAL COLOR-CODING DIRECTIVE FOR REVISIONS:
+  - All fixes resulting from REVIEWER 2 comments must be colored in RED (\textcolor{red}{...}).
+  - All fixes resulting from REVIEWER 1 comments must be colored in BLUE (\textcolor{blue}{...}).
+
+--------------------------------------------------------------------------------
+TABLE OF CONTENTS
+--------------------------------------------------------------------------------
+1. Terms Explicitly Flagged by Reviewer 2 (P9, P10, P11, P38, P87, P90, P100)
+2. Additional Undefined Technical Terms in Chapter 1 (Introduction)
+3. Additional Undefined Technical Terms in Chapter 2 (Model Problem & Numerical Solvers)
+4. Additional Undefined Technical Terms in Chapter 3 (Acceleration Techniques & DPNN)
+5. Comprehensive Summary Table (Term, Location, TeX Line, Deficit, Suggested Fix)
+
+
+================================================================================
+1. TERMS EXPLICITLY FLAGGED BY REVIEWER 2
+================================================================================
+
+--------------------------------------------------------------------------------
+[R2-01] "global support", "computational domain", "interpolant"
+--------------------------------------------------------------------------------
+- Location:
+  Chapter 1, Section 1.3 ("Finite Element and Spectral Methods")
+  Printed Page: P9 | TeX Source: latex/Thesis.tex, Line 385
+- Excerpt from TeX:
+  "In spectral methods, by contrast, the basis functions have global support over
+  the computational domain, so that the solution is represented by a single global
+  interpolant and the spatial derivatives are obtained by differentiating this
+  interpolant."
+- Reviewer 2 Comment:
+  "the terms 'global support', 'computational domain' and 'interpolant' have not
+  been defined in this context."
+- Deficit Analysis:
+  * "computational domain": Used as undefined jargon. In PDE boundary value problems,
+    it denotes the bounded open spatial region \Omega \subset \mathbb{R}^d on which
+    the governing equation is solved subject to conditions on its boundary \partial\Omega.
+  * "global support": Contrasted with local support in FEM, but "support"
+    supp(\phi_k) = closure(\{x \in \Omega : \phi_k(x) \neq 0\}) is never
+    defined. Basis functions in spectral methods are non-zero almost everywhere across
+    the entire domain \Omega, rather than vanishing outside a compact sub-element.
+  * "interpolant": The function I_N u(x) = \sum_{k=0}^N c_k \phi_k(x)
+    satisfying I_N u(x_j) = u(x_j) at grid collocation points x_j is
+    not mathematically specified.
+- Required Fix (Reviewer 2 -> RED):
+  Provide concise definitions and references (Hesthaven et al., 2007; Canuto et al., 2006):
+  1. Define the computational domain \Omega \subset \mathbb{R}^d with boundary \partial\Omega.
+  2. Define support: basis functions have global support because supp(\phi_k) = closure(\Omega),
+     meaning each basis function extends across the entire spatial domain without vanishing outside local elements.
+  3. Define interpolant: a global function I_N u(x) formed as a linear expansion in the basis
+     functions that matches the nodal values of the field at discrete grid nodes x_j, whose derivative
+     d/dx I_N u(x) supplies the discrete differential operator.
+
+--------------------------------------------------------------------------------
+[R2-02] "spectral convergence", "exponential convergence", "numerical dispersion"
+--------------------------------------------------------------------------------
+- Location:
+  Chapter 1, Section 1.3 ("Finite Element and Spectral Methods")
+  Printed Page: P9 | TeX Source: latex/Thesis.tex, Line 387
+  (See also Line 378 for numerical dispersion, and Lines 3680, 3725, 3794 for exponential convergence)
+- Excerpt from TeX:
+  "Because of their global approximation, Fourier spectral methods, namely
+  spectral methods based on trigonometric interpolants, can be interpreted as
+  infinite-order finite-difference schemes on uniform grids. For sufficiently
+  smooth solutions, they exhibit spectral, often exponential, convergence and
+  very low numerical dispersion (\cite{hesthaven_spectral_2007})."
+- Reviewer 2 Comment:
+  "neither spectral convergence, exponential convergence or numerical dispersion
+  have been defined."
+- Deficit Analysis:
+  * "spectral convergence": Also called infinite-order convergence; the error decays
+    faster than any algebraic power N^{-p} of the number of degrees of freedom N
+    for infinitely smooth (C^\infty) solutions (||u - I_N u|| = O(N^{-k})
+    for every k > 0).
+  * "exponential convergence": When the solution is analytic in a strip around the real
+    axis, the error decays geometrically/exponentially as O(e^{-c N}) for some
+    constant c > 0. The text treats "spectral" and "exponential" interchangeably without
+    clarifying the distinction.
+  * "numerical dispersion": Phase velocity error introduced by spatial and temporal
+    discretization, causing different harmonic frequency components to propagate at
+    unphysical numerical phase speeds c_num(\omega) \neq c, resulting in artificial
+    pulse deformation and phase error.
+- Required Fix (Reviewer 2 -> RED):
+  Formally define:
+  1. Spectral/infinite-order convergence: error decays faster than O(N^{-p})
+     for any algebraic power p for smooth functions;
+  2. Exponential (geometric) convergence: error bounds of form ||u - u_N|| \le C e^{-\eta N}
+     for analytic functions;
+  3. Numerical dispersion: the unphysical dependence of the numerical wave speed on grid spacing
+     and frequency (\omega_{num}(k) \neq c k), citing Trefethen (2000) and Hesthaven et al. (2007).
+
+--------------------------------------------------------------------------------
+[R2-03] "Runge-Kutta scheme"
+--------------------------------------------------------------------------------
+- Location:
+  Chapter 1, Section 1.3 ("Wave-Based Numerical Solvers")
+  Printed Page: P10 | TeX Source: latex/Thesis.tex, Line 393
+- Excerpt from TeX:
+  "In the PSTD method, the spatial derivatives are evaluated through fast transforms
+  such as the FFT. The resulting evolution problem is then advanced in time using
+  a Runge--Kutta scheme."
+- Reviewer 2 Comment:
+  "P10: 'Runge-Kutta scheme'"
+- Deficit Analysis:
+  The method of Runge-Kutta is abruptly mentioned as a generic label with no definition,
+  order specification (e.g., classical RK4, low-storage RK45), Butcher tableau, or foundational reference.
+- Required Fix (Reviewer 2 -> RED):
+  Introduce Runge-Kutta methods as a family of single-step multi-stage explicit/implicit
+  time integrators for systems of ordinary differential equations dy/dt = f(t, y),
+  specify the typical scheme employed in PSTD acoustic formulations (such as the classical explicit
+  fourth-order Runge-Kutta method, RK4), and cite Hairer, Norsett & Wanner (1993) or Butcher (2016).
+
+--------------------------------------------------------------------------------
+[R2-04] "transmission conditions"
+--------------------------------------------------------------------------------
+- Location:
+  Chapter 1, Section 1.4 ("Domain Decomposition Methods")
+  Printed Page: P11 | TeX Source: latex/Thesis.tex, Lines 406, 408
+  (Also mentioned on P13 Line 431, P14 Line 440, and P71 Line 3842)
+- Excerpt from TeX:
+  "A related approach is the Optimized Schwarz method, where suitable transmission
+  conditions are designed to improve the convergence rate of the iteration."
+  "Optimized Schwarz Waveform Relaxation further improves convergence by selecting
+  suitable transmission conditions (\cite{barth_schwarz_2008})."
+- Reviewer 2 Comment:
+  "P11: 'transmission conditions' have not been defined in this context"
+- Deficit Analysis:
+  The text assumes the reader already knows domain decomposition jargon. In domain
+  decomposition methods, "transmission conditions" are artificial boundary operators
+  prescribed at the internal interfaces separating adjacent subdomains (e.g., Dirichlet,
+  Neumann, or impedance/Robin-type operators) that govern how information is exchanged
+  and iterated between subdomains to guarantee continuity and accelerate convergence.
+- Required Fix (Reviewer 2 -> RED):
+  Add an explicit definition on page 11 (Line 406): Define transmission conditions as the
+  inter-subdomain coupling conditions (boundary conditions imposed on the internal artificial
+  interfaces \Gamma_{ij} = \partial\Omega_i \cap \Omega_j) through which subdomains exchange
+  boundary traces and normal fluxes during iterative Schwarz cycles (citing Quarteroni & Valli,
+  1999; Gander, 2006).
+
+--------------------------------------------------------------------------------
+[R2-05] "the amplification polynomial"
+--------------------------------------------------------------------------------
+- Location:
+  Chapter 2, Section 2.4.4 ("Analysis - Von Neumann Stability")
+  Printed Page: P38 | TeX Source: latex/Thesis.tex, Line 1857
+- Excerpt from TeX:
+  "Introducing the dimensionless parameters \sigma = \frac{c\Delta t}{\Delta x},
+  \alpha = \frac{\gamma\Delta t}{2}, \beta = \frac{\nu\Delta t}{2\Delta x^2},
+  we obtain the amplification polynomial
+  (1+\alpha+2\beta\delta)\xi^2 - 2(1-\sigma^2\delta)\xi + (1-\alpha-2\beta\delta) = 0,
+  which can be rewritten as a\xi^2+b\xi+c=0..."
+- Reviewer 2 Comment:
+  "P38: 'the amplification polynomial': why is it called like this?"
+- Deficit Analysis:
+  The author introduces \xi as the "amplification factor" (u_j^{n+1} = \xi u_j^n), but
+  does not explain why setting the resulting characteristic expression to zero yields the
+  "amplification polynomial". It is the characteristic polynomial of the linear discrete
+  time-evolution operator whose roots \xi define the growth/decay factor of each spatial
+  Fourier mode per discrete time step.
+- Required Fix (Reviewer 2 -> RED):
+  Clarify why it is called the amplification polynomial: Explain that in von Neumann stability
+  analysis, the discrete evolution is expressed as u^{n+1} = \xi u^n. Inserting this harmonic
+  ansatz into the multi-level difference scheme yields a characteristic polynomial in \xi,
+  P(\xi) = a\xi^2 + b\xi + c = 0. The roots of this algebraic equation are the amplification
+  factors \xi(k) that govern the modal growth per time step. Hence, P(\xi) is the
+  amplification (or characteristic) polynomial of the scheme (cite Strikwerda, 2004; Hirsch, 2007).
+
+--------------------------------------------------------------------------------
+[R2-06] "explicit leapfrog FDTD" and "first-order Velocity Verlet scheme"
+--------------------------------------------------------------------------------
+- Location:
+  Chapter 3, Section 3.2.3 ("Application to FDTD")
+  Printed Page: P87 | TeX Source: latex/Thesis.tex, Line 4413
+- Excerpt from TeX:
+  "For the purely undamped wave equation, standard explicit leapfrog FDTD is
+  mathematically equivalent to a first-order Velocity Verlet scheme, making the
+  Strang-split ARD integration straightforward."
+- Reviewer 2 Comment:
+  "P87: 'explicit leapfrog FDTD' and 'first-order Velocity Verlet scheme' are not defined"
+- Deficit Analysis:
+  * "explicit leapfrog FDTD": Standard staggered-in-time discretization where position/pressure
+    is evaluated at integer time steps t^n and velocity at half-integer time steps t^{n+1/2},
+    leaping over one another.
+  * "first-order Velocity Verlet scheme": Velocity Verlet is a symplectic second-order
+    integrator from Hamiltonian dynamics / molecular dynamics that splits the update into
+    position and velocity drift/kick steps. Calling it "first-order" is both confusing
+    (Velocity Verlet is 2nd-order accurate in time) and undefined without writing down the equations
+    or demonstrating the equivalence.
+- Required Fix (Reviewer 2 -> RED):
+  1. Define explicit leapfrog FDTD: write the staggered time-stepping equations
+     v^{n+1/2} = v^{n-1/2} + \Delta t L_h u^n, u^{n+1} = u^n + \Delta t v^{n+1/2}.
+  2. Define the Velocity Verlet scheme: write the Kick-Drift-Kick update
+     v^{n+1/2} = v^n + (\Delta t/2) a(u^n), u^{n+1} = u^n + \Delta t v^{n+1/2},
+     v^{n+1} = v^{n+1/2} + (\Delta t/2) a(u^{n+1}).
+  3. Prove or show their mathematical equivalence for undamped linear wave systems (a(u) = c^2 \Delta_h u),
+     citing Hairer et al. (2006) and Swope et al. (1982), and clarify the confusing
+     "first-order" label (it represents a first-order system in time, i.e., state-space formulation, with
+     second-order temporal accuracy).
+
+--------------------------------------------------------------------------------
+[R2-07] "interface stencils"
+--------------------------------------------------------------------------------
+- Location:
+  Chapter 3, Section 3.2.6 ("Numerical Experiments - Stability")
+  Printed Page: P90 | TeX Source: latex/Thesis.tex, Line 4514, Line 4524
+  (Also Line 4562 on P92)
+- Excerpt from TeX:
+  "The resulting stability limits reveal that the localized interface correction
+  imposes only a mild restriction on the time step. Because the explicit correction
+  operator involves the projection of global spectral modes onto a localized interface
+  stencil, the exact maximum eigenvalue of the amplification matrix exhibits a minor
+  dependence on the grid resolution N."
+  "The monotonic decrease reflects the increasing spectral radius of the higher-order
+  interface operators: wider interface stencils strengthen the explicit coupling between
+  neighboring subdomains and therefore produce a slightly more restrictive stability condition."
+- Reviewer 2 Comment:
+  "P90: 'interface stencils' has not been defined"
+- Deficit Analysis:
+  The term "interface stencil" refers to the compact finite-difference spatial operator
+  evaluated specifically across the artificial interface boundary cells to compute the
+  coupling forces/fluxes (C_res = L_h - L_h^{(N)}). The reader is not told
+  what constitutes an interface stencil, how its width/support is determined, or how its
+  order (2nd, 4th, 6th, 8th) is constructed.
+- Required Fix (Reviewer 2 -> RED):
+  Provide a formal definition of "interface stencil": Define it as the local difference
+  operator approximating derivatives at and adjacent to the artificial boundary \Gamma
+  connecting neighboring subdomains. Explain that a 2p-th order interface stencil
+  spans 2p+1 grid points centered across the interface to compute the residual coupling matrix
+  C_res, with wider stencils involving a larger spatial support/footprint across the
+  subdomain boundaries.
+
+--------------------------------------------------------------------------------
+[R2-08] "Cosine Annealing schedules"
+--------------------------------------------------------------------------------
+- Location:
+  Chapter 3, Section 3.3 ("Differentiable Physics Neural Networks for Inverse Problems")
+  Printed Page: P100 (and P101) | TeX Source: latex/Thesis.tex, Line 4801, Line 4813
+- Excerpt from TeX:
+  "By entirely decoupling the optimizers, we assert strict independent control
+  over their learning rate trajectories using Cosine Annealing schedules.
+  The network weights are optimized with a conservative initial learning rate of
+  10^{-3}, smoothly decaying to a minimum cap of 10^{-5}."
+- Reviewer 2 Comment:
+  "P100: 'using Cosine Annealing schedules.': this is mentioned for the first time
+  here but never defined or explained."
+- Deficit Analysis:
+  The learning rate schedule is stated without any mathematical formula, definition,
+  or foundational reference to Loshchilov & Hutter (2016).
+- Required Fix (Reviewer 2 -> RED):
+  Formally define Cosine Annealing: Provide the equation for the learning rate at epoch t:
+  \eta_t = \eta_{min} + 0.5 * (\eta_{max} - \eta_{min}) * (1 + cos(t * \pi / T_{max})),
+  explain that it smoothly decays the learning rate following a half-period cosine curve from
+  \eta_{max} to \eta_{min} over T_{max} epochs to promote exploration early and stable
+  convergence later, and cite Loshchilov & Hutter (ICLR 2017).
+
+
+================================================================================
+2. ADDITIONAL UNDEFINED TECHNICAL TERMS IN CHAPTER 1 (INTRODUCTION)
+================================================================================
+
+--------------------------------------------------------------------------------
+[C1-01] "eikonal equation" & "characteristic curves"
+--------------------------------------------------------------------------------
+- Location: Chapter 1, Section 1.1 | P2 | TeX Line 295, 299
+- Excerpt:
+  "Mathematically, this assumption is justified because, in the high-frequency
+  limit, the wave equation reduces asymptotically to the eikonal equation, whose
+  characteristic curves are precisely these sound rays."
+- Deficit: The eikonal equation ||\nabla S(x)||^2 = 1/c^2 is never written
+  or defined, nor is the concept of its characteristic curves (the rays perpendicular
+  to wavefront surfaces S = const).
+- Fix: Add the eikonal equation formula and cite Pierce (1989) or Born & Wolf (1999).
+
+--------------------------------------------------------------------------------
+[C1-02] "coherent" vs "incoherent" models / ray superposition
+--------------------------------------------------------------------------------
+- Location: Chapter 1, Section 1.1 | P2, P3 | TeX Lines 297, 311
+- Excerpt:
+  "Most classical formulations of the ray tracing technique treat the rays as incoherent.
+  However, treating sound simply as energy rays that sum together ignores its coherent
+  wave nature. In reality, the superposition of sound waves depends heavily on their phase."
+- Deficit: Acoustic coherence (interference with phase \sum p_i e^{i\phi_i}) vs
+  incoherent energy summation (\sum |p_i|^2) is introduced colloquially without formal
+  mathematical distinction.
+- Fix: Add brief definitions of coherent summation (complex acoustic pressure amplitudes)
+  and incoherent summation (energy addition).
+
+--------------------------------------------------------------------------------
+[C1-03] "Kirchhoff-Fresnel diffraction formula"
+--------------------------------------------------------------------------------
+- Location: Chapter 1, Section 1.1 | P3 | TeX Line 307
+- Excerpt:
+  "in \cite{deregowski_ray_1983}, the ray tracing technique is coupled with the
+  Kirchhoff--Fresnel diffraction formula..."
+- Deficit: Mentioned by name only; neither the formula nor an explanation of how it
+  models diffraction around edges is provided.
+- Fix: Provide the integral expression or explain the boundary-integral wave diffraction
+  principle and cite Born & Wolf (1999).
+
+--------------------------------------------------------------------------------
+[C1-04] "Helmholtz equation"
+--------------------------------------------------------------------------------
+- Location: Chapter 1, Section 1.1, 1.2 | P4, P7 | TeX Line 318, Line 362
+- Excerpt:
+  "Wave-based methods such as the Finite Element Method (FEM) and the Boundary Element
+  Method (BEM) for the Helmholtz equation, i.e., the steady-state form of the wave
+  equation, also emerged around 1970..."
+- Deficit: The Helmholtz equation (\Delta u + k^2 u = 0) is referred to as the
+  "steady-state form of the wave equation" without showing the Fourier/harmonic time
+  ansatz (u(x, t) = \hat{u}(x) e^{i\omega t}) or the wavenumber k = \omega/c.
+- Fix: State the PDE \Delta \hat{u} + k^2 \hat{u} = 0 with k = \omega/c and cite
+  Ihlenburg (1998).
+
+--------------------------------------------------------------------------------
+[C1-05] "Courant-Friedrichs-Lewy (CFL) stability condition"
+--------------------------------------------------------------------------------
+- Location: Chapter 1, Section 1.3 | P8 | TeX Line 378
+- Excerpt:
+  "In particular, explicit schemes are generally conditionally stable and are
+  therefore subject to a Courant--Friedrichs--Lewy (CFL) stability condition."
+- Deficit: Mentioned without definition, physical meaning (domain of dependence),
+  or mathematical inequality (c\Delta t/\Delta x \le CFL_max).
+- Fix: Provide the definition of the CFL condition (c\Delta t/\Delta x \le 1 in 1D)
+  and cite Courant, Friedrichs & Lewy (1928).
+
+--------------------------------------------------------------------------------
+[C1-06] "Nyquist limit" / "Nyquist frequency"
+--------------------------------------------------------------------------------
+- Location: Chapter 1, Section 1.3 | P9 | TeX Line 389
+  (Also Chapter 2 Line 1900, Line 2440; Chapter 3 Line 4134)
+- Excerpt:
+  "which represent Fourier modes exactly up to the Nyquist limit and therefore
+  require only two grid points per wavelength in principle."
+- Deficit: The Nyquist limit (k_max = \pi/\Delta x, f_Nyq = 1/(2\Delta t))
+  and the Nyquist-Shannon sampling theorem are assumed without definition.
+- Fix: Define the Nyquist spatial frequency k_Nyq = \pi/\Delta x corresponding
+  to 2 samples per wavelength, citing Shannon (1949).
+
+--------------------------------------------------------------------------------
+[C1-07] "collocation nodes" & "tau method"
+--------------------------------------------------------------------------------
+- Location: Chapter 1, Section 1.3 | P9, P10 | TeX Lines 389, 391
+- Excerpt:
+  "orthogonal polynomials of Jacobi type, such as Chebyshev or Legendre polynomials,
+  whose associated collocation nodes are generally non-uniform."
+  "the three classical approaches are the tau, Galerkin, and collocation methods."
+- Deficit: Collocation nodes (zeros of orthogonal polynomials / Gauss-Lobatto points)
+  and Lanczos's tau method (residual expanded in Chebyshev polynomials to satisfy
+  boundary conditions) are named without definition.
+- Fix: Clarify collocation nodes as interpolation grid points and define the tau method,
+  citing Fornberg (1996) and Canuto et al. (2006).
+
+--------------------------------------------------------------------------------
+[C1-08] "Krylov methods" / "Krylov subspace"
+--------------------------------------------------------------------------------
+- Location: Chapter 1, Section 1.4 | P10 | TeX Line 398, 401
+- Excerpt:
+  "Krylov subspace methods, such as GMRES and BiCGSTAB... rely on matrix-vector products...
+  For the theoretical framework of Krylov methods, the reader may refer to \cite{liesen_krylov_2012}."
+- Deficit: The Krylov subspace K_m(A, r_0) = span{r_0, A r_0, ..., A^{m-1} r_0}
+  is never formally stated.
+- Fix: Add the formal definition of the Krylov subspace K_m(A, r_0).
+
+--------------------------------------------------------------------------------
+[C1-09] "perfectly matched layer (PML)"
+--------------------------------------------------------------------------------
+- Location: Chapter 1, Section 1.4 | P12 | TeX Line 410
+  (Also Chapter 3 Line 4644)
+- Excerpt:
+  "To model partial or total absorption at the outer boundaries, ARD couples this
+  pseudospectral discretization with a perfectly matched layer (PML)."
+- Deficit: PML is introduced as an acronym with no explanation of how an artificial
+  absorbing buffer layer with complex coordinate stretching absorbs outgoing waves
+  without reflections.
+- Fix: Define PML as an absorbing boundary layer with impedance-matched complex
+  damping, citing Berenger (1994).
+
+--------------------------------------------------------------------------------
+[C1-10] "Proper Orthogonal Decomposition (POD)" & "singular value decomposition (SVD)"
+--------------------------------------------------------------------------------
+- Location: Chapter 1, Section 1.4 | P12 | TeX Line 417
+- Excerpt:
+  "A reduced basis is first constructed from a collection of solution snapshots,
+  typically by means of a singular value decomposition, so that the dominant features
+  of the solution are captured by a small number of basis functions."
+- Deficit: Snapshot matrix S = [u(t_1), ..., u(t_m)], its SVD S = U \Sigma V^T,
+  and optimal truncation are not defined.
+- Fix: Briefly state the snapshot matrix and SVD formulation, citing Schilders et al. (2008).
+
+--------------------------------------------------------------------------------
+[C1-11] "automatic differentiation"
+--------------------------------------------------------------------------------
+- Location: Chapter 1, Section 1.4 | P13 | TeX Line 424
+  (Also Chapter 3 Line 4748, Line 4799)
+- Excerpt:
+  "Since the gradients are computed by automatic differentiation through the
+  numerical solver, the governing physical model remains embedded within the
+  optimization process."
+- Deficit: Used without definition or citation explaining forward-mode vs reverse-mode
+  (backpropagation) computational graph differentiation.
+- Fix: Define automatic differentiation (algorithmic evaluation of exact derivatives
+  via the chain rule on computational graphs) and cite Baydin et al. (2018).
+
+
+================================================================================
+3. ADDITIONAL UNDEFINED TECHNICAL TERMS IN CHAPTER 2
+================================================================================
+
+--------------------------------------------------------------------------------
+[C2-01] "multiple relaxation terms" & "relaxation frequencies"
+--------------------------------------------------------------------------------
+- Location: Chapter 2, Section 2.1 | P15 | TeX Line 457
+- Excerpt:
+  "an acoustic propagation equation with multiple relaxation terms, as proposed in
+  \cite{nachman_equation_1990}... where each relaxation frequency \omega_{r,j} models
+  a distinct dissipative mechanism..."
+- Deficit: What physical mechanism "relaxation" refers to is never explained
+  (molecular energy transfer between translational and vibrational/rotational modes
+  of O_2 and N_2 molecules).
+- Fix: Add a sentence explaining molecular relaxation processes in air and cite
+  Bass et al. (1972) and ISO (1993).
+
+--------------------------------------------------------------------------------
+[C2-02] Physical Origins of "telegrapher damping" & "viscoelastic damping"
+--------------------------------------------------------------------------------
+- Location: Chapter 2, Section 2.1 | P16 | TeX Line 482
+- Excerpt:
+  "A simpler alternative is the damped wave equation with telegrapher and viscoelastic damping,
+  \partial_{tt}u + \gamma \partial_t u - c^2 \Delta u - \nu \partial_t \Delta u = 0..."
+- Deficit: Why the 1st-order temporal damping \gamma u_t is termed "telegrapher"
+  and the mixed spatio-temporal damping \nu u_{txx} is termed "viscoelastic" is
+  not motivated mathematically or physically.
+- Fix: Explain:
+  1. Telegrapher damping originates from Heaviside's telegrapher equation for lossy
+     transmission lines with series resistance.
+  2. Viscoelastic damping arises from the Kelvin-Voigt constitutive model in viscoelastic
+     continua (\sigma = E \epsilon + \eta d\epsilon/dt), producing a strain-rate damping
+     proportional to \partial_t \Delta u.
+
+--------------------------------------------------------------------------------
+[C2-03] "Engquist-Majda Absorbing Boundary Conditions"
+--------------------------------------------------------------------------------
+- Location: Chapter 2, Section 2.2.1 | P18 | TeX Line 544
+- Excerpt:
+  "The fourth class consists of Absorbing Boundary Conditions (ABCs)...
+  -u_x + (1/c) u_t = 0."
+- Deficit: This first-order absorbing boundary condition is presented without naming
+  it or citing Engquist & Majda (1977).
+- Fix: Explicitly attribute it as the first-order Engquist-Majda absorbing boundary condition
+  and cite Engquist & Majda (1977).
+
+--------------------------------------------------------------------------------
+[C2-04] "BDF2 scheme / discretization"
+--------------------------------------------------------------------------------
+- Location: Chapter 2, Section 2.4.2, 2.4.5 | P34, P41 | TeX Lines 1618, 1637, 2074
+- Excerpt:
+  "Using one-sided 3-point finite differences for space and the BDF2 scheme for time,
+  the boundary condition is approximated by..."
+- Deficit: "BDF2" (Backward Differentiation Formula of second order) is used without
+  defining the temporal difference formula (3 u^{n+1} - 4 u^n + u^{n-1}) / (2\Delta t)
+  or citing Gear (1971) / Hairer et al. (1993).
+- Fix: Provide the formal definition of BDF2 and cite Hairer & Wanner (1996).
+
+--------------------------------------------------------------------------------
+[C2-05] "Jury criterion"
+--------------------------------------------------------------------------------
+- Location: Chapter 2, Section 2.4.4 | P38 | TeX Line 1874
+- Excerpt:
+  "Since the polynomial has real coefficients and a > 0, the Jury criterion
+  (\cite{jury_inners_1973}, Chapter~3...) states that both roots satisfy |\xi| \le 1
+  if and only if a+b+c \ge 0, a-b+c \ge 0, a-c \ge 0."
+- Deficit: The conditions are stated, but what the Jury criterion is (the discrete-time
+  analogue of the Routh-Hurwitz stability criterion for algebraic root placement inside
+  the unit circle) is not explained.
+- Fix: Clarify that the Jury stability test is an algebraic criterion determining whether
+  all roots of a discrete characteristic polynomial lie within the closed unit disk
+  |\xi| \le 1.
+
+--------------------------------------------------------------------------------
+[C2-06] Sobolev spaces H^1, H^2, H^r & "Bramble-Hilbert lemma"
+--------------------------------------------------------------------------------
+- Location: Chapter 2, Section 2.4.4 | P40, P41 | TeX Lines 2050-2070
+- Excerpt:
+  "Let u(\cdot, t) \in H^1(0, L)... if u(\cdot, t) \in H^2(0, L)...
+  where interpolation error estimates for finite-element spaces are derived using
+  the Bramble--Hilbert lemma."
+- Deficit: Sobolev spaces H^s(\Omega) = W^{s, 2}(\Omega) and their norms/semi-norms
+  are used throughout the thesis without definition. The Bramble-Hilbert lemma is cited
+  without stating its mathematical statement.
+- Fix: Define the Sobolev spaces H^m(\Omega) and provide a brief statement of the
+  Bramble-Hilbert lemma, citing Adams & Fournier (2003) and Quarteroni et al. (2007).
+
+--------------------------------------------------------------------------------
+[C2-07] "cell-centered discretization" & "ghost nodes"
+--------------------------------------------------------------------------------
+- Location: Chapter 2, Section 2.4.2, 2.4.6 | P33, P43 | TeX Lines 1544, 2192
+- Excerpt:
+  "ghost nodes are introduced outside the computational domain and eliminated
+  through the second-order boundary discretization..."
+  "we adopt a cell-centered discretization, since it naturally leads to a cosine
+  modal expansion diagonalized by the Discrete Cosine Transform (DCT-II)..."
+- Deficit: The concept of fictitious "ghost nodes" and the difference between node-centered
+  and cell-centered staggered grids is introduced without a schematic or formal definition.
+- Fix: Formally define cell-centered coordinates x_i = (i + 1/2)\Delta x and ghost cells
+  x_{-1/2}, x_{N-1/2} used to enforce Neumann boundary conditions.
+
+--------------------------------------------------------------------------------
+[C2-08] "zero-padding"
+--------------------------------------------------------------------------------
+- Location: Chapter 2, Section 2.5.5 | P56 | TeX Line 3196
+- Excerpt:
+  "Instead, a dense sampling of the same interpolant is efficiently obtained by
+  appending zeros to the modal coefficient vector... Zero-padding does not modify
+  the represented trigonometric polynomial..."
+- Deficit: Zero-padding in transform space as spectral interpolation / sinc-like
+  refinement is mentioned colloquially without signal processing definition.
+- Fix: Define spectral zero-padding as the padding of high-frequency modal coefficients
+  with zeros to evaluate the trigonometric polynomial on a denser grid via inverse DCT,
+  citing Oppenheim & Schafer (2009).
+
+--------------------------------------------------------------------------------
+[C2-09] Misleading use of "exponential convergence" for FDTD
+--------------------------------------------------------------------------------
+- Location: Chapter 2, Section 2.6 | P63, P64, P68, P69 | TeX Lines 3680, 3725, 3794, 3817
+- Excerpt:
+  "In one spatial dimension, when the CFL condition satisfies c\Delta t = \Delta x,
+  the undamped FDTD scheme reduces to the leapfrog method and exhibits the expected
+  exponential convergence of the discretization error (\cite{bilbao_numerical_2009})."
+- Deficit: FDTD is an algebraic, second-order finite-difference scheme (O(\Delta x^2)).
+  Calling its convergence "exponential" in the text contradicts Table 2.1 (which reports
+  algebraic convergence rates around 1.0 to 3.2). At CFL=1 in 1D, the magic time-step
+  exhibits exact numerical propagation (error drops to machine precision), not
+  "exponential convergence".
+- Fix: Correct the text to state that at CFL=1 the 1D scheme achieves exact cancellation
+  (zero numerical dispersion) and second-order algebraic convergence generally, removing
+  the incorrect phrase "exponential convergence" for FDTD.
+
+
+================================================================================
+4. ADDITIONAL UNDEFINED TECHNICAL TERMS IN CHAPTER 3
+================================================================================
+
+--------------------------------------------------------------------------------
+[C3-01] "Strang splitting" (Drift-Kick-Drift)
+--------------------------------------------------------------------------------
+- Location: Chapter 3, Section 3.2.2 | P86 | TeX Line 4336, 4360, 4370
+- Excerpt:
+  "symmetric Strang splitting (\cite{strang_construction_1968}),
+  e^{\Delta t(A+B)} = e^{\frac{\Delta t}{2}B} e^{\Delta t A} e^{\frac{\Delta t}{2}B} + O(\Delta t^3).
+  During the Drift step, the subdomains evolve independently... During the Kick step..."
+- Deficit: The mechanical analogy of "Drift" (propagation under uncoupled free motion)
+  and "Kick" (instantaneous impulse from interface residual forces) is used without
+  formal introduction.
+- Fix: Explain the physical interpretation of operator splitting: the "Drift" operator
+  represents uncoupled homogeneous modal evolution, while the "Kick" operator represents
+  an instantaneous boundary impulse restoring interface continuity, citing Strang (1968)
+  and McLachlan & Quispel (2002).
+
+--------------------------------------------------------------------------------
+[C3-02] "amplification matrix"
+--------------------------------------------------------------------------------
+- Location: Chapter 3, Section 3.2.5 | P89, P90 | TeX Line 4497, 4514
+- Excerpt:
+  "Instead, the stability boundary is obtained by constructing the complete
+  one-step amplification matrix G = K(\frac{\Delta t}{2}) D(\Delta t) K(\frac{\Delta t}{2})..."
+- Deficit: The amplification matrix G is defined algebraically, but its spectral
+  radius stability criterion \rho(G) \le 1 for non-normal split operators is not
+  formally justified.
+- Fix: Provide the definition of the state transition amplification matrix G mapping
+  Z^{n+1} = G Z^n, and discuss the spectral radius condition \rho(G) \le 1, citing
+  Strikwerda (2004).
+
+--------------------------------------------------------------------------------
+[C3-03] "ReLU activations" & "Softplus mappings"
+--------------------------------------------------------------------------------
+- Location: Chapter 3, Section 3.3 | P98 | TeX Lines 4756, 4758
+- Excerpt:
+  "Unlike traditional networks equipped with ReLU activations, SIREN uses periodic
+  sine activation functions..."
+  "avoiding the severe vanishing gradients associated with Softplus mappings near zero..."
+- Deficit: Neither the ReLU function ReLU(x) = max(0, x) nor the Softplus function
+  Softplus(x) = ln(1 + e^x) is mathematically defined or cited.
+- Fix: State the mathematical definitions ReLU(x) = max(0, x) and
+  Softplus(x) = ln(1 + e^x), citing Nair & Hinton (2010) and Dugas et al. (2001).
+
+--------------------------------------------------------------------------------
+[C3-04] "Adam optimizer"
+--------------------------------------------------------------------------------
+- Location: Chapter 3, Section 3.3 | P100, P101 | TeX Line 4801, Line 4813
+- Excerpt:
+  "To ensure stable and precise convergence during training, we deploy two independent
+  Adam optimizers... The optimization is performed over 500 epochs using two
+  independent Adam optimizers..."
+- Deficit: The Adam optimization algorithm (Adaptive Moment Estimation with first and
+  second moment running averages) is mentioned without definition or citation.
+- Fix: Define Adam as an adaptive learning rate optimization algorithm based on running
+  estimates of first and second moments of the gradient, citing Kingma & Ba (ICLR 2015).
+
+--------------------------------------------------------------------------------
+[C3-05] "Signal-to-Noise Ratio (SNR)" in dB
+--------------------------------------------------------------------------------
+- Location: Chapter 3, Section 3.3.1 | P101 | TeX Line 4811
+- Excerpt:
+  "independent Gaussian noise is superimposed on the sensor data, yielding a
+  Signal-to-Noise Ratio (SNR) of 30 dB."
+- Deficit: The definition of SNR in decibels,
+  SNR_{dB} = 10 log_{10}(\sigma_{signal}^2 / \sigma_{noise}^2),
+  is not stated.
+- Fix: Provide the mathematical formula for SNR in decibels.
+
+--------------------------------------------------------------------------------
+[C3-06] "L_1 sparsity penalty" & "Sobolev H^1 semi-norm"
+--------------------------------------------------------------------------------
+- Location: Chapter 3, Section 3.3 | P99, P100 | TeX Lines 4777, 4778, 4786
+- Excerpt:
+  "the second term imposes an L_1 sparsity penalty on the initial condition to
+  suppress localized spurious artifacts... Crucially, the third term introduces a
+  Sobolev H^1 smoothness regularization... evaluated by integrating the square
+  of this derivative..."
+- Deficit: The connection between the L_1 norm (||u_0||_1 = \int |u_0| dx) and
+  sparsity (LASSO principle, Tibshirani 1996) is not cited. The Sobolev H^1 semi-norm
+  |u_0|_{H^1}^2 = \int |\partial_x u_0|^2 dx is derived spectrally via Parseval,
+  but not named as the standard H^1 semi-norm.
+- Fix: Cite Tibshirani (1996) for L_1 regularization / sparsity, and explicitly identify
+  ||\partial_x u_0||_2^2 as the squared H^1 semi-norm.
+
+--------------------------------------------------------------------------------
+[C3-07] "Parseval's identity / theorem"
+--------------------------------------------------------------------------------
+- Location: Chapter 3, Section 3.3 | P100 | TeX Lines 4789, 4799
+- Excerpt:
+  "By Parseval's identity for Fourier series, the continuous spatial integral
+  reduces exactly to the sum of the squared modal coefficients weighted by k_m^2..."
+- Deficit: Stated without formula or reference.
+- Fix: Provide the identity \int_0^L |f(x)|^2 dx = \sum_m |c_m|^2 for orthonormal bases,
+  citing Rudin (1987) or Folland (1992).
+
+
+================================================================================
+5. COMPREHENSIVE SUMMARY TABLE
+================================================================================
+
+Term / Concept                    | Location in Thesis           | Line | Primary Deficit              | Proposed Fix / Citation
+----------------------------------------------------------------------------------------------------------------------------------------
+[R2] global support               | Ch 1, Sec 1.3 (P9)           | 385  | Undefined mathematical term  | Define supp(phi) = Omega (Hesthaven 2007)
+[R2] computational domain         | Ch 1, Sec 1.3 (P9)           | 385  | Undefined domain boundary    | Define Omega subset R^d with boundary dOmega
+[R2] interpolant                  | Ch 1, Sec 1.3 (P9)           | 385  | Undefined function expansion | Define I_N u(x) matching at collocation nodes
+[R2] spectral convergence         | Ch 1, Sec 1.3 (P9)           | 387  | Undefined error decay rate   | Define O(N^-k) faster than any polynomial
+[R2] exponential convergence      | Ch 1, Sec 1.3 (P9)           | 387  | Undefined geometric rate     | Define O(e^-cN) for analytic solutions
+[R2] numerical dispersion         | Ch 1, Sec 1.3 (P9)           | 387  | Undefined wave speed error   | Define omega(k) != c*k phase velocity error
+[R2] Runge-Kutta scheme           | Ch 1, Sec 1.3 (P10)          | 393  | No definition, order, or ref | Define multi-stage ODE solver; cite Hairer (1993)
+[R2] transmission conditions      | Ch 1, Sec 1.4 (P11)          | 406  | Undefined DDM interface data | Define inter-subdomain coupling operator (Gander 2006)
+[R2] amplification polynomial     | Ch 2, Sec 2.4.4 (P38)        | 1857 | Unexplained naming origin    | Explain characteristic poly of von Neumann factor xi
+[R2] explicit leapfrog FDTD       | Ch 3, Sec 3.2.3 (P87)        | 4413 | Missing staggered equations  | Write staggered equations; cite Bilbao (2009)
+[R2] Velocity Verlet scheme       | Ch 3, Sec 3.2.3 (P87)        | 4413 | Undefined symplectic scheme  | Write Kick-Drift-Kick update; cite Swope (1982)
+[R2] interface stencils           | Ch 3, Sec 3.2.6 (P90)        | 4514 | Undefined coupling operator  | Define finite-difference residual stencil across Gamma
+[R2] Cosine Annealing schedules   | Ch 3, Sec 3.3 (P100)         | 4801 | No formula, definition, ref  | Provide cosine decay formula; cite Loshchilov (2017)
+----------------------------------------------------------------------------------------------------------------------------------------
+eikonal equation & rays           | Ch 1, Sec 1.1 (P2)           | 295  | Equation not written out     | Give |grad S|^2 = 1/c^2; cite Pierce (1989)
+coherent vs incoherent rays       | Ch 1, Sec 1.1 (P2)           | 297  | Informal distinction only    | Define complex sum vs energy sum
+Kirchhoff-Fresnel diffraction     | Ch 1, Sec 1.1 (P3)           | 307  | Name-dropped without formula | Define diffraction integral; cite Born & Wolf (1999)
+Helmholtz equation                | Ch 1, Sec 1.1, 1.2 (P4, P7)  | 318  | Equation not stated          | State Delta u + k^2 u = 0; cite Ihlenburg (1998)
+CFL stability condition           | Ch 1, Sec 1.3 (P8)           | 378  | Not stated mathematically    | Give c*dt/dx <= 1; cite CFL (1928)
+Nyquist limit / frequency         | Ch 1, Sec 1.3 (P9)           | 389  | Sampling bound not defined   | Define k_Nyq = pi/dx (2 pts/wavelength)
+collocation nodes & tau method    | Ch 1, Sec 1.3 (P9, P10)      | 391  | Named without definition     | Define interpolation nodes & tau boundary method
+Krylov subspace                   | Ch 1, Sec 1.4 (P10)          | 398  | Subspace not defined         | Define K_m(A, r0) = span{r0, ..., A^{m-1}r0}
+Perfectly Matched Layer (PML)     | Ch 1, Sec 1.4 (P12)          | 410  | Acronym without mechanism    | Define complex absorbing buffer; cite Berenger (1994)
+Proper Orthogonal Decomp. (POD)   | Ch 1, Sec 1.4 (P12)          | 417  | SVD snapshots not defined    | Write SVD of snapshot matrix; cite Schilders (2008)
+Automatic Differentiation         | Ch 1, Sec 1.4 (P13)          | 424  | Mentioned without mechanism  | Define computational graph chain rule (Baydin 2018)
+Multiple relaxation mechanisms    | Ch 2, Sec 2.1 (P15)          | 457  | Physical origin omitted      | Explain O2/N2 vibrational relaxation (Bass 1972)
+Telegrapher / Viscoelastic origin | Ch 2, Sec 2.1 (P16)          | 482  | Etymology not explained      | Heaviside transmission line & Kelvin-Voigt model
+Engquist-Majda ABC                | Ch 2, Sec 2.2.1 (P18)        | 544  | Unattributed ABC             | Name Engquist-Majda ABC; cite Engquist & Majda (1977)
+BDF2 temporal scheme              | Ch 2, Sec 2.4.2 (P34)        | 1618 | Formula not given            | Give (3u^{n+1}-4u^n+u^{n-1})/(2dt); cite Hairer (1996)
+Jury stability criterion          | Ch 2, Sec 2.4.4 (P38)        | 1874 | Context not explained        | Clarify root placement inside unit disk (Jury 1973)
+Sobolev spaces H^1, H^2, H^r      | Ch 2, Sec 2.4.4 (P40)        | 2050 | Functional space not defined | Define W^{s,2}(Omega) norm/semi-norm (Adams 2003)
+Bramble-Hilbert lemma             | Ch 2, Sec 2.4.4 (P41)        | 2070 | Statement omitted            | State polynomial error bound (Quarteroni 2007)
+Cell-centered / ghost nodes       | Ch 2, Sec 2.4.6 (P43)        | 2192 | Discretization undefined     | Define x_i = (i+1/2)dx and ghost cell reflection
+Spectral zero-padding             | Ch 2, Sec 2.5.5 (P56)        | 3196 | Signal processing undefined  | Define transform-domain zero padding (Oppenheim 2009)
+FDTD "exponential convergence"    | Ch 2, Sec 2.6 (P63)          | 3680 | Erroneous / misleading term  | Replace with exact dispersion cancellation at CFL=1
+Strang splitting (Drift & Kick)   | Ch 3, Sec 3.2.2 (P86)        | 4336 | Physical analogy undefined   | Explain modal drift and boundary kick impulses
+Amplification matrix G            | Ch 3, Sec 3.2.5 (P89)        | 4497 | Non-normal stability bound   | Define Z^{n+1} = G Z^n and rho(G) <= 1 bound
+ReLU & Softplus activations       | Ch 3, Sec 3.3 (P98)          | 4756 | Formulas omitted             | Give max(0,x) and ln(1+e^x); cite Nair & Hinton (2010)
+Adam optimizer                    | Ch 3, Sec 3.3 (P100)         | 4801 | Algorithm omitted            | Define adaptive moment estimation (Kingma & Ba 2015)
+Signal-to-Noise Ratio (SNR)       | Ch 3, Sec 3.3.1 (P101)       | 4811 | Formula in dB omitted        | Give 10 log10(sigma_sig^2 / sigma_noise^2)
+L1 sparsity penalty / LASSO       | Ch 3, Sec 3.3 (P99)          | 4777 | Sparsity link not cited      | Cite Tibshirani (1996) for L1 sparse parameterization
+Parseval's identity               | Ch 3, Sec 3.3 (P100)         | 4789 | Identity omitted             | Give integral |f|^2 dx = sum |c_m|^2; cite Rudin (1987)
+================================================================================
