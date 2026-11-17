@@ -1,0 +1,23 @@
+\begin{table}[H]
+\centering
+\small
+\caption{Ablation study on regularization components for PSTD-DPNN across Gaussian and Triangular initial profiles. Comparing the proposed unregularized data fitting formulation against spatial sparsity ($L_1$), Sobolev smoothness ($H^1$), and coupled versus decoupled viscosity weighting.}
+\label{tab:dpnn_ablation}
+\begin{tabular}{llcccc}
+\toprule
+\textbf{Benchmark} & \textbf{Regularization Configuration} & \textbf{NMSE($p_0$)} & \textbf{Field Rel. $L_2$ (\%)} & $\hat{\gamma}$ [s$^{-1}$] & $\hat{\nu}$ [m$^2$/s] \\
+\midrule
+\multirow{5}{*}{Gaussian Pulse} & Data only (Proposed) & 0.0030 & 1.68\% & 0.0965 & 5.10e-03 \\
+ & $L_1$ only & 0.0018 & 2.42\% & 0.0559 & 5.29e-03 \\
+ & $H^1$ only & 0.0164 & 7.42\% & 0.2384 & 9.53e-06 \\
+ & $L_1 + H^1$ (Coupled $\nu$) & 0.0203 & 8.17\% & 0.1556 & 1.08e-05 \\
+ & $L_1 + H^1$ (Decoupled $\nu_0$) & 0.0667 & 13.40\% & 0.0227 & 2.18e-05 \\
+\midrule
+\multirow{5}{*}{Triangle Pulse} & Data only (Proposed) & 0.0045 & 3.09\% & 0.1047 & 4.82e-03 \\
+ & $L_1$ only & 0.0057 & 4.93\% & 0.0462 & 4.50e-03 \\
+ & $H^1$ only & 0.1052 & 18.10\% & 0.4611 & 7.66e-06 \\
+ & $L_1 + H^1$ (Coupled $\nu$) & 0.1229 & 19.84\% & 0.2719 & 1.03e-05 \\
+ & $L_1 + H^1$ (Decoupled $\nu_0$) & 0.2611 & 28.47\% & 0.0171 & 2.42e-05 \\
+\bottomrule
+\end{tabular}
+\end{table}

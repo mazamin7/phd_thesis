@@ -1,0 +1,15 @@
+\begin{table}[H]
+\centering
+\small
+\caption{Disentangled analysis of the inverse problem on the Gaussian benchmark, comparing: (Exp~A) initial condition reconstruction with physical parameters fixed to ground truth; (Exp~B) physical parameter identification with initial condition fixed to ground truth; and (Exp~C) joint reconstruction where both the initial state and damping parameters are simultaneously unknown.}
+\label{tab:dpnn_isolated_experiments}
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Inverse Formulation} & \textbf{NMSE($p_0$)} & \textbf{Field Rel. $L_2$ (\%)} & $\hat{\gamma}$ [s$^{-1}$] & Rel. Err $\gamma$ & $\hat{\nu}$ [m$^2$/s] & Rel. Err $\nu$ \\
+\midrule
+Exp A: Initial Condition Only ($u_0$ unknown, $\gamma, \nu$ fixed) & 3.23e-03 & 3.94\% & 0.1000 & 0.0\% & 5.00e-03 & 0.0\% \\
+Exp B: Physical Parameters Only ($\gamma, \nu$ unknown, $u_0$ fixed) & 0.00 (Exact) & 0.37\% & 0.1108 & 10.8\% & 4.85e-03 & 3.0\% \\
+Exp C: Joint Inversion ($u_0, \gamma, \nu$ all unknown) & 1.69e-03 & 1.73\% & 0.1207 & 20.7\% & 4.89e-03 & 2.2\% \\
+\bottomrule
+\end{tabular}
+\end{table}

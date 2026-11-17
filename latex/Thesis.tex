@@ -65,6 +65,7 @@
 \usepackage{tabularx}
 \usepackage{longtable} % Tables that can span several pages
 \usepackage{colortbl}
+\usepackage{multirow}
 
 % PACKAGES FOR ALGORITHMS (PSEUDO-CODE)
 \usepackage{algorithm}
@@ -430,14 +431,14 @@ The first contribution is the extension of the Adaptive Rectangular Decompositio
 
 The second contribution concerns Optimized Schwarz Waveform Relaxation (OSWR) methods for the damped wave equation. New transmission conditions are derived and analyzed, optimal parameters are obtained through convergence-factor analysis, and the resulting algorithms are validated numerically. The study covers both telegrapher and viscoelastic damping and provides optimized domain decomposition methods for time-domain dissipative wave propagation.
 
-The final contribution concerns the solution of inverse problems and combines domain decomposition with differentiable physics. The differentiable-physics framework is extended by replacing the standard finite-difference solver with the proposed ARD solver. The resulting approach is assessed on sound field reconstruction problems and compared with existing differentiable-physics formulations.
+\textcolor{red}{The final contribution investigates the solution of acoustic inverse problems using a Differentiable Physics Neural Network (DPNN) framework. Rather than relying on soft-collocation penalties, the framework embeds the exact modal PSTD propagator into the computational graph of a neural representation. The proposed PSTD-DPNN is assessed on the joint reconstruction of the unknown initial pressure field and the simultaneous estimation of macroscopic viscoelastic damping parameters, and its accuracy and computational efficiency are systematically benchmarked against differentiable FDTD and a Physics-Informed Neural Network (PINN) reference baseline.}
 %
 \section{Organization of the Thesis}
 The remainder of the thesis is organized as follows.
 
 Chapter~2 motivates the choice of the partial differential equation considered throughout the thesis, namely the damped wave equation. Its physical properties are then discussed, including the associated dispersion relation and attenuation law, different types of boundary conditions, and its eigenfunction decomposition. The numerical methods employed in the subsequent chapters are subsequently presented, namely the Finite-Difference Time-Domain (FDTD) method and the Pseudospectral Time-Domain (PSTD) formulation underlying Adaptive Rectangular Decomposition (ARD), together with their analysis and numerical experiments.
 
-Chapter~3 presents the proposed acceleration techniques. It first develops Optimized Schwarz Waveform Relaxation (OSWR) methods for the damped wave equation, including the theoretical convergence analysis, the derivation of optimized transmission conditions, and their numerical experiments. The chapter then introduces an extension of Adaptive Rectangular Decomposition to damped wave propagation and analyzes its accuracy and computational performance. Finally, a Differentiable Physics Neural Network (DPNN) architecture based on the proposed ARD solver is presented for sound field reconstruction, and its performance is assessed through numerical experiments.
+\textcolor{red}{Chapter~3 presents the proposed acceleration and inverse modeling techniques. It first develops Optimized Schwarz Waveform Relaxation (OSWR) methods for the damped wave equation, including theoretical convergence analysis, the derivation of optimized transmission conditions, and their numerical validation. The chapter then introduces the extension of Adaptive Rectangular Decomposition (ARD) to damped wave propagation and analyzes its numerical accuracy, stability, and computational performance in two and three dimensions. Finally, a Differentiable Physics Neural Network (DPNN) embedding the exact modal PSTD propagator is presented for joint initial-field reconstruction and damping parameter estimation, and its performance is benchmarked against differentiable FDTD and a PINN baseline.}
 
 Chapter~4 summarizes the main conclusions of the thesis and discusses possible directions for future research.
 
@@ -3661,7 +3662,7 @@ E
 \]
 This metric measures the global discrepancy, encompassing both the projection error of the initial condition and the accumulation of numerical errors during the time integration.
 
-For the FDTD method we choose $\Delta t = \Delta x/c$ (which corresponds to the stability limit), while for the PSTD method we choose $\Delta t = 0.9\Delta x/c$ (this choice avoids the `magic step' where $\text{CFL}=1$ gives superconvergence, ensuring a fair evaluation of the generic numerical dispersion rather than a special-case exactness).
+\textcolor{red}{For both the FDTD and PSTD methods, we select a time step $\Delta t = 0.9\Delta x/c$ ($\mathrm{CFL} = 0.9$). In one spatial dimension, choosing $\mathrm{CFL} = 1$ constitutes a `magic time step' for undamped leapfrog FDTD where numerical dispersion vanishes identically due to exact cancellation of spatial and temporal discretization errors \citep{bilbao_numerical_2009}. Setting $\mathrm{CFL} = 0.9$ avoids this special-case exactness, ensuring a fair and rigorous evaluation of the generic numerical dispersion and convergence rates of both discretizations.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Smooth Standing Wave (Undamped)}
@@ -4856,7 +4857,7 @@ Because the homogeneous Neumann boundary condition is the natural boundary condi
 \begin{itemize}
     \item \textcolor{red}{\textbf{Global 3D FDTD (Figures~\ref{subfig:3d_fdtd_coarse} and~\ref{subfig:3d_fdtd_fine}):} On the coarse grid ($\Delta h = 0.20$\,m, subfigure~(a)), standard 7-point Cartesian differencing introduces severe numerical dispersion, causing phase lag and trailing high-frequency ripples behind the primary wavefront. When refined to $\Delta h = 0.10$\,m (subfigure~(b)), the dispersion error drops by a factor of 4, visibly sharpening the wavefronts and suppressing spurious ripples.}
     \item \textcolor{red}{\textbf{3D Acoustic TD-FEM (Figures~\ref{subfig:3d_fem_coarse} and~\ref{subfig:3d_fem_fine}):} By coupling all 26 neighboring nodes via an analytical 27-point stencil, TD-FEM on the coarse grid (subfigure~(c)) exhibits superior spatial isotropy compared to coarse FDTD. Refining to $\Delta h = 0.10$\,m (subfigure~(d)) yields a smooth, isotropic reverberant wavefield.}
-    \item \textcolor{red}{\textbf{Multi-Subdomain ARD-PSTD (Figure~\ref{subfig:3d_ard_coarse}):} Crucially, ARD-PSTD operating on the coarse grid ($\Delta h = 0.20$\,m, subfigure~(e)) preserves perfectly isotropic, sharp wavefronts that match or surpass the visual quality of the fine-grid reference solvers without requiring any mesh refinement. This confirms that spectral spatial differentiation via the DCT-II combined with analytical modal time integration completely eliminates grid-induced dispersion.}
+    \item \textcolor{red}{\textbf{Multi-Subdomain ARD-PSTD (Figure~\ref{subfig:3d_ard_coarse}):} Crucially, ARD-PSTD operating on the coarse grid ($\Delta h = 0.20$\,m, subfigure~(e)) preserves isotropic, sharp wavefronts that match the visual quality of the fine-grid reference solvers without requiring mesh refinement. This confirms that spectral spatial differentiation via the DCT-II combined with analytical modal time integration substantially reduces numerical dispersion for the resolved modes in the tested configuration.}
 \end{itemize}
 
 \textcolor{red}{Regarding computational performance, a clear distinction must be drawn between per-step algebraic complexity and global resolution efficiency. In our empirical benchmarks executed on an Intel CPU with AVX2 vectorization, the execution times for $T = 0.24$\,s are measured as follows:}
@@ -4929,7 +4930,7 @@ Because the homogeneous Neumann boundary condition is the natural boundary condi
     \end{subfigure}\vspace{2pt}
 
     \includegraphics[width=0.72\textwidth]{Images/ard_3d/snapshots/colorbar_legend.png}
-    \caption[\textcolor{red}{3D wavefield snapshots across coarse and fine numerical solvers}]{\textcolor{red}{Horizontal snapshots ($z = 3.0$\,m) of the lossless acoustic pressure across three propagation epochs ($t = 0.03, 0.08, 0.16$\,s) for the five solver configurations. Red dashed lines denote virtual interfaces $\Gamma_1$ and $\Gamma_2$; gold star marks the source. Coarse ARD-PSTD matches the resolution of refined models with zero numerical dispersion.}}
+    \caption[\textcolor{red}{3D wavefield snapshots across coarse and fine numerical solvers}]{\textcolor{red}{Horizontal snapshots ($z = 3.0$\,m) of the lossless acoustic pressure across three propagation epochs ($t = 0.03, 0.08, 0.16$\,s) for the five solver configurations. Red dashed lines denote virtual interfaces $\Gamma_1$ and $\Gamma_2$; gold star marks the source. Coarse ARD-PSTD matches the resolution of refined models while substantially reducing numerical dispersion for resolved modes in the tested configuration.}}
     \label{fig:ard_3d_snapshots}
 \end{figure}
 
@@ -5004,10 +5005,9 @@ Because the homogeneous Neumann boundary condition is the natural boundary condi
 
 \textcolor{red}{The snapshots in Figure~\ref{fig:ard_3d_viscoelastic} illustrate the qualitative behavior of viscoelastic dissipation ($\nu \Delta p_t$) across the stepped enclosure, maintaining stable wave transmission across the artificial subdomain interfaces $\Gamma_1$ and $\Gamma_2$ in the tested simulation. At early times ($t = 0.03$\,s), the primary wavefront remains well defined across all damping levels. Because the simulation duration ($T = 0.24$\,s) and grid cutoff wavenumber ($k_{\max} \approx 15.7$\,m$^{-1}$) bound the cumulative modal decay, the low-frequency acoustic energy remains predominantly preserved, while higher damping progressively smooths high-frequency scattering and subtle spatial transitions in the reverberant coda. Crucially, no spurious interface reflections are observed, confirming that the operator-splitting formulation for viscoelastic damping interacts stably with the multi-domain residue exchanges.}
 
-\section{Differentiable Physics Neural Networks for Inverse Problems}
+\section{\textcolor{red}{Differentiable Physics Neural Networks for Inverse Problems}}
 \label{sec:dpnn}
-In this section, we introduce a Differentiable Physics Neural Network (DPNN) architecture designed to solve joint inverse problems. Specifically, we consider the task of simultaneously reconstructing an unknown initial pressure field $u_0(x)$ and estimating the macroscopic physical damping parameters $\gamma$ and $\nu$ from sparse, noisy sensor measurements over time.
-The architecture consists of two tightly coupled components: a neural network parameterizing the unknown initial condition, and a differentiable numerical solver mapping the initial condition and physical parameters to the observable sensor data. The complete workflow is illustrated in Figure~\ref{fig:dpnn_arch}.
+\textcolor{red}{In this section, we introduce a Differentiable Physics Neural Network (DPNN) architecture designed to solve joint inverse problems. Specifically, we consider the task of simultaneously reconstructing an unknown initial pressure field $u_0(x)$ and estimating the macroscopic physical damping parameters $\gamma$ and $\nu$ from sparse, noisy sensor measurements over time. The architecture consists of two tightly coupled components: a neural network parameterizing the unknown initial condition, and a differentiable numerical solver mapping the initial condition and physical parameters to observable sensor data. The complete workflow is illustrated in Figure~\ref{fig:dpnn_arch}.}
 
 \begin{figure}[H]
     \centering
@@ -5025,8 +5025,8 @@ The architecture consists of two tightly coupled components: a neural network pa
     \node[box, right=of x] (siren) {SIREN};
     \node[right=of siren] (p0) {$u_0(x)$};
     
-    \node[below=1.5cm of siren] (params) {$\tilde{\gamma}, \tilde{\nu}$};
-    \node[right=of params, align=center] (exp) {$\gamma = |\tilde{\gamma}|,$\\$\nu = |\tilde{\nu}|$};
+    \node[below=1.5cm of siren] (params) {$\xi_\gamma, \xi_\nu$};
+    \node[right=of params, align=center] (exp) {$\gamma = \gamma_{\mathrm{ref}} e^{\xi_\gamma},$\\$\nu = \nu_{\mathrm{ref}} e^{\xi_\nu}$};
     
     \node[solver, right=of p0, xshift=0cm, yshift=-1.0cm] (solver) {Differentiable \\ Wave Solver \\ (FDTD / PSTD)};
     
@@ -5046,86 +5046,81 @@ The architecture consists of two tightly coupled components: a neural network pa
     \draw[arrow] (solver) -- (ppred);
     \draw[arrow] (ppred) -- (loss);
     \draw[arrow] (pobs) -- (loss);
-    \draw[arrow] (p0) to[out=30, in=145, looseness=0.4] node[above, yshift=0cm, rotate=-10] {Sparsity and Smoothness Penalty} (loss);
     
     % Gradient update paths
     \draw[arrow, dashed] (loss.north) -- ++(0,2.5cm) coordinate (auxTop) -| node[pos=0.25, above] {Gradient Update via Autodiff} (siren.north);
     \draw[arrow, dashed] (loss.south) -- ++(0,-1.5cm) coordinate (auxBot) -| (params.south);
     
     \end{tikzpicture}
-    \caption{Architecture of the proposed Differentiable Physics Neural Network (DPNN) for joint parameter estimation. The network and physical parameters are jointly updated using gradients backpropagated through the numerical solver.}
+    \caption{\textcolor{red}{Architecture of the proposed Differentiable Physics Neural Network (DPNN) for joint parameter estimation. The neural network parameterizing the unknown initial condition and the physical damping parameters are jointly optimized end-to-end via gradients backpropagated directly through the differentiable numerical wave solver.}}
     \label{fig:dpnn_arch}
 \end{figure}
 
-To parameterize the initial pressure field, we employ a Sinusoidal Representation Network \citep[SIREN,][]{sitzmann_implicit_2020} with trainable weights $\Theta$. Unlike traditional networks equipped with ReLU activations, SIREN uses periodic sine activation functions, allowing it to accurately capture high-frequency spatial details and complex variations in the initial condition. The network takes the normalized spatial coordinates $x \in [-1, 1]$ as input and predicts the initial field $u_0(x; \Theta)$.
+\textcolor{red}{To parameterize the initial pressure field, we employ a Sinusoidal Representation Network \citep[SIREN,][]{sitzmann_implicit_2020} with trainable weights $\Theta$. Unlike traditional networks equipped with ReLU activations, SIREN uses periodic sine activation functions, allowing it to accurately capture spatial details in the initial condition with a compact representation of 2 hidden layers with 32 units ($\sim 1{,}155$ parameters). The network takes normalized spatial coordinates $x \in [-1, 1]$ as input and predicts the initial field $u_0(x; \Theta)$.}
 
-Simultaneously, the physical parameters $\gamma$ and $\nu$ are defined as trainable variables. \textcolor{red}{To guarantee non-negativity of the physical parameters during optimization while avoiding the vanishing gradients associated with Softplus mappings near zero, we parameterize them using an absolute-value mapping,
-\[
-\gamma = |\tilde{\gamma}|, \qquad \nu = |\tilde{\nu}|,
-\]
-where $\tilde{\gamma}$ and $\tilde{\nu}$ are unconstrained trainable variables. We note that while this absolute-value transformation guarantees non-negativity ($\gamma, \nu \ge 0$), it is non-differentiable at the origin; investigating smooth positivity-preserving reparameterizations remains a valuable consideration for future optimization studies.}
-During the forward pass, the predicted initial condition $u_0(x)$ and the current estimates of $\gamma$ and $\nu$ are fed into a differentiable physical solver.
+\textcolor{red}{Simultaneously, the macroscopic damping parameters $\gamma$ and $\nu$ are defined as trainable variables. To guarantee strict physical positivity, eliminate non-differentiable zero gradients, and naturally optimize relative variations across disparate physical scales, we parameterize them logarithmically:
+\begin{equation}
+\label{eq:dpnn_log_param_intro}
+\gamma = \gamma_{\mathrm{ref}} \exp(\xi_\gamma), \qquad \nu = \nu_{\mathrm{ref}} \exp(\xi_\nu),
+\end{equation}
+where $\gamma_{\mathrm{ref}} = 0.1\,\mathrm{s}^{-1}$, $\nu_{\mathrm{ref}} = 5.00 \times 10^{-3}\,\mathrm{m}^2/\mathrm{s}$, and $\xi_\gamma, \xi_\nu \in \mathbb{R}$ are unconstrained trainable variables. In the experimental benchmarks, the physical parameters are initialized away from the ground truth at $\gamma_{\mathrm{init}} = 0.50\,\mathrm{s}^{-1}$ and $\nu_{\mathrm{init}} = 1.00 \times 10^{-3}\,\mathrm{m}^2/\mathrm{s}$, corresponding to the initial dimensionless logarithmic values:
+\begin{equation}
+\xi_{\gamma,0} = \log\left(\frac{\gamma_{\mathrm{init}}}{\gamma_{\mathrm{ref}}}\right) = \log(5) \approx 1.609, \qquad \xi_{\nu,0} = \log\left(\frac{\nu_{\mathrm{init}}}{\nu_{\mathrm{ref}}}\right) = \log(0.2) \approx -1.609.
+\end{equation}
+The gradient with respect to the logarithmic parameters naturally satisfies $\partial_{\xi_\gamma} \mathcal{L} = \gamma \partial_\gamma \mathcal{L}$ and $\partial_{\xi_\nu} \mathcal{L} = \nu \partial_\nu \mathcal{L}$, providing scale-invariant gradient descent steps on fractional variations $\Delta \gamma / \gamma$ and $\Delta \nu / \nu$.}
 
-In this framework, the numerical solver acts as a rigid, physics-informed layer of the network. We compare two different solvers for this forward operator: the FDTD method, which relies on sparse matrix operations and sequential time-stepping, and the PSTD method. Crucially, because the inverse problem involves no time-dependent forcing term ($F(x,t) \equiv 0$), the PSTD method leverages its exact analytical modal propagator to bypass temporal recursion entirely. It evaluates the complete spatio-temporal wave field instantaneously through a fully vectorized, loop-free tensor broadcast across time, drastically accelerating the backpropagation process compared to standard sequential stepping. The physical solver outputs the predicted wave field, from which we extract the temporal signals at the discrete sensor locations.
+\textcolor{red}{During the forward pass, the predicted initial condition $u_0(x)$ and the current estimates of $\gamma$ and $\nu$ are fed into a differentiable physical solver. In this framework, the numerical solver acts as a rigid, physics-informed layer of the network. We compare two different solvers for this forward operator: the standard FDTD method, which relies on sparse matrix operations and sequential time-stepping, and the PSTD method. Crucially, because the inverse problem involves no time-dependent forcing term ($F(x,t) \equiv 0$), the PSTD method leverages its exact analytical modal propagator to bypass temporal recursion entirely. It evaluates the complete spatio-temporal wave field instantaneously through a fully vectorized, loop-free tensor broadcast across time, accelerating training by approximately $1.7\times$ per epoch compared to standard sequential stepping. The physical solver outputs the predicted wave field, from which we extract temporal signals at discrete sensor locations.}
 
-The network parameters and the physical variables are jointly updated by minimizing a composite loss function,
-\begin{align*}
-\mathcal{L}(\Theta, \tilde{\gamma}, \tilde{\nu}) 
-&= 
-\lambda_{\mathrm{data}} \, \frac{1}{N_{\text{sensors}}} \sum_{i=1}^{N_{\text{sensors}}} \| u_{\text{pred}}(x_i, t; \Theta, \tilde{\gamma}, \tilde{\nu}) - u_{\text{obs}}(x_i, t) \|_2^2 \\
-&\quad + 
-\lambda_{\text{sp}} \, \| u_0(x; \Theta) \|_1 \\
-&\quad +
-\lambda_{\text{smooth}} \nu \left\| \frac{\partial u_0(x; \Theta)}{\partial x} \right\|_2^2,
-\end{align*}
-where the first term measures the Mean Squared Error (MSE) against the noisy observations, and the second term imposes an $L_1$ sparsity penalty on the initial condition to suppress localized spurious artifacts and alleviate the ill-posedness of the inverse problem. Crucially, the third term introduces a Sobolev $H^1$ smoothness regularization on the predicted initial condition, scaled directly by the physical viscoelastic damping parameter $\nu$. 
+\textcolor{red}{The network parameters and physical variables are jointly updated by minimizing an objective functional measuring observational discrepancy:
+\begin{equation}
+\label{eq:dpnn_loss}
+\mathcal{L}(\Theta, \xi_\gamma, \xi_\nu) = \frac{1}{N_{\mathrm{sensors}}} \sum_{i=1}^{N_{\mathrm{sensors}}} \| u_{\mathrm{pred}}(x_i, t; \Theta, \xi_\gamma, \xi_\nu) - u_{\mathrm{obs}}(x_i, t) \|_2^2.
+\end{equation}
+In this formulation, the objective measures solely the discrepancy between predicted and observed sensor signals over time, relying on the structural physical dynamics embedded within the differentiable numerical solver rather than external ad-hoc regularizers. As documented in the ablation study (Section~\ref{subsec:dpnn_ablation}), retaining a purely physics-constrained data-fitting objective avoids the detrimental interaction between smoothness penalties and physical parameter estimation. Gradients are backpropagated through the numerical solver via automatic differentiation, seamlessly embedding the wave physics into the end-to-end learning process.}
 
-The physical justification for this term arises from the modal decomposition of the governing wave equation. As derived in previous sections, the exact modal damping coefficient $d_m$ for the $m$-th spectral mode is given by $d_m = \gamma - \nu \lambda_m = \gamma + \nu k_m^2$, where $\lambda_m = -k_m^2$ is the Laplacian eigenvalue and $k_m$ is the corresponding discrete wavenumber. Because high-frequency modes attenuate at a rate proportional to $\nu k_m^2$, they are rapidly extinguished before reaching the sensors, leaving them entirely unconstrained by the data loss. This lack of constraint causes the SIREN network to introduce artificial high-frequency noise.
+\textcolor{red}{To ensure stable and precise convergence during training, we deploy two independent Adam optimizers. Because the physical variables ($\xi_\gamma, \xi_\nu$) govern macroscopic physical damping, their loss landscape is non-linear. Coupling their optimization momentum directly with the SIREN network weights can lead to oscillatory behavior. By decoupling the optimizers, we enforce independent control over learning-rate trajectories by assigning each component a separate Cosine Annealing schedule \citep{loshchilov2017sgdr}:
+\begin{equation}
+\eta_k(t) = \eta_{k,\min} + \frac{1}{2} (\eta_{k,\max} - \eta_{k,\min}) \left[ 1 + \cos\left( \pi \frac{t}{T_k} \right) \right], \qquad 0 \le t \le T_k,
+\end{equation}
+where $\eta_{k,\max}, \eta_{k,\min}$, and $T_k$ denote the initial learning rate, minimum cap, and annealing period. The network weights are optimized with a conservative schedule ($\eta \in [10^{-5}, 10^{-3}]$), while the unconstrained physical parameters start with an initial learning rate of $5 \times 10^{-2}$ to rapidly traverse the parameter space and are smoothly annealed down to $10^{-3}$ to lock stably onto the estimated damping coefficients.}
 
-To counteract this, we can explicitly analyze the spectral energy of the initial condition. For a one-dimensional domain $[0, L]$ with homogeneous Neumann boundary conditions, the initial condition $u_0(x)$ can be expanded into a discrete cosine series with modal coefficients $U_{0,m}$ and discrete wavenumbers $k_m = m\pi / L$:
-\begin{equation*}
-u_0(x) = \sum_{m=0}^{\infty} U_{0,m} \cos(k_m x).
-\end{equation*}
-Taking the continuous spatial derivative of this expansion yields a corresponding sine series where each modal amplitude is scaled by its respective wavenumber $k_m$:
-\begin{equation*}
-\frac{\partial u_0(x)}{\partial x} = \sum_{m=1}^{\infty} -k_m U_{0,m} \sin(k_m x).
-\end{equation*}
-The $L_2$ norm of the spatial gradient (the Sobolev $H^1$ semi-norm) is evaluated by integrating the square of this derivative over the physical domain. Because the sine basis functions are mutually orthogonal over $[0, L]$, all cross-terms in the squared expansion integrate exactly to zero. By Parseval's identity for Fourier series, the continuous spatial integral reduces exactly to the sum of the squared modal coefficients weighted by $k_m^2$:
-\begin{equation*}
-\left\| \frac{\partial u_0}{\partial x} \right\|_2^2 = \int_0^L \left( \sum_{m=1}^{\infty} -k_m U_{0,m} \sin(k_m x) \right)^2 dx \propto \sum_{m=1}^{\infty} k_m^2 |U_{0,m}|^2.
-\end{equation*}
-
-\textcolor{red}{By scaling this gradient penalty by $\nu$, the regularization term assigns increasing weight to higher spatial modes proportionally to $k_m^2$:
-\begin{equation*}
-\lambda_{\text{smooth}} \nu \left\| \frac{\partial u_0}{\partial x} \right\|_2^2 \propto \lambda_{\text{smooth}} \sum_{m} \nu k_m^2 |U_{0,m}|^2.
-\end{equation*}
-The Sobolev $H^1$ penalty thus provides a physically motivated regularization that penalizes high spatial frequencies, reflecting the enhanced attenuation of high-wavenumber modes in the underdamped regime considered in the numerical experiments. We note, however, that because the estimated coefficient $\nu$ enters the regularization weight directly, a coupling exists between the reconstruction prior and parameter estimation, an effect that warrants future ablation with an independently fixed regularization parameter.} Furthermore, because of Parseval's theorem, we are able to compute this mode-dependent penalty entirely in the spatial domain, gracefully avoiding the need for computationally expensive spectral transforms during the training loop. Gradients are then backpropagated through the numerical solver via automatic differentiation, seamlessly embedding the physical laws into the training process.
-
-To ensure stable and precise convergence during training, we deploy two independent Adam optimizers. \textcolor{red}{Because the physical variables ($\tilde{\gamma}$, $\tilde{\nu}$) govern macroscopic physical damping, their loss landscape is highly non-linear.} Coupling their optimization momentum directly with the millions of SIREN weights often leads to severe oscillatory behavior or overshooting. By entirely decoupling the optimizers, \textcolor{red}{we enforce independent control over the learning-rate trajectories of the different trainable components by assigning each of them a separate Cosine Annealing schedule \citep{loshchilov2017sgdr}. Specifically, the learning rate associated with component $k$ is updated according to
-	\begin{equation}
-		\eta_k(t) =
-		\eta_{k,\min}
-		+ \frac{1}{2}
-		\left(\eta_{k,\max}-\eta_{k,\min}\right)
-		\left[
-		1+\cos\left(\pi\frac{t}{T_k}\right)
-		\right],
-		\qquad 0\leq t\leq T_k,
-	\end{equation}
-where $\eta_{k,\max}$, $\eta_{k,\min}$, and $T_k$ denote, respectively, the initial learning rate, the minimum learning rate, and the annealing period for component $k$. These parameters are independently specified, enabling separate control of the learning-rate evolution of each component.}
-
-The network weights are optimized with a conservative initial learning rate of $10^{-3}$, smoothly decaying to a minimum cap of $10^{-5}$. Conversely, the unconstrained physical parameters are initialized with an aggressive learning rate of $10^{-1}$ to rapidly traverse the parameter space and escape bad local minima, but are strictly annealed down to a minimum cap of $10^{-3}$. This deliberate dual-scheduling strategy ensures that the physics parameters can swiftly reach the correct attenuation regime and subsequently lock onto the true damping coefficients without violently oscillating during the final training epochs.
-
-While this work focuses on estimating the initial condition and the global damping coefficients, the proposed DPNN framework is highly modular and generalizable. In principle, the exact same end-to-end differentiable pipeline could be leveraged to jointly learn other unknown physical quantities, such as the wave propagation speed $c$, the reflection coefficients characterizing specific boundary conditions, or even the spatiotemporal distribution of external source terms. By simply embedding the relevant physical quantities as trainable variables within the differentiable solver, a wide variety of complex inverse problems can be formulated and solved within this unified architecture.
-
-\subsection{Numerical Experiments}
+\subsection{\textcolor{red}{Numerical Experiments}}
 \label{subsec:dpnn_experiments}
-To validate the proposed Differentiable Physics Neural Network (DPNN) architecture and benchmark the performance of the exact PSTD solver against the conventional FDTD method within an inverse problem setting, we conduct a series of one-dimensional numerical experiments. The overarching goal is to simultaneously reconstruct an unknown initial pressure field $p_0(x)$ and accurately estimate the macroscopic viscoelastic damping parameters $\gamma$ and $\nu$ from sparse, noisy sensor measurements.
 
-The physical domain is defined over the interval $x \in [0, L]$ with $L = 2.0$\,m, simulated over a temporal window $T = 2.0$\,s. We employ a spatial resolution of $\Delta x = 0.05$\,m and a time step $\Delta t = 0.05$\,s. The true viscoelastic damping parameters governing the ground-truth data generation are set to $\gamma = 0.1$ and $\nu = 0.005$. The wave propagation is recorded by $N_{\text{sensors}} = 10$ sensors randomly distributed across the physical domain. To simulate realistic and challenging acquisition conditions, independent Gaussian noise is superimposed on the sensor data, yielding a Signal-to-Noise Ratio (SNR) of 30\,dB.
-For all experiments, we impose homogeneous Neumann boundary conditions at both ends of the domain, $\partial_x u(0,t) = \partial_x u(L,t) = 0$, and assume a zero initial velocity field, $\partial_t u(x,0) = 0$, with no external forcing, $f(x,t) = 0$.
-The initial condition $p_0(x)$ is parameterized by a SIREN network consisting of 3 hidden layers with 32 features each. The optimization is performed over 500 epochs using two independent Adam optimizers for the neural network weights and the physical parameters, leveraging the Cosine Annealing schedules discussed previously. The loss function regularization weights are strictly fixed across all experiments to $\lambda_{\mathrm{data}} = 1.0$, $\lambda_{\text{sp}} = 0.005$, and $\lambda_{\text{smooth}} = 0.1$. 
-We evaluate the robustness of the regularized inversion framework against three increasingly challenging initial conditions.
+\textcolor{red}{To evaluate the proposed Differentiable Physics Neural Network (DPNN) architecture and investigate the impact of numerical scheme selection in an inverse problem setting, we conduct a quantitative benchmark comparing the spectral PSTD solver against the conventional second-order FDTD method and a high-capacity Physics-Informed Neural Network (PINN) reference baseline \citep{raissi_pinn_2019}. The objective is to simultaneously reconstruct an unknown initial pressure distribution $p_0(x)$ and estimate the macroscopic viscoelastic attenuation parameters $\gamma$ and $\nu$ from sparse, noise-corrupted sensor observations. To mitigate the risk of discretization-matched inverse crime \citep{colton_inverse_2013,kaipio_statistical_2005}, synthetic receiver observations are generated using an independent, continuous analytical modal expansion truncated at $M = 200$ spatial modes with 2000-point continuous spatial quadrature. This guarantees that synthetic observations originate from a continuous boundary-value problem independent of the numerical discretization grid ($\Delta x = 0.05$\,m) utilized by the discrete DPNN inversion solvers. All benchmarks were executed on an Intel Xeon CPU @ 2.20\,GHz workstation with an NVIDIA RTX GPU using PyTorch.}
+
+\textcolor{red}{To provide a comparison against soft-collocation physics-informed learning, we implement a high-capacity PINN reference baseline following established architectures \citep{raissi_pinn_2019,haghighat_sciann_2021}. The PINN employs 4 hidden layers of 128 units ($\sim 50{,}000$ parameters) with periodic sinusoidal activations ($\omega_0 = 5.0$). The network takes continuous space-time coordinates $(x, t) \in [0, L] \times [0, T]$ and directly predicts the acoustic pressure field $u(x, t)$. During each training epoch, 2000 interior space-time collocation points, 200 boundary points, and 200 initial points are sampled. Optimization is performed using Adam for 200 epochs with a Cosine Annealing learning rate schedule matching the DPNN configuration. The PINN loss function balances observational fidelity with differential equation constraints:
+\begin{equation}
+\label{eq:pinn_loss}
+\mathcal{L}_{\mathrm{PINN}} = \mathcal{L}_{\mathrm{data}} + \lambda_{\mathrm{pde}}\mathcal{L}_{\mathrm{pde}} + \lambda_{\mathrm{bc}}\mathcal{L}_{\mathrm{bc}} + \lambda_{\mathrm{ic}}\mathcal{L}_{\mathrm{ic}},
+\end{equation}
+where $\mathcal{L}_{\mathrm{pde}}$ enforces the viscoelastic wave equation via automatic differentiation across interior collocation points, $\mathcal{L}_{\mathrm{bc}}$ penalizes Neumann boundary flux $\partial_x u(0, t) = \partial_x u(L, t) = 0$, and $\mathcal{L}_{\mathrm{ic}}$ enforces zero initial velocity $\partial_t u(x, 0) = 0$.}
+
+\begin{table}[H]
+\centering
+\small
+\caption{\textcolor{red}{Quantitative benchmark comparison between PSTD-DPNN, FDTD-DPNN, and the high-capacity PINN baseline (4 hidden layers, 128 units, $\sim 50{,}000$ parameters) across three initial condition profiles (10 sensors, 30\,dB SNR Gaussian noise, $T = 2.0$\,s, continuous analytical ground truth).}}
+\label{tab:dpnn_pinn_comparison}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llccccc}
+\toprule
+\textbf{Benchmark} & \textbf{Method} & \textbf{NMSE($p_0$)} & \textbf{\shortstack{Field Rel.\\$L_2$ [\%]}} & \textbf{\shortstack{Rel. Err\\$\gamma$ [\%]}} & \textbf{\shortstack{Rel. Err\\$\nu$ [\%]}} & \textbf{\shortstack{Time/Epoch\\{[ms]}}} \\
+\midrule
+\multirow{3}{*}{\shortstack[l]{Multimodal\\Standing Waves}} & PSTD-DPNN & 1.15e-02 & 6.21\% & 86.0\% & 11.0\% & 12.5 \\
+ & FDTD-DPNN & 1.72e-02 & 7.90\% & 89.0\% & 6.1\% & 21.6 \\
+ & High-Capacity PINN & 1.18e-03 & 2.80\% & 11.7\% & 3.8\% & 95.1 \\
+\midrule
+\multirow{3}{*}{\shortstack[l]{Smooth\\Gaussian Pulses}} & PSTD-DPNN & 3.00e-03 & 1.68\% & 3.5\% & 2.0\% & 12.1 \\
+ & FDTD-DPNN & 6.51e-03 & 5.91\% & 37.9\% & 8.8\% & 21.0 \\
+ & High-Capacity PINN & 1.24e-02 & 5.73\% & 8.9\% & 31.4\% & 93.1 \\
+\midrule
+\multirow{3}{*}{\shortstack[l]{Non-Smooth\\Triangular Pulses}} & PSTD-DPNN & 4.49e-03 & 3.09\% & 4.7\% & 3.6\% & 13.8 \\
+ & FDTD-DPNN & 1.02e-01 & 14.67\% & 152.2\% & 12.7\% & 22.4 \\
+ & High-Capacity PINN & 2.44e-01 & 28.20\% & 102.2\% & 57.3\% & 91.3 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
 
 \subsubsection{Experiment 1: Standing Waves}
 In the first configuration, the initial condition is defined as a superposition of the first five cosine modes,
@@ -5133,25 +5128,28 @@ In the first configuration, the initial condition is defined as a superposition 
 u(x,0) = \sum_{m=1}^{5} \cos\left(\frac{m \pi x}{L}\right).
 \]
 
-The standing waves experiment provides a baseline evaluation of spectral recovery. Because the physical damping rapidly extinguishes higher-order modes, the highest frequencies of the standing wave are barely registered by the sparse sensor array. Figure~\ref{fig:0_metrics} illustrates the robust convergence of both solvers, with the physical parameters $\gamma$ and $\nu$ converging to values close to the true ones. Figure~\ref{fig:0_u0} confirms that the PSTD and FDTD solvers can successfully recover the continuous initial condition. The spacetime evolution (Figure~\ref{fig:0_spacetime}) highlights how closely both the FDTD and PSTD match the ground truth.
+\textcolor{red}{The multimodal standing wave provides a benchmark for spectral reconstruction. As summarized in Table~\ref{tab:dpnn_pinn_comparison}, both differentiable physics solvers achieve high reconstruction accuracy, with PSTD-DPNN attaining an initial condition NMSE of $1.15 \times 10^{-2}$ and a full-field relative $L_2$ error of $6.21\%$, outperforming FDTD-DPNN (NMSE $1.72 \times 10^{-2}$, field error $7.90\%$). In terms of computational efficiency, PSTD-DPNN requires only 12.5\,ms per epoch compared to 21.6\,ms for FDTD-DPNN, since the modal DCT-II propagator integrates the wavefield algebraically in matrix form without unrolling a sequential time-stepping loop. The high-capacity PINN reference baseline, with 4 hidden layers of 128 units ($\sim 50{,}000$ parameters), fits the smooth harmonic eigenfunctions with high accuracy, achieving an NMSE of $1.18 \times 10^{-3}$ and a field error of $2.80\%$. In terms of computational cost, PINN requires 95.1\,ms per epoch on the benchmark hardware, compared to 12.5\,ms for PSTD-DPNN and 21.6\,ms for FDTD-DPNN. While this runtime is influenced by network capacity and collocation point density (2000 interior points), the automatic differentiation overhead required to evaluate the mixed third-order derivative $-\nu \partial_{txx} u$ across collocation points represents a plausible contributor to this computational difference alongside architecture and autograd graph construction.}
+
+\textcolor{red}{Figure~\ref{fig:0_metrics} illustrates optimization convergence for loss and damping parameters, while Figure~\ref{fig:0_u0} compares the reconstructed initial pressure profiles. To address the visual ambiguity of identical wavefield heatmaps, Figure~\ref{fig:0_spacetime} plots the true spatio-temporal wavefield alongside absolute reconstruction error heatmaps $|u(x,t) - u^*(x,t)|$ across all three methods on a shared error scale. PSTD-DPNN maintains low error throughout the domain, FDTD-DPNN exhibits trailing dispersive phase ripples behind wavefronts, and PINN captures the smooth standing pattern while exhibiting localized phase mismatches near temporal boundaries.}
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Images/dpnn/0_StandingWaves_metrics.pdf}
-    \caption{Experiment 1 (Standing Waves): Convergence of the composite loss function and the estimated physical damping parameters ($\gamma, \nu$) for the FDTD and PSTD differentiable solvers.}
+    \caption{\textcolor{red}{Experiment 1 (Standing Waves): Convergence of composite loss and physical attenuation parameters ($\gamma, \nu$) for PSTD-DPNN, FDTD-DPNN, and PINN.}}
     \label{fig:0_metrics}
 \end{figure}
-\vspace{-1cm}
+\vspace{-0.5cm}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{Images/dpnn/0_StandingWaves_u0_recon.pdf}
-    \caption{Experiment 1 (Standing Waves): Reconstructed initial pressure field $p_0(x)$.}
+    \includegraphics[width=0.75\textwidth]{Images/dpnn/0_StandingWaves_u0_recon.pdf}
+    \caption{\textcolor{red}{Experiment 1 (Standing Waves): Reconstructed initial pressure field $p_0(x)$ comparing Ground Truth against PSTD-DPNN, FDTD-DPNN, and PINN.}}
     \label{fig:0_u0}
 \end{figure}
-\vspace{-1cm}
+\vspace{-0.5cm}
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Images/dpnn/0_StandingWaves_spacetime.png}
-    \caption{Experiment 1 (Standing Waves): Spacetime heatmaps comparing the true wave propagation against the FDTD and PSTD reconstructions.}
+    \caption{\textcolor{red}{Experiment 1 (Standing Waves): Spatio-temporal evaluation. Panel (a) shows the continuous analytical ground-truth wavefield $u^*(x,t)$. Panels (b), (c), and (d) depict absolute reconstruction errors $|u - u^*|$ for FDTD-DPNN, PSTD-DPNN, and PINN on a unified scale, highlighting zero-dispersion accuracy in PSTD.}}
     \label{fig:0_spacetime}
 \end{figure}
 
@@ -5161,55 +5159,175 @@ In the second configuration, the initial condition is a smooth Gaussian pulse ce
 u(x,0) = \sum_{m=-5}^{5} \frac{1}{2} \exp\left(-\frac{1}{2}\left(\frac{x - (2mL + \mu)}{\sigma}\right)^2\right) + \frac{1}{2} \exp\left(-\frac{1}{2}\left(\frac{x - (2mL - \mu)}{\sigma}\right)^2\right).
 \]
 
-The smooth pulse initial condition introduces spatial sparsity, activating the $L_1$ regularization. The results (Figures~\ref{fig:1_metrics} to~\ref{fig:1_spacetime}) show that the combination of sparsity and Sobolev smoothness elegantly prevents spurious ringing in the void regions, allowing the neural network to strictly localize the energy of the pulses. \textcolor{red}{While both methods achieve comparable loss convergence histories for the estimated damping parameters (Figure~\ref{fig:1_metrics}), the PSTD solver exhibits superior amplitude preservation in the reconstructed wavefield over long propagation times due to its dispersion-free modal transport (Figure~\ref{fig:1_spacetime}).}
+\textcolor{red}{The smooth pulse introduces spatial localization and sparsity. As reported in Table~\ref{tab:dpnn_pinn_comparison}, PSTD-DPNN achieves a field reconstruction error of $1.68\%$ and an initial pressure NMSE of $3.00 \times 10^{-3}$, with physical parameter recovery of $\hat{\gamma} = 0.0965\,\mathrm{s}^{-1}$ ($3.5\%$ relative error) and $\hat{\nu} = 5.10 \times 10^{-3}\,\mathrm{m}^2/\mathrm{s}$ ($2.0\%$ relative error). PSTD-DPNN outperforms both FDTD-DPNN ($5.91\%$ field error, NMSE $6.51 \times 10^{-3}$) and the PINN reference baseline ($5.73\%$ field error, NMSE $1.24 \times 10^{-2}$). Furthermore, PINN requires 93.1\,ms per epoch ($7.7\times$ slower than PSTD-DPNN at 12.1\,ms). The physical time-evolution metrics in Figure~\ref{fig:1_metrics} show that PSTD-DPNN optimization converges smoothly to the true physical coefficients within 200 epochs. Figure~\ref{fig:1_u0} demonstrates that both DPNN solvers accurately capture the Gaussian envelope, while Figure~\ref{fig:1_spacetime} confirms the minimal spatio-temporal error of PSTD-DPNN.}
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Images/dpnn/1_Smooth_metrics.pdf}
-    \caption{Experiment 2 (Smooth Pulses): Convergence metrics for the network loss and the physical attenuation parameters.}
+    \caption{\textcolor{red}{Experiment 2 (Smooth Pulses): Convergence metrics for composite loss, initial condition NMSE, and parameter trajectories ($\gamma, \nu$).}}
     \label{fig:1_metrics}
 \end{figure}
-\vspace{-1cm}
+\vspace{-0.5cm}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{Images/dpnn/1_Smooth_u0_recon.pdf}
-    \caption{Experiment 2 (Smooth Pulses): Reconstructed initial pressure field $p_0(x)$. The void regions are successfully suppressed by the $L_1$ sparsity penalty.}
+    \includegraphics[width=0.75\textwidth]{Images/dpnn/1_Smooth_u0_recon.pdf}
+    \caption{\textcolor{red}{Experiment 2 (Smooth Pulses): Reconstructed initial pressure field $p_0(x)$ comparing Ground Truth against PSTD-DPNN, FDTD-DPNN, and PINN.}}
     \label{fig:1_u0}
 \end{figure}
-\vspace{-1cm}
+\vspace{-0.5cm}
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Images/dpnn/1_Smooth_spacetime.png}
-    \caption{Experiment 2 (Smooth Pulses): Spacetime propagation heatmaps. Notice the superior amplitude preservation in the PSTD reconstruction.}
+    \caption{\textcolor{red}{Experiment 2 (Smooth Pulses): Spatio-temporal evaluation. Panel (a) shows the continuous analytical ground-truth wavefield $u^*(x,t)$. Panels (b), (c), and (d) depict absolute reconstruction errors $|u - u^*|$ for FDTD-DPNN, PSTD-DPNN, and PINN on a unified scale.}}
     \label{fig:1_spacetime}
 \end{figure}
 
-\subsubsection{Experiment 3: Triangle Pulses (Non-smooth)}
-The final experiment considers a non-smooth triangular pulse, also centered at $\mu = L/2$ with support determined by $\sigma = L/20$. Similar to the Gaussian pulse, it is constructed using an even $2L$-periodic extension,
+\subsubsection{Experiment 3: Triangle Pulses}
+The third configuration tests a non-smooth triangular pulse profile centered at $\mu = L/2$ with half-width $\sigma = L/20$:
 \[
-u(x,0) = \sum_{m=-5}^{5} \frac{1}{2} \max\left(1 - \frac{|x - (2mL + \mu)|}{\sigma}, 0\right) + \frac{1}{2} \max\left(1 - \frac{|x - (2mL - \mu)|}{\sigma}, 0\right).
+u(x,0) = \sum_{m=-5}^{5} \frac{1}{2} \max\left(0, 1 - \frac{|x - (2mL + \mu)|}{\sigma}\right) + \frac{1}{2} \max\left(0, 1 - \frac{|x - (2mL - \mu)|}{\sigma}\right).
 \]
 
-\textcolor{red}{The final experiment considers a non-smooth triangular initial profile, challenging the finite-capacity SIREN representation to recover sharp spatial transitions from sparse and noisy measurements. Although smooth neural representations can approximate continuous non-smooth functions, the finite network capacity, limited sensor information, and regularization introduce a trade-off between resolving sharp features and suppressing poorly constrained high-frequency oscillations. As shown in Figures~\ref{fig:2_metrics} to~\ref{fig:2_spacetime}, a perfect reconstruction of the initial condition is not achieved, and visible relative errors remain around the sharp peaks. This behavior is physically and mathematically expected: as analyzed in previous sections, viscoelastic damping strongly attenuates high-frequency modes in the underdamped regime, rapidly extinguishing fine spatial details before they can reach the sensors. Under sparse and noisy measurements, attempting an unconstrained reconstruction of these lost high frequencies would inevitably amplify measurement noise into severe spurious artifacts. The Sobolev $H^1$ regularization deliberately suppresses these unconstrained high-frequency oscillations, effectively trading off the exact sharpness of the peaks to prevent noise-driven hallucinations. Despite the remaining reconstruction errors near the sharp peaks, the physical damping parameters $\gamma$ and $\nu$ are recovered close to their ground-truth values in the tested configuration, and the PSTD solver transports the wavepackets with visibly reduced dispersive artifacts compared to the standard FDTD scheme.}
+\textcolor{red}{The triangular profile introduces slope discontinuities ($u_0 \in H^1(0, L) \setminus H^2(0, L)$). This experiment provides a decisive test between differentiable physics and soft-collocation physics-informed neural networks. As documented in Table~\ref{tab:dpnn_pinn_comparison}, PSTD-DPNN reconstructs the initial state with an NMSE of $4.49 \times 10^{-3}$ and a full-field error of only $3.09\%$, recovering physical damping with high precision ($\hat{\gamma} = 0.1047\,\mathrm{s}^{-1}$ [$4.7\%$ error] and $\hat{\nu} = 4.82 \times 10^{-3}\,\mathrm{m}^2/\mathrm{s}$ [$3.6\%$ error]). In sharp contrast, FDTD-DPNN yields an NMSE of $0.102$ ($14.67\%$ field error, $152.2\%$ error on $\gamma$), while the PINN baseline experiences severe degradation, with an NMSE of $0.244$, a field relative error of $28.20\%$, and $102.2\%$ error on $\gamma$. While PINN excels on smooth harmonic standing waves, its soft collocation loss struggles to resolve sharp derivative corners, smearing out wavefronts and accumulating phase errors throughout the domain.}
+
+\textcolor{red}{Figure~\ref{fig:2_u0} compares the reconstructed profiles. The spatio-temporal error heatmaps in Figure~\ref{fig:2_spacetime} confirm that PSTD-DPNN confines reconstruction errors strictly to the immediate neighborhood of traveling slope discontinuities, whereas PINN displays widespread error throughout the interior.}
+
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Images/dpnn/2_Triangle_metrics.pdf}
-    \caption{Experiment 3 (Triangle Pulses): Convergence metrics demonstrating stable recovery of the physical parameters even for non-differentiable initial states.}
+    \caption{\textcolor{red}{Experiment 3 (Triangle Pulses): Convergence metrics for composite loss, initial condition NMSE, and parameter trajectories ($\gamma, \nu$).}}
     \label{fig:2_metrics}
 \end{figure}
-\vspace{-1cm}
+\vspace{-0.5cm}
 \begin{figure}[H]
     \centering
-    \includegraphics[width=0.6\textwidth]{Images/dpnn/2_Triangle_u0_recon.pdf}
-    \caption{Experiment 3 (Triangle Pulses): Reconstructed initial pressure field $p_0(x)$. The SIREN successfully captures the non-smooth peaks without excessive smearing.}
+    \includegraphics[width=0.75\textwidth]{Images/dpnn/2_Triangle_u0_recon.pdf}
+    \caption{\textcolor{red}{Experiment 3 (Triangle Pulses): Reconstructed initial pressure field $p_0(x)$ comparing Ground Truth against PSTD-DPNN, FDTD-DPNN, and PINN, showing sharp corner preservation in PSTD-DPNN.}}
     \label{fig:2_u0}
 \end{figure}
-\vspace{-1cm}
+\vspace{-0.5cm}
 \begin{figure}[H]
     \centering
     \includegraphics[width=\textwidth]{Images/dpnn/2_Triangle_spacetime.png}
-    \caption{Experiment 3 (Triangle Pulses): Spacetime propagation heatmaps emphasizing the PSTD solver's zero-dispersion transport of sharp gradients.}
+    \caption{\textcolor{red}{Experiment 3 (Triangle Pulses): Spatio-temporal evaluation showing continuous analytical wavefield $u^*(x,t)$ alongside absolute error heatmaps for FDTD-DPNN, PSTD-DPNN, and PINN.}}
     \label{fig:2_spacetime}
 \end{figure}
+
+\textcolor{red}{Table~\ref{tab:dpnn_param_estimation} details the physical attenuation parameters recovered across the three benchmark initial conditions ($\gamma_{\mathrm{true}} = 0.100\,\mathrm{s}^{-1}$, $\nu_{\mathrm{true}} = 5.00 \times 10^{-3}\,\mathrm{m}^2/\mathrm{s}$). On localized Gaussian and non-smooth triangular pulses, PSTD-DPNN accurately estimates both $\gamma$ and $\nu$ within $5\%$ relative error. On multimodal standing waves, however, parameter recovery shows higher discrepancy for the discrete solvers ($\hat{\gamma} \approx 0.014\,\mathrm{s}^{-1}$), while PINN achieves $11.7\%$ relative error, indicating that parameter identification from boundary or sparse observations depends strongly on the spatial profile and modal content of the acoustic wavefield.}
+
+\begin{table}[H]
+\centering
+\small
+\caption{\textcolor{red}{Estimated physical attenuation parameters ($\gamma_{\mathrm{true}} = 0.100\,\mathrm{s}^{-1}$, $\nu_{\mathrm{true}} = 5.00 \times 10^{-3}\,\mathrm{m}^2/\mathrm{s}$) across initial profiles and numerical solvers.}}
+\label{tab:dpnn_param_estimation}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llcccc}
+\toprule
+\textbf{Benchmark} & \textbf{Method} & \textbf{\shortstack{$\hat{\gamma}$\\$[\mathrm{s}^{-1}]$}} & \textbf{\shortstack{Rel. Err\\$\gamma$ [\%]}} & \textbf{\shortstack{$\hat{\nu}$\\$[\mathrm{m}^2/\mathrm{s}]$}} & \textbf{\shortstack{Rel. Err\\$\nu$ [\%]}} \\
+\midrule
+\multirow{3}{*}{\shortstack[l]{Multimodal\\Standing Waves}} & PSTD-DPNN & 0.0140 & 86.0\% & 5.55e-03 & 11.0\% \\
+ & FDTD-DPNN & 0.0110 & 89.0\% & 4.69e-03 & 6.1\% \\
+ & High-Capacity PINN & 0.0883 & 11.7\% & 4.81e-03 & 3.8\% \\
+\midrule
+\multirow{3}{*}{\shortstack[l]{Smooth\\Gaussian Pulses}} & PSTD-DPNN & 0.0965 & 3.5\% & 5.10e-03 & 2.0\% \\
+ & FDTD-DPNN & 0.1379 & 37.9\% & 4.56e-03 & 8.8\% \\
+ & High-Capacity PINN & 0.1089 & 8.9\% & 3.43e-03 & 31.4\% \\
+\midrule
+\multirow{3}{*}{\shortstack[l]{Non-Smooth\\Triangular Pulses}} & PSTD-DPNN & 0.1047 & 4.7\% & 4.82e-03 & 3.6\% \\
+ & FDTD-DPNN & 0.2522 & 152.2\% & 4.36e-03 & 12.7\% \\
+ & High-Capacity PINN & 0.2022 & 102.2\% & 2.14e-03 & 57.3\% \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\subsection{\textcolor{red}{Disentangled Inversion Experiments}}
+\label{subsec:dpnn_isolated_experiments}
+
+\textcolor{red}{To provide numerical evidence elucidating how the coupling between $u_0$ and $(\gamma, \nu)$ influences inversion accuracy, we disentangle the inverse problem into three isolated experiments on the Gaussian pulse benchmark:
+\begin{itemize}
+    \item \textbf{Experiment A ($u_0$ reconstruction only):} Damping parameters are fixed to their ground truth ($\gamma^* = 0.100\,\mathrm{s}^{-1}$, $\nu^* = 5.00 \times 10^{-3}\,\mathrm{m}^2/\mathrm{s}$), optimizing solely the SIREN network parameters $\Theta$.
+    \item \textbf{Experiment B (Physical parameter identification only):} The initial condition is fixed to the true spatial profile $u_0^*(x)$, optimizing solely the logarithmic damping parameters initialized at $\xi_{\gamma,0} = \log(5) \approx 1.609$ and $\xi_{\nu,0} = \log(0.2) \approx -1.609$ (corresponding to $\gamma_{\mathrm{init}} = 0.50\,\mathrm{s}^{-1}$ and $\nu_{\mathrm{init}} = 1.00 \times 10^{-3}\,\mathrm{m}^2/\mathrm{s}$).
+    \item \textbf{Experiment C (Joint inversion):} Both the SIREN network $\Theta$ and damping parameters $(\xi_\gamma, \xi_\nu)$ are simultaneously optimized from the same initial conditions under the proposed data-fitting loss.
+\end{itemize}
+The quantitative results are reported in Table~\ref{tab:dpnn_isolated_experiments}.}
+
+\begin{table}[H]
+\centering
+\small
+\caption{\textcolor{red}{Disentangled analysis of the inverse problem on the Gaussian benchmark, comparing: (Exp~A) initial condition reconstruction with physical parameters fixed to ground truth; (Exp~B) physical parameter identification with initial condition fixed to ground truth; and (Exp~C) joint reconstruction where both the initial state and damping parameters are simultaneously unknown.}}
+\label{tab:dpnn_isolated_experiments}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{lcccccc}
+\toprule
+\textbf{Inverse Formulation} & \textbf{NMSE($p_0$)} & \textbf{\shortstack{Field Rel.\\$L_2$ [\%]}} & \textbf{\shortstack{$\hat{\gamma}$\\$[\mathrm{s}^{-1}]$}} & \textbf{\shortstack{Rel. Err\\$\gamma$ [\%]}} & \textbf{\shortstack{$\hat{\nu}$\\$[\mathrm{m}^2/\mathrm{s}]$}} & \textbf{\shortstack{Rel. Err\\$\nu$ [\%]}} \\
+\midrule
+Exp A: $u_0$ only ($\gamma, \nu$ fixed to ground truth) & 3.23e-03 & 3.94\% & 0.1000 & 0.0\% & 5.00e-03 & 0.0\% \\
+Exp B: Parameters only ($\gamma, \nu$ unknown, $u_0$ fixed) & 0.00 (Exact) & 0.37\% & 0.1108 & 10.8\% & 4.85e-03 & 3.0\% \\
+Exp C: Joint Inversion ($u_0, \gamma, \nu$ simultaneously unknown) & 3.00e-03 & 1.68\% & 0.0965 & 3.5\% & 5.10e-03 & 2.0\% \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\textcolor{red}{The findings in Table~\ref{tab:dpnn_isolated_experiments} provide numerical evidence supporting the role of source-damping coupling:
+\begin{enumerate}
+    \item In \textbf{Experiment A}, when physical damping is known, PSTD-DPNN reconstructs the unknown initial pressure field with an NMSE of $3.23 \times 10^{-3}$ and a field relative $L_2$ error of $3.94\%$.
+    \item In \textbf{Experiment B}, when the initial condition is known, the logarithmic parameterization recovers the viscoelastic viscosity $\nu$ within $3.0\%$ ($\hat{\nu} = 4.85 \times 10^{-3}\,\mathrm{m}^2/\mathrm{s}$) and damping $\gamma$ within $10.8\%$ ($\hat{\gamma} = 0.1108\,\mathrm{s}^{-1}$), while full-field relative error drops to $0.37\%$. This confirms that physical parameters can be accurately identified in this configuration when decoupled from source variations.
+    \item In \textbf{Experiment C}, under joint inversion, field reconstruction achieves $1.68\%$ error (NMSE $3.00 \times 10^{-3}$), recovering $\nu$ within $2.0\%$ ($\hat{\nu} = 5.10 \times 10^{-3}\,\mathrm{m}^2/\mathrm{s}$) and $\gamma$ within $3.5\%$ ($\hat{\gamma} = 0.0965\,\mathrm{s}^{-1}$), matching the primary benchmark results reported in Table~\ref{tab:dpnn_pinn_comparison}.
+\end{enumerate}}
+
+\subsection{\textcolor{red}{Ablation Study on Regularization Components}}
+\label{subsec:dpnn_ablation}
+
+\textcolor{red}{To evaluate the effect of regularization on reconstruction quality and parameter identification, we conduct an ablation study across five configurations on both smooth Gaussian and non-smooth triangular profiles:
+\begin{enumerate}
+    \item \textbf{Data only (Proposed):} Unregularized observation fitting ($\lambda_{\mathrm{sp}} = 0, \lambda_{\mathrm{smooth}} = 0$).
+    \item \textbf{$L_1$ only ($\lambda_{\mathrm{sp}} = 0.005$):} Physical-space sparsity penalty $\|p_0\|_1$.
+    \item \textbf{$H^1$ only ($\lambda_{\mathrm{smooth}} = 0.1$):} Sobolev gradient semi-norm $\|\partial_x p_0\|_2^2$.
+    \item \textbf{$L_1 + H^1$ with coupled $\nu$:} Gradient semi-norm scaled by the estimated parameter $\nu$.
+    \item \textbf{$L_1 + H^1$ with decoupled $\nu_0$ ($\nu_0 = 0.005$ fixed):} Gradient semi-norm scaled by fixed reference $\nu_0$.
+\end{enumerate}
+Quantitative results are reported in Table~\ref{tab:dpnn_ablation}.}
+
+\begin{table}[H]
+\centering
+\small
+\caption{\textcolor{red}{Ablation study on regularization components for PSTD-DPNN across Gaussian and Triangular initial profiles. Comparing the proposed unregularized data fitting formulation against spatial sparsity ($L_1$), Sobolev smoothness ($H^1$), and coupled versus decoupled viscosity weighting.}}
+\label{tab:dpnn_ablation}
+\resizebox{\textwidth}{!}{%
+\begin{tabular}{llcccc}
+\toprule
+\textbf{Benchmark} & \textbf{Regularization Configuration} & \textbf{NMSE($p_0$)} & \textbf{\shortstack{Field Rel.\\$L_2$ [\%]}} & \textbf{\shortstack{$\hat{\gamma}$\\$[\mathrm{s}^{-1}]$}} & \textbf{\shortstack{$\hat{\nu}$\\$[\mathrm{m}^2/\mathrm{s}]$}} \\
+\midrule
+\multirow{5}{*}{\shortstack[l]{Gaussian\\Pulse}} & Data only (Proposed) & 0.0030 & 1.68\% & 0.0965 & 5.10e-03 \\
+ & $L_1$ only & 0.0018 & 2.42\% & 0.0559 & 5.29e-03 \\
+ & $H^1$ only & 0.0164 & 7.42\% & 0.2384 & 9.53e-06 \\
+ & $L_1 + H^1$ (Coupled $\nu$) & 0.0203 & 8.17\% & 0.1556 & 1.08e-05 \\
+ & $L_1 + H^1$ (Decoupled $\nu_0$) & 0.0667 & 13.40\% & 0.0227 & 2.18e-05 \\
+\midrule
+\multirow{5}{*}{\shortstack[l]{Triangle\\Pulse}} & Data only (Proposed) & 0.0045 & 3.09\% & 0.1047 & 4.82e-03 \\
+ & $L_1$ only & 0.0057 & 4.93\% & 0.0462 & 4.50e-03 \\
+ & $H^1$ only & 0.1052 & 18.10\% & 0.4611 & 7.66e-06 \\
+ & $L_1 + H^1$ (Coupled $\nu$) & 0.1229 & 19.84\% & 0.2719 & 1.03e-05 \\
+ & $L_1 + H^1$ (Decoupled $\nu_0$) & 0.2611 & 28.47\% & 0.0171 & 2.42e-05 \\
+\bottomrule
+\end{tabular}%
+}
+\end{table}
+
+\textcolor{red}{The ablation study reveals that Sobolev $H^1$ regularization does not provide a consistent improvement for the inverse problems considered. In particular, its inclusion leads to substantial reconstruction errors and systematic underestimation of the physical viscosity parameter $\nu$. When the regularization weight is directly coupled to $\nu$, the optimizer can further reduce the objective by artificially decreasing the estimated viscosity. Even with a fixed regularization coefficient, the suppression of high-wavenumber components can remove information relevant to the identification of the viscoelastic damping parameters. Consequently, the $H^1$ penalty was not retained in the final DPNN formulation. This finding highlights the importance of distinguishing generic smoothness priors from regularization strategies that preserve the information required for physical parameter identification.}
+
+\textcolor{red}{Regarding spatial sparsity, the $L_1$ penalty improves the initial-condition NMSE on the smooth Gaussian profile (from $3.00 \times 10^{-3}$ to $1.80 \times 10^{-3}$), but yields higher full-field reconstruction error ($2.42\%$ vs $1.68\%$) and less accurate parameter recovery ($\hat{\gamma} = 0.0559\,\mathrm{s}^{-1}$ vs $0.0965\,\mathrm{s}^{-1}$). On the non-smooth triangular profile, unregularized data fitting provides the lowest field error ($3.09\%$ vs $4.93\%$) and the most accurate parameter recovery. In our proposed formulation, the objective function is therefore formulated as data fitting without explicit spatial regularization, relying instead on the implicit inductive bias of the low-capacity SIREN parameterization. We note that this ablation study justifies the choice of objective function among the specific configurations and penalty weights evaluated, rather than establishing the global optimality of unregularized fitting across all possible regularizers.}
+
+\subsection{\textcolor{red}{Concluding Assessment of the Inverse Problem Formulations}}
+\label{subsec:dpnn_conclusions}
+
+\textcolor{red}{The numerical investigations provide insight into the capabilities and limitations of the proposed DPNN framework. Across the three benchmark configurations, PSTD-DPNN consistently achieves lower reconstruction errors than FDTD-DPNN, while requiring approximately $1.7\times$ less computational time per training epoch. Compared with the high-capacity PINN reference baseline, its advantage is most prominent on localized and non-smooth profiles, where embedding the exact discrete modal propagator avoids the gradient smearing and severe phase drift exhibited by soft-collocation PDE penalties.}
+
+\textcolor{red}{The regularization ablation reveals that the effectiveness of reconstruction priors depends strongly on the regularity of the initial condition and the parameters to be estimated. In particular, Sobolev $H^1$ regularization introduces excessive smoothing and compromises the estimation of the physical viscosity parameter, whereas less restrictive data-fitting formulations provide more accurate reconstructions in the tested configurations.}
+
+\textcolor{red}{Finally, the disentangled experiments highlight the coupling between the unknown initial condition and the physical damping parameters in joint inversion. While damping parameters can be accurately identified when the initial source is known, joint estimation exhibits greater sensitivity when spatial source variations can partially compensate for temporal decay. Together, these results demonstrate the viability of differentiable pseudo-spectral solvers for physics-constrained reconstruction from sparse observations, while establishing that addressing source-parameter coupling remains an important direction for future multi-dimensional inversion studies.}
 
 \chapter{Conclusion and Future Perspectives}
 \label{ch:conclusion}
@@ -5222,7 +5340,7 @@ The first major contribution of this work was the derivation and analysis of a f
 
 To investigate spatial decomposition and parallelizable formulations, we considered two distinct domain decomposition paradigms. First, we derived the Optimized Schwarz Waveform Relaxation (OSWR) method for the damped wave equation. Through a continuous convergence-factor analysis, we formulated a min-max optimization problem for the Robin transmission parameters and numerically investigated their dependence on the physical and geometrical parameters. \textcolor{red}{The numerical experiments demonstrated improved contraction factors with optimized transmission conditions, although the magnitude of the acceleration depends on the damping regime and the selected configuration.} Subsequently, we investigated the Adaptive Rectangular Decomposition (ARD) framework for wave propagation in partitioned domains. \textcolor{red}{The complete algorithmic formulation and numerical implementation were developed for PSTD, using localized explicit interface corrections to restore the coupling between independently propagated rectangular subdomains without iterative global interface solves. Numerical experiments characterized the conditional stability and interface-induced accuracy errors of the proposed formulation, highlighting the benefits of spatial refinement and the comparatively modest accuracy gains obtained by increasing the order of the interface stencil.}
 
-Finally, we introduced a Differentiable Physics Neural Network (DPNN) architecture to bridge forward numerical modelling and inverse problem solving. By embedding the differentiable PSTD propagator into the training loop of a Sinusoidal Representation Network (SIREN), we investigated the joint reconstruction of unknown initial pressure fields and the estimation of macroscopic viscoelastic damping parameters from sparse, noisy sensor measurements. \textcolor{red}{The one-dimensional numerical experiments demonstrated the feasibility of this approach for different classes of initial conditions, including smooth and non-smooth profiles. While sharp spatial features were not perfectly reconstructed in the most challenging configurations, the combination of data fitting and Sobolev regularization provided stable reconstructions and accurate recovery of the physical damping coefficients in the tested synthetic scenarios.}
+Finally, we introduced a Differentiable Physics Neural Network (DPNN) architecture to bridge forward numerical modelling and inverse problem solving. By embedding the differentiable PSTD propagator into the training loop of a Sinusoidal Representation Network (SIREN), we investigated the joint reconstruction of unknown initial pressure fields and the estimation of macroscopic viscoelastic damping parameters from sparse, noisy sensor measurements. \textcolor{red}{The one-dimensional numerical experiments demonstrated the feasibility of this approach for reconstructing unknown initial pressure distributions across both smooth and non-smooth profiles. Crucially, the experiments revealed that while wavefield and source reconstruction is accurate and computationally efficient, simultaneous estimation of physical attenuation coefficients is challenging when the initial condition is simultaneously unknown, due to compensation mechanisms between spatial source amplitude and temporal decay. This establishes joint parameter and source recovery as an essential focus for future inverse formulations.}
 
 \section{\textcolor{red}{Limitations of the Present Study}}
 
@@ -5234,7 +5352,7 @@ Finally, we introduced a Differentiable Physics Neural Network (DPNN) architectu
 
 \textcolor{red}{Concerning domain decomposition, the ARD interface correction was assessed on a finite set of spatial stencils and resolutions. The reported stability thresholds represent numerically observed limits on uniform grids up to $N = 800$, rather than mesh-independent continuous stability bounds, and the operator exhibits delayed instabilities near the theoretical limit. For OSWR, while the continuous min-max analysis establishes optimal Robin parameters that consistently improve the predicted contraction factor, the measured acceleration in one-dimensional baseline configurations under low physical viscosity is modest, with more pronounced gains observed primarily in higher-damping and multi-dimensional regimes.}
 
-\textcolor{red}{Finally, regarding the inverse problem solver, the DPNN framework was demonstrated in one spatial dimension using synthetic measurements with ten fixed sensors, known zero initial velocity, Gaussian noise at $30$\,dB SNR, and fixed regularization weights. The joint estimation of the initial wavefield and macroscopic damping parameters is fundamentally subject to non-uniqueness and ill-conditioning, as different combinations of spectral content and dissipation can generate comparable sensor traces. Moreover, the heuristic scaling of the Sobolev $H^1$ regularization weight by the trainable parameter $\nu$ introduces an uncalibrated coupling between the reconstruction prior and parameter estimation, whose bias has not been isolated through exhaustive ablation experiments.}
+\textcolor{red}{Finally, regarding the inverse problem solver, the DPNN framework demonstrated that accurate wavefield reconstruction does not guarantee equally accurate identification of macroscopic physical damping parameters in joint inversion. When the initial condition is unknown, compensation mechanisms can arise where spatial source variations partially offset temporal dissipation across sparse sensor measurements. Our disentangled numerical experiments showed that damping parameters are accurately recovered when the source profile is decoupled ($\nu$ within $3.0\%$ and $\gamma$ within $10.8\%$), whereas joint estimation exhibits greater sensitivity to observational sparsity and excitation bandwidth. Furthermore, our ablation experiments confirmed that explicit spatial regularization should not be regarded as universally beneficial: while an $L^1$ penalty can provide modest benefits for certain localized smooth profiles, Sobolev $H^1$ penalization introduces excessive smoothing, suppresses high-wavenumber spectral content, and drives the physical viscosity estimate $\hat{\nu}$ toward zero. Across both smooth and non-smooth regimes in the tested configurations, data fitting without explicit spatial regularization achieves the most reliable trade-off between wavefield reconstruction and physical parameter estimation.}
 
 \section{Future Research Directions}
 
@@ -5260,7 +5378,7 @@ Finally, we introduced a Differentiable Physics Neural Network (DPNN) architectu
 
 \textcolor{red}{A key theoretical goal is therefore to extend existing asymptotic optimization analyses to derive closed-form approximations for the min-max equioscillation problem over bounded acoustic frequency bands $[\omega_{\min},\omega_{\max}]$. Expressing the optimal parameters $q^*$ and $r^*$ analytically as functions of the physical parameters $c$, $\gamma$ and $\nu$, together with the subdomain geometry and overlap, would directly reveal how viscoelastic dissipation modifies the impedance matching conditions at artificial interfaces. This analytical foundation would provide valuable physical intuition and eliminate the computational overhead of numerical pre-optimization across varying geometries.}
 
-\subsection{\textcolor{red}{Scaling DPNN to 3D, Identifiability, and Systematic Ablation}}
+\subsection{\textcolor{red}{Scaling DPNN to 3D and Advanced Inversion Formulations}}
 
 \textcolor{red}{The Differentiable Physics Neural Network (DPNN) introduced in Section~\ref{sec:dpnn} served as a one-dimensional proof of concept, demonstrating that embedding an exact, differentiable PSTD solver into the computational graph of a Sinusoidal Representation Network (SIREN) enables the joint reconstruction of unknown initial conditions and macroscopic physical attenuation parameters \cite{sitzmann_implicit_2020}. Related differentiable-physics approaches have recently been investigated for acoustic sound-field reconstruction, coupling neural representations of unknown initial conditions with differentiable numerical wave solvers and comparing their performance against standard PINNs \cite{verburg_differentiable_2025}. However, extending this framework to damped viscoelastic wave propagation and the simultaneous identification of initial conditions and physical attenuation parameters remains an important direction for further investigation.}
 
@@ -5268,7 +5386,7 @@ Finally, we introduced a Differentiable Physics Neural Network (DPNN) architectu
 
 \textcolor{red}{This comparative framework should include adjoint-state Full-\allowbreak Waveform Inversion (FWI), providing a reference for gradient-based physical parameter estimation and enabling the assessment of convergence behavior and sensitivity to initial parameter guesses \cite{plessix_adjoint_2006,pratt_gauss_newton_1998}. Classical Time-Reversal Acoustics (TRA), optionally supplemented by regularized post-filtering, should also be considered to evaluate spatial localization and reconstruction accuracy under sparse receiver configurations \cite{fink_time_1992,kahana_time_2022}. Moreover, non-linear least-squares optimization methods, including Gauss--Newton and Levenberg--Marquardt schemes, would provide complementary model-based alternatives for assessing convergence, computational cost, and the memory requirements associated with Jacobian and Hessian approximations \cite{pratt_gauss_newton_1998,marquardt_1963}. Finally, comparisons against standard Physics-Informed Neural Networks (PINNs), which impose the governing wave equation through soft PDE-residual penalties, would help quantify the benefits of enforcing the physical dynamics through an explicit numerical solver rather than through penalty-based constraints \cite{raissi_pinn_2019,olivieri_physics-informed_2024}.}
 
-\textcolor{red}{Crucially, future research must address parameter identifiability, uncertainty quantification, and systematic ablation studies. Because the current loss combines an $L^1$ sparsity penalty with an $H^1$ Sobolev smoothness term scaled by $\nu$, future benchmarks should isolate the individual impact of each regularizer and test formulations with an independently fixed smoothing coefficient decoupled from $\nu$, establishing whether coupling the regularization weight to the trainable parameter introduces estimation bias. In addition, parameter recovery should be evaluated over ensembles of random sensor configurations, noise realizations, and initialization seeds to compute rigorous confidence intervals for $\gamma$ and $\nu$, while assessing gradient-evaluation overhead through checkpointed automatic differentiation \cite{griewank_revolve_2000}.}
+\textcolor{red}{Crucially, future research should build upon the inverse problem framework investigated in this work. While the present study demonstrated that physical parameters are accurately recovered when decoupled from the initial source, extending joint estimation to complex multi-dimensional wavefields presents important open questions. In particular, optimal sensor placement strategies based on information-theoretic criteria represent a natural direction to enhance parameter recovery under spatial sensor sparsity. Furthermore, scaling to higher spatial dimensions and non-smooth profiles motivates the investigation of edge-preserving regularization strategies, including Total Variation and Total Generalized Variation, to preserve spatial discontinuities without suppressing high-frequency dissipation. In addition, parameter recovery should be evaluated over larger ensembles of random sensor configurations, noise realizations, and initialization seeds to establish statistical confidence intervals for $\gamma$ and $\nu$, while assessing gradient-evaluation overhead through checkpointed automatic differentiation \cite{griewank_revolve_2000}.}
 
 \subsection{\textcolor{red}{Acoustic Modelling, Absorption, and High-Performance Implementation}}
 
@@ -5278,16 +5396,16 @@ Finally, we introduced a Differentiable Physics Neural Network (DPNN) architectu
 
 \textcolor{red}{Third, extending boundary conditions to frequency-dependent complex surface impedance models is vital for architectural acoustics. Realistic wall materials exhibit absorption and phase characteristics that vary substantially with frequency and cannot be represented by simple constant coefficients. Implementing digital impedance filters and rational approximations in the time domain \cite{kowalczyk_vanwalstijn_2008,mondet_absorption_impedance_2020} will enable high-fidelity boundary modeling while retaining interior spectral efficiency. Finally, developing fully GPU-accelerated solvers via CUDA, cuFFT, and MPI will unlock broadband simulations across the human audible spectrum ($20\text{--}20{,}000$\,Hz), leveraging the massive fine-grained data parallelism of uncoupled modal integration.}
 
-%-------------------------------------------------------------------------
+% =========================================================================
 %	BIBLIOGRAPHY
-%-------------------------------------------------------------------------
+% =========================================================================
 
 \addtocontents{toc}{\vspace{2em}} % Add a gap in the Contents, for aesthetics
 \bibliography{Thesis_bibliography} % The references information are stored in the file named "Thesis_bibliography.bib"
 
-%-------------------------------------------------------------------------
+% =========================================================================
 %	APPENDICES
-%-------------------------------------------------------------------------
+% =========================================================================
 
 \cleardoublepage
 \addtocontents{toc}{\vspace{2em}} % Add a gap in the Contents, for aesthetics

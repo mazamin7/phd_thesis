@@ -1,0 +1,23 @@
+\begin{table}[H]
+\centering
+\small
+\caption{Quantitative benchmark comparison between PSTD-DPNN, FDTD-DPNN, and the high-capacity PINN baseline (4 hidden layers, 128 units, $\sim 50{,}000$ parameters) across three initial condition profiles (10 sensors, 30\,dB SNR Gaussian noise, $T = 2.0$\,s, continuous analytical ground truth).}
+\label{tab:dpnn_pinn_comparison}
+\begin{tabular}{llccccc}
+\toprule
+\textbf{Benchmark} & \textbf{Method} & \textbf{NMSE($p_0$)} & \textbf{Field Rel. $L_2$ (\%)} & \textbf{Rel. Err $\gamma$ (\%)} & \textbf{Rel. Err $\nu$ (\%)} & \textbf{Time / Epoch (ms)} \\
+\midrule
+\multirow{3}{*}{Multimodal Standing Waves} & PSTD-DPNN & 1.15e-02 & 6.21\% & 86.0\% & 11.0\% & 12.5 \\
+ & FDTD-DPNN & 1.72e-02 & 7.90\% & 89.0\% & 6.1\% & 21.6 \\
+ & High-Capacity PINN & 1.18e-03 & 2.80\% & 11.7\% & 3.8\% & 95.1 \\
+\midrule
+\multirow{3}{*}{Smooth Gaussian Pulses} & PSTD-DPNN & 3.00e-03 & 1.68\% & 3.5\% & 2.0\% & 12.1 \\
+ & FDTD-DPNN & 6.51e-03 & 5.91\% & 37.9\% & 8.8\% & 21.0 \\
+ & High-Capacity PINN & 1.24e-02 & 5.73\% & 8.9\% & 31.4\% & 93.1 \\
+\midrule
+\multirow{3}{*}{Non-Smooth Triangular Pulses} & PSTD-DPNN & 4.49e-03 & 3.09\% & 4.7\% & 3.6\% & 13.8 \\
+ & FDTD-DPNN & 1.02e-01 & 14.67\% & 152.2\% & 12.7\% & 22.4 \\
+ & High-Capacity PINN & 2.44e-01 & 28.20\% & 102.2\% & 57.3\% & 91.3 \\
+\bottomrule
+\end{tabular}
+\end{table}

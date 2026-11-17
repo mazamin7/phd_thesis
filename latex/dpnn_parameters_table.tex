@@ -1,0 +1,23 @@
+\begin{table}[H]
+\centering
+\small
+\caption{Detailed comparison of estimated physical attenuation parameters ($\gamma_{\mathrm{true}} = 0.100\,\mathrm{s}^{-1}$, $\nu_{\mathrm{true}} = 5.00 \times 10^{-3}\,\mathrm{m}^2/\mathrm{s}$) across benchmarks and methods. In all cases, parameter estimation errors reflect structural identifiability limitations and compensation mechanisms between spatial amplitude and temporal decay.}
+\label{tab:dpnn_param_estimation}
+\begin{tabular}{llcccc}
+\toprule
+\textbf{Benchmark} & \textbf{Method} & $\hat{\gamma}$ [s$^{-1}$] & Rel. Err $\gamma$ & $\hat{\nu}$ [m$^2$/s] & Rel. Err $\nu$ \\
+\midrule
+\multirow{3}{*}{Multimodal Standing Waves} & PSTD-DPNN & 0.0140 & 86.0\% & 5.55e-03 & 11.0\% \\
+ & FDTD-DPNN & 0.0110 & 89.0\% & 4.69e-03 & 6.1\% \\
+ & High-Capacity PINN & 0.0883 & 11.7\% & 4.81e-03 & 3.8\% \\
+\midrule
+\multirow{3}{*}{Smooth Gaussian Pulses} & PSTD-DPNN & 0.0965 & 3.5\% & 5.10e-03 & 2.0\% \\
+ & FDTD-DPNN & 0.1379 & 37.9\% & 4.56e-03 & 8.8\% \\
+ & High-Capacity PINN & 0.1089 & 8.9\% & 3.43e-03 & 31.4\% \\
+\midrule
+\multirow{3}{*}{Non-Smooth Triangular Pulses} & PSTD-DPNN & 0.1047 & 4.7\% & 4.82e-03 & 3.6\% \\
+ & FDTD-DPNN & 0.2522 & 152.2\% & 4.36e-03 & 12.7\% \\
+ & High-Capacity PINN & 0.2022 & 102.2\% & 2.14e-03 & 57.3\% \\
+\bottomrule
+\end{tabular}
+\end{table}
