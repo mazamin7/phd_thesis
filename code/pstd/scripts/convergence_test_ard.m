@@ -135,10 +135,13 @@ for exp_idx = 1:6
         'DisplayName','Measured');
     hold on
 
-    ref = errNodal(1)*(dxVec/dxVec(1)).^2;
+    ref2 = errNodal(1)*(dxVec/dxVec(1)).^2;
+    ref1 = errNodal(1)*(dxVec/dxVec(1));
 
-    loglog(dxVec,ref,'k--','LineWidth',1.5,...
-        'DisplayName','O(\Delta x^2)')
+    loglog(dxVec,ref2,'k--','LineWidth',1.5,...
+        'DisplayName','O(\Delta x^2)');
+    loglog(dxVec,ref1,'k:','LineWidth',1.5,...
+        'DisplayName','O(\Delta x)');
 
     grid on
     xlabel('\Delta x')
@@ -149,6 +152,12 @@ for exp_idx = 1:6
     exportgraphics(h,...
         fullfile(saveFolder,'nodal_error_vs_monolithic.png'),...
         'Resolution',300);
+    latexFolder = fullfile('..','..','..','latex','Images','pstd_snapshots',sprintf('experiment_%d', exp_idx));
+    if exist(latexFolder, 'dir')
+        exportgraphics(h,...
+            fullfile(latexFolder,'nodal_error_vs_monolithic.png'),...
+            'Resolution',300);
+    end
     close(h);
 end
 

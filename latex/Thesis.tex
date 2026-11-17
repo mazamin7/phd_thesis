@@ -1,4 +1,4 @@
-% A LaTeX template for MSc Thesis submissions to 
+﻿% A LaTeX template for MSc Thesis submissions to 
 % Politecnico di Milano (PoliMi) - School of Industrial and Information Engineering
 %
 % S. Bonetti, A. Gruttadauria, G. Mescolini, A. Zingaro
@@ -324,7 +324,7 @@ Gradually, these methods became more efficient and, starting from 1990, were use
 
 For room acoustics, the finite speed of sound wave implies that the direct sound and early reflections arrive at clearly distinguishable times in the room impulse response. This makes transient behavior important to model \citep{funkhouser_beam_1998}.
 
-\textcolor{red}{Although time-dependent wave-based methods date back to the late 1960s and 1970s in geophysics and seismology \citep{alterman_propagation_1968,ottaviani_elastic-wave_1971,alford_accuracy_1974}, their application to room acoustics emerged in the 1990s \citep{botteldooren_finitedifference_1995}. In particular, the Finite-Difference Time-Domain (FDTD) method discretizes the wave equation in both space and time on a grid, making it possible to obtain transient solutions with systematically controlled accuracy as the grid is refined and the time step is reduced, albeit at increased computational cost. This in turn enables the direct computation of room impulse responses and energy decay curves for room-acoustic analysis and auralization.}
+\textcolor{blue}{Although time-dependent wave-based methods date back to the late 1960s and 1970s in geophysics and seismology \citep{alterman_propagation_1968,ottaviani_elastic-wave_1971,alford_accuracy_1974}, their application to room acoustics emerged in the 1990s \citep{botteldooren_finitedifference_1995}. In particular, the Finite-Difference Time-Domain (FDTD) method discretizes the wave equation in both space and time on a grid, making it possible to obtain transient solutions with systematically controlled accuracy as the grid is refined and the time step is reduced, albeit at increased computational cost. This in turn enables the direct computation of room impulse responses and energy decay curves for room-acoustic analysis and auralization.}
 
 \subsection{Challenges}
 Even as early as 1990, wave-based methods made it possible to compute room impulse responses and perform auralization. However, these methods are still largely limited to small rooms and low frequencies because of computational constraints, as they require the solution of large systems of equations arising from the discretization of the domain. To achieve realistic, real-time simulations for interactive room and architectural acoustics design, entertainment applications such as immersive virtual reality, or inverse problems requiring repeated evaluations, we still rely heavily on geometrical methods \citep{kleiner_auralization_1993,council_virtual_1995,savioja_creating_1999,sampedro_llopis_reduced_2023}.
@@ -560,7 +560,8 @@ Since the exact Dirichlet-to-Neumann operator is nonlocal in time, its direct im
 iq\omega+r,
 \end{equation*}
 which leads to the generalized Robin boundary condition
-\begin{equation*}
+\begin{equation}
+\label{eq:robin_boundary}
 -\partial_nu
 +
 q\,\partial_tu
@@ -568,7 +569,7 @@ q\,\partial_tu
 ru
 =
 g,
-\end{equation*}
+\end{equation}
 where \(q\) and \(r\) are non-negative parameters. The values of these parameters are chosen so that the local impedance \(iq\omega+r\) provides the best approximation of the exact impedance \(ik(i\omega)\) over the frequency range of interest.
 
 For the undamped wave equation (\(\gamma=\nu=0\)), the exact impedance reduces to
@@ -583,7 +584,7 @@ q=\frac{1}{c},
 \qquad
 r=0.
 \end{equation*}
-Therefore, in the absence of damping, the Robin boundary condition coincides with the exact transparent boundary condition and yields perfect absorption for all frequencies.
+\textcolor{blue}{Therefore, in the absence of damping, the Robin boundary condition coincides with the exact Dirichlet-to-Neumann (DtN) transparent boundary condition for one-dimensional plane waves at normal incidence, yielding perfect absorption across all frequencies. In multiple spatial dimensions, the exact DtN operator is non-local and angle-dependent; hence, the local Robin condition \eqref{eq:robin_boundary} represents a zeroth-order local approximation (in the sense of Engquist and Majda \cite{engquist_absorbing_1977,dolean_introduction_2015}) to the true transparent boundary condition.}
 
 In one spatial dimension, the Robin conditions read
 \begin{align*}
@@ -829,7 +830,7 @@ In particular, the reflection vanishes if
 \begin{equation*}
 \Lambda(i\omega)=ik(i\omega),
 \end{equation*}
-that is, when the Robin operator coincides with the exact Dirichlet-to-Neumann map. Since \(k(i\omega)\) depends nonlinearly on the frequency, no constant values of \(q\) and \(r\) can achieve perfect absorption over the entire frequency
+\textcolor{blue}{that is, when the Robin operator coincides with the exact Dirichlet-to-Neumann map (which provides exact transparent absorption for 1D plane waves at normal incidence, but represents a zeroth-order local approximation in higher-dimensional geometries \cite{dolean_introduction_2015}).} Since \(k(i\omega)\) depends nonlinearly on the frequency, no constant values of \(q\) and \(r\) can achieve perfect absorption over the entire frequency
 spectrum. The choice of the Robin parameters therefore amounts to approximating the exact impedance by the affine function \(\Lambda(\omega)=iq\omega+r\) over the frequency range of interest.
 
 \subsection{Modal Expansion with Homogeneous Neumann Boundary Conditions} \label{sec:modal_expansion}
@@ -1121,8 +1122,9 @@ The exact solution is given by:
 u(x,t)
 =
 \sum_{m\in\{1,3\}}
-U_m(t)\phi_m(x).
+U_m(t)\phi_m(x),
 \]
+\textcolor{blue}{where $\phi_m(x) = \cos(m\pi x / L)$ denotes the spatial eigenfunctions of the Laplacian subject to homogeneous Neumann boundary conditions.}
 
 \subsubsection{Configuration II: Non-smooth standing wave (undamped)}
 The initial displacement is a trapezoidal profile, given by the piecewise linear function
@@ -1304,16 +1306,6 @@ As noted in \cite[Sec.~4.2]{olver_introduction_2014}, when a pulse hits one of t
 
 \section{Finite-Difference Time-Domain Method}
 In this section, we derive and analyze an FDTD scheme for the damped wave equation, following the approach described in \cite{bilbao_numerical_2009}, Chapter 6, \S6.2. For simplicity, we derive the method in one spatial dimension. The extension to higher dimensions is obtained by replacing the second spatial derivative by the corresponding discrete Laplacian \cite[Chapter 11]{bilbao_numerical_2009}.
-
-The finite-difference time-domain (FDTD) method approximates the wave equation by replacing the continuous derivatives with finite difference operators on a discrete grid. For the damped wave equation, a standard explicit centered-difference scheme is given by:
-\begin{multline}
-\label{eq:fdtd_scheme}
-\frac{u_i^{n+1} - 2u_i^n + u_i^{n-1}}{\Delta t^2}
-- c^2 \frac{u_{i+1}^n - 2u_i^n + u_{i-1}^n}{\Delta x^2}
-+ \gamma \frac{u_i^{n+1} - u_i^{n-1}}{2\Delta t}
-\\- \nu \frac{u_{i+1}^n - 2u_i^n + u_{i-1}^n - (u_{i+1}^{n-1} - 2u_i^{n-1} + u_{i-1}^{n-1})}{\Delta t \Delta x^2} = 0,
-\end{multline}
-where $u_i^n \approx u(i\Delta x, n\Delta t)$. This leads to an explicit update equation for $u_i^{n+1}$ in terms of the fields at time steps $n$ and $n-1$.
 
 
 \subsection{Space and Time Discretization}
@@ -2450,21 +2442,11 @@ u_i(t)
 U_m(t)\phi_m(i),
 \end{equation*}
 where the basis functions $\phi_m$ are defined as
-\begin{align*}
-\phi_0(i)
-&=
-\frac1{\sqrt N},
-\\
-\phi_m(i)
-&=
-\sqrt{\frac2N}
-\cos\!\left(
-\frac{m\pi}{N}
-\left(i+\frac12\right)
-\right),
-\qquad
-m=1,\ldots,N-1.
-\end{align*}
+\begin{equation}
+\label{eq:dct_basis}
+\phi_0(i) = \frac1{\sqrt N}, \qquad
+\phi_m(i) = \sqrt{\frac2N} \cos\!\left(\frac{m\pi}{N}\left(i+\frac12\right)\right), \quad m=1,\ldots,N-1.
+\end{equation}
 
 Conversely, the modal coefficients are recovered by the inverse transform
 \begin{equation*}
@@ -2578,7 +2560,12 @@ which is an identity by Euler's formula. Consequently, every harmonic mode is pr
 When telegrapher or viscoelastic damping is present, the modal equations remain uncoupled but we need to develop a different exact time integration scheme. This construction will be discussed in the following section.
 
 \subsection{State Space Form}
-For convenience, we define the orthonormal DCT-II matrix $\Phi$, the physical displacement, velocity and force vectors
+	extcolor{blue}{For convenience, we introduce the orthonormal DCT-II change-of-basis matrix $\Phi \in \mathbb{R}^{N \times N}$, whose $(i,m)$-th entry is given by the discrete basis functions in \eqref{eq:dct_basis}:
+\begin{equation}
+\Phi_{i,m} = \phi_m(i) = \sqrt{\frac{2}{N}} \alpha_m \cos\!\left(\frac{m\pi}{N}\left(i + \frac{1}{2}\right)\right), \quad i, m = 0, \dots, N-1,
+\label{eq:phi_matrix_def}
+\end{equation}
+with scaling factors $\alpha_0 = 1/\sqrt{2}$ and $\alpha_m = 1$ for $m \ge 1$, satisfying $\Phi^{-1} = \Phi^T$. We also define} the physical displacement, velocity and force vectors
 \begin{equation*}
 \mathbf u
 =
@@ -2722,12 +2709,11 @@ P\mathbf Z,
 =
 P^T\widetilde{\mathbf Z},
 \end{equation*}
-where $P$ is the $2N\times2N$ permutation matrix satisfying
+\textcolor{blue}{where $P$ is the $2N\times2N$ orthogonal permutation matrix ($P^{-1} = P^T$) that reorders the pairwise interleaved modal state vector
 \begin{equation*}
-P^{-1}
-=
-P^T.
+\mathbf Z = [U_0, V_0, U_1, V_1, \dots, U_{N-1}, V_{N-1}]^T
 \end{equation*}
+into the segregated block-component vector $\widetilde{\mathbf Z} = [\mathbf U^T, \mathbf V^T]^T$ grouping all modal displacements first, followed by all modal velocities.}
 
 Introducing the block transform
 \begin{equation*}
@@ -3058,8 +3044,8 @@ whenever needed, using the inverse DCT-II:
 \Phi\mathbf V_n.
 \end{equation*}
 In practice, the matrix-vector products are not formed explicitly. Instead, the
-forward and inverse transforms are evaluated using fast DCT algorithms with
-computational complexity $O(N\log N)$.
+\textcolor{blue}{forward and inverse transforms are evaluated using fast DCT algorithms with
+computational complexity $O(N\log N)$ \cite{makhoul_fast_1980,rao_discrete_1990,frigo_design_2005}.}
 
 \subsubsection{Physical Space Formulation}
 Recall the PSTD scheme expressed in matrix form shown in \eqref{eq:all_modal_update}:
@@ -3662,11 +3648,11 @@ E
 \]
 This metric measures the global discrepancy, encompassing both the projection error of the initial condition and the accumulation of numerical errors during the time integration.
 
-\textcolor{red}{For both the FDTD and PSTD methods, we select a time step $\Delta t = 0.9\Delta x/c$ ($\mathrm{CFL} = 0.9$). In one spatial dimension, choosing $\mathrm{CFL} = 1$ constitutes a `magic time step' for undamped leapfrog FDTD where numerical dispersion vanishes identically due to exact cancellation of spatial and temporal discretization errors \citep{bilbao_numerical_2009}. Setting $\mathrm{CFL} = 0.9$ avoids this special-case exactness, ensuring a fair and rigorous evaluation of the generic numerical dispersion and convergence rates of both discretizations.}
+\textcolor{blue}{For both the FDTD and PSTD methods, we select a time step $\Delta t = 0.9\Delta x/c$ ($\mathrm{CFL} = 0.9$). In one spatial dimension, choosing $\mathrm{CFL} = 1$ constitutes a `magic time step' for undamped leapfrog FDTD where numerical dispersion vanishes identically due to exact cancellation of spatial and temporal discretization errors \citep{bilbao_numerical_2009}. Setting $\mathrm{CFL} = 0.9$ avoids this special-case exactness, ensuring a fair and rigorous evaluation of the generic numerical dispersion and convergence rates of both discretizations.}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection*{Smooth Standing Wave (Undamped)}
-This benchmark verifies the accuracy of both schemes for smooth standing-wave solutions. \textcolor{red}{In one spatial dimension, when the CFL condition satisfies $c\Delta t=\Delta x$, the undamped FDTD leapfrog scheme exhibits exact numerical propagation on a uniform grid \citep{bilbao_numerical_2009}; at our chosen operational CFL number ($0.9$), it exhibits regular second-order algebraic convergence ($L_2$ error $\sim 3.63 \times 10^{-8}$ at $N=800$). For the PSTD solver, because the continuous initial profile projects entirely onto the fundamental cosine mode ($m=1$) and uncoupled modes evolve independently according to Proposition~\ref{prop:stability}, the spatial discretization introduces zero projection error and the PSTD solution agrees with the analytical modal reference to nearly machine precision ($10^{-15}$ to $10^{-14}$) across all mesh resolutions (Table~\ref{tab:convergence_analysis}). Figures~\ref{fig:exp1_snapshots} and~\ref{fig:exp1_spacetime} illustrate the resulting temporal evolution.}
+This benchmark verifies the accuracy of both schemes for smooth standing-wave solutions. \textcolor{blue}{In one spatial dimension, when the CFL condition satisfies $c\Delta t=\Delta x$, the undamped FDTD leapfrog scheme exhibits exact numerical propagation on a uniform grid \citep{bilbao_numerical_2009}; at our chosen operational CFL number ($0.9$), it exhibits regular second-order algebraic convergence ($L_2$ error $\sim 3.63 \times 10^{-8}$ at $N=800$). For the PSTD solver, because the continuous initial profile projects entirely onto the fundamental cosine mode ($m=1$) and uncoupled modes evolve independently according to Proposition~\ref{prop:stability}, the spatial discretization introduces zero projection error and the PSTD solution agrees with the analytical modal reference to nearly machine precision ($10^{-15}$ to $10^{-14}$) across all mesh resolutions (Table~\ref{tab:convergence_analysis}). Figures~\ref{fig:exp1_snapshots} and~\ref{fig:exp1_spacetime} illustrate the resulting temporal evolution.}
 
 \begin{figure}[H]
     \centering
@@ -4152,7 +4138,7 @@ The overall contraction rate of the algorithm is governed by the worst mode pres
 \qquad
 \omega_{\max}=\frac{\pi}{\Delta t}.
 \]
-\textcolor{red}{While $\omega_{\max} = \pi/\Delta t$ corresponds to the temporal Nyquist frequency, the lower bound $\omega_{\min} = \pi/T$ represents a modelling choice reflecting the lowest transient frequency component that can complete a half-cycle over the time window $[0,T]$ (in contrast to the fundamental periodic angular frequency $2\pi/T$). In our numerical implementation, this continuous min-max problem is approximated by sampling the frequency interval over a discrete grid, which provides a practical numerical approximation to the continuous equioscillation problem. Optimizing the transmission conditions therefore amounts to choosing $(q,r)$ so as to minimize the largest value that $\rho$ attains over this finite band, i.e.\ solving the min-max problem}
+\textcolor{blue}{While $\omega_{\max} = \pi/\Delta t$ corresponds to the temporal Nyquist frequency, the lower bound $\omega_{\min} = \pi/T$ represents a modelling choice reflecting the lowest transient frequency component that can complete a half-cycle over the time window $[0,T]$ (in contrast to the fundamental periodic angular frequency $2\pi/T$). In our numerical implementation, this continuous min-max problem is approximated by sampling the frequency interval over a discrete grid, which provides a practical numerical approximation to the continuous equioscillation problem. Optimizing the transmission conditions therefore amounts to choosing $(q,r)$ so as to minimize the largest value that $\rho$ attains over this finite band, i.e.\ solving the min-max problem}
 
 \begin{equation}
 \operatorname*{min}_{q,r\ge0}
@@ -4168,7 +4154,7 @@ We employ the monolithic FDTD scheme introduced in the previous chapter. To vali
 
 The domain $\Omega=(0,L)$ is split into two overlapping subdomains with an overlap size $\delta=L/10$. The physical parameters, grid resolution ($\Delta x=0.05$, $\Delta t=0.05$), and total simulation duration ($T=2$) are identical to those defined in the baseline configurations. It is important to note that for spacetime domain decomposition methods like SWR, the total number of iterations required to reach convergence inherently depends on this simulation duration $T$, as boundary information must propagate back and forth across the entire spacetime interface.
 
-We compare the convergence of the SWR iteration using classical Robin transmission conditions ($q=1/c$, $r=0$) against the optimized Robin parameters derived from the theoretical min-max problem (Equation~\ref{eq:minmax}). Figure~\ref{fig:oswr_convergence} illustrates the $L^\infty$ error over successive Schwarz iterations, measured against the monolithic FDTD reference solution. \textcolor{red}{In these baseline configurations, the theoretically optimized parameters consistently improve the predicted convergence factor, although the measured acceleration in error contraction is modest. As demonstrated in the subsequent experiments, this limited improvement occurs because a low viscoelastic damping coefficient was chosen for the one-dimensional baseline configurations, whereas more pronounced acceleration is achieved in higher-damping and multi-dimensional regimes.}
+We compare the convergence of the SWR iteration using classical Robin transmission conditions ($q=1/c$, $r=0$) against the optimized Robin parameters derived from the theoretical min-max problem (Equation~\ref{eq:minmax}). Figure~\ref{fig:oswr_convergence} illustrates the $L^\infty$ error over successive Schwarz iterations, measured against the monolithic FDTD reference solution. \textcolor{blue}{In these baseline configurations, the theoretically optimized parameters consistently improve the predicted convergence factor, although the measured acceleration in error contraction is modest. As demonstrated in the subsequent experiments, this limited improvement occurs because a low viscoelastic damping coefficient was chosen for the one-dimensional baseline configurations, whereas more pronounced acceleration is achieved in higher-damping and multi-dimensional regimes.}
 
 \begin{figure}[H]
      \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/fdtd_snapshots/experiment_1_swr/swr_convergence.png} \caption{Smooth standing wave (undamped)} \end{subfigure}
@@ -4188,7 +4174,7 @@ We compare the convergence of the SWR iteration using classical Robin transmissi
 
 To better characterize the performance of the Optimized Schwarz Waveform Relaxation method, we investigate the influence of the viscoelastic damping parameter $\nu$ on the optimized Robin parameters. For these evaluations, we consider the non-smooth standing wave configuration as our baseline setup. The simulation duration is set to $T=2$.
 
-Figure~\ref{fig:oswr_nu_sweep} illustrates the behavior of the SWR convergence across varying levels of viscosity $\nu$. As the viscosity increases, the optimal transmission parameters deviate more significantly from the classical Robin conditions ($q=1/c$, $r=0$).
+Figure~\ref{fig:oswr_nu_sweep} illustrates the behavior of the SWR convergence across varying levels of viscosity $\nu$. As the viscosity increases, the optimal transmission parameters deviate more significantly from the classical Robin conditions ($q=1/c$, $r=0$). \textcolor{blue}{Figure~\ref{fig:oswr_optimized_params} displays the resulting optimized Robin parameters $q^\ast$ and $r^\ast$, along with the predicted convergence factor $\rho_{\mathrm{opt}}$, as a function of the viscoelastic damping $\nu$. As $\nu$ increases, the optimal parameter $r^\ast$ increases substantially to counteract high-frequency viscoelastic dissipation, while the asymptotic convergence factor remains well bounded.}
 
 \begin{figure}[H]
     \centering
@@ -4213,16 +4199,7 @@ To provide a broader overview of how both damping parameters jointly affect the 
     \label{fig:oswr_rho_opt_map}
 \end{figure}
 
-To further understand the behavior of the min-max optimization, we can examine how the optimal Robin parameters $(q_{\mathrm{opt}}, r_{\mathrm{opt}})$ vary as a mapping from the physical damping parameters $\gamma$ and $\nu$. Figure~\ref{fig:swr_qr_mapping_all} presents a scatter plot of the optimal parameters computed over the entire parameter space $\gamma \in [0, 5]$ and $\nu \in [10^{-3}, 10^{1}]$.
-
-To better distinguish the individual effects of the Telegrapher damping $\gamma$ and the viscoelastic damping $\nu$, we parameterize the trajectories of the optimal $(q,r)$ values. Figure~\ref{fig:swr_qr_mapping_gamma_curves} displays the trajectories obtained by holding $\gamma$ constant at discrete levels while continuously sweeping $\nu$. The color of each dot indicates the associated value of $\nu$ on a logarithmic scale. Conversely, Figure~\ref{fig:swr_qr_mapping_nu_curves} illustrates the complementary set of curves formed by holding $\nu$ constant while sweeping $\gamma$, with the color indicating the value of $\gamma$. This parametric mapping demonstrates that $\nu$ and $\gamma$ exert distinct, non-degenerate influences on the optimal Robin parameters.
-
-\begin{figure}[H]
-    \centering
-    \includegraphics[width=0.75\textwidth]{Images/fdtd_snapshots/swr_parameters/swr_qr_mapping_all.png}
-    \caption{Mapping of the optimal parameters $(q, r)$ across the dense grid of $(\gamma, \nu)$.}
-    \label{fig:swr_qr_mapping_all}
-\end{figure}
+\textcolor{blue}{To further understand the behavior of the min-max optimization, we examine the parametric trajectories of the optimal Robin parameters $(q_{\mathrm{opt}}, r_{\mathrm{opt}})$ under continuous variations of the physical damping parameters $\gamma$ and $\nu$ (Figure~\ref{fig:swr_qr_mapping_curves}). Figure~\ref{fig:swr_qr_mapping_gamma_curves} displays the trajectories obtained by holding $\gamma$ constant at discrete levels while continuously sweeping $\nu$. The color of each dot indicates the associated value of $\nu$ on a logarithmic scale. Conversely, Figure~\ref{fig:swr_qr_mapping_nu_curves} illustrates the complementary set of curves formed by holding $\nu$ constant while sweeping $\gamma$, with the color indicating the value of $\gamma$. This parametric mapping demonstrates that $\nu$ and $\gamma$ exert distinct, non-degenerate influences on the optimal Robin parameters.}
 
 \begin{figure}[H]
     \centering
@@ -4246,7 +4223,7 @@ To definitively validate the theoretical min-max optimization problem (Equation~
 
 \subsection{Extension to Two-Dimensional Domains}
 
-The convergence analysis and optimization of the Schwarz Waveform Relaxation method can be naturally extended to higher-dimensional domains. Let us consider the damped wave equation in two spatial dimensions $(x, y)$, where the domain is partitioned along the $x$-axis \textcolor{red}{(allowing the transverse $y$-direction to be decoupled via a spatial Fourier transform) into two overlapping subdomains $\Omega_1 = (0, b) \times (0, L_y)$ and $\Omega_2 = (a, L_x) \times (0, L_y)$ with $0 < a < b < L_x$ (sharing the overlap width $\delta = b - a > 0$)}.
+The convergence analysis and optimization of the Schwarz Waveform Relaxation method can be naturally extended to higher-dimensional domains. \textcolor{blue}{Let us consider the damped wave equation in two spatial dimensions $(x, y)$ on the rectangular domain $\Omega = (0, L_x) \times (0, L_y)$, where the domain is partitioned along the $x$-axis (allowing the transverse $y$-direction to be decoupled via a spatial Fourier transform) into two overlapping subdomains $\Omega_1 = (0, b) \times (0, L_y)$ and $\Omega_2 = (a, L_x) \times (0, L_y)$ with $0 < a < b < L_x$ (sharing the overlap width $\delta = b - a > 0$).}
 
 The error equations for the 2D problem are given by
 \begin{equation*}
@@ -4268,7 +4245,7 @@ K(s, k_y) = \sqrt{ \frac{s^2 + \gamma s}{c^2 + \nu s} + k_y^2 }.
 
 This structure is mathematically equivalent to the one-dimensional case, with the continuous spectral argument $K(s)$ simply replaced by $K(s, k_y)$. Consequently, the analytical expression for the convergence factor $\rho(s, k_y; q, r)$ mirrors the 1D derivation perfectly. The transmission parameters $(q, r)$ can therefore be optimized for two-dimensional problems by minimizing the maximum of the convergence factor across the relevant range of both the temporal frequencies $\omega$ (where $s = i\omega$) and the transverse spatial frequencies $k_y$ supported by the underlying numerical grid.
 
-\textcolor{red}{To numerically demonstrate this extended theoretical framework, we implement the overlapping decomposition for the FDTD method on a 2D Cartesian grid with homogeneous Dirichlet exterior boundaries on $\partial\Omega$ (which naturally accommodate the sine modal expansion $\sum_{m,n} (mn)^{-2} \sin(m x) \sin(n y)$). The subdomains exchange data via the second-order BDF Robin discretization applied independently along each row of the artificial interfaces. The experiment is conducted on a $\Omega = [0, \pi] \times [0, \pi]$ domain discretized with a $30 \times 30$ grid. The domain is split into two overlapping subdomains with an overlap size of $\delta = 2 \Delta x$. To test the robustness of the optimized parameters in a dissipative regime, we configure the simulation with a viscoelastic damping factor ($\nu = 1.0$) alongside a baseline telegrapher damping ($\gamma = 0.5$).}
+\textcolor{blue}{To numerically demonstrate this extended theoretical framework, we implement the overlapping decomposition for the FDTD method on a 2D Cartesian grid with homogeneous Dirichlet exterior boundaries on $\partial\Omega$ (which naturally accommodate the sine modal expansion $\sum_{m,n} (mn)^{-2} \sin(m x) \sin(n y)$). The subdomains exchange data via the second-order BDF Robin discretization applied independently along each row of the artificial interfaces. The experiment is conducted on a $\Omega = [0, \pi] \times [0, \pi]$ domain discretized with a $30 \times 30$ grid. The domain is split into two overlapping subdomains with an overlap size of $\delta = 2 \Delta x$. To test the robustness of the optimized parameters in a dissipative regime, we configure the simulation with a viscoelastic damping factor ($\nu = 1.0$) alongside a baseline telegrapher damping ($\gamma = 0.5$).}
 
 Figure~\ref{fig:oswr_convergence_comparison_2d} tracks the global $L_\infty$ error as a function of the Schwarz iteration count. It compares the convergence history of the unoptimized classical Robin transmission conditions ($q=1/c, r=0$) against the optimally tuned parameters $q^\ast$ and $r^\ast$. Utilizing the numerically optimized transmission condition parameters significantly accelerates the solver convergence.
 \begin{figure}[H]
@@ -4665,7 +4642,7 @@ as a function of the interface spatial order and grid resolution. The domain $\O
 
 Figure~\ref{fig:ard_convergence_dx} and Figure~\ref{fig:ard_convergence_order} present the $L^\infty$ domain decomposition error relative to the monolithic PSTD reference solution as a function of the grid resolution $\Delta x$ and the spatial order, respectively. 
 
-As observed in Figure~\ref{fig:ard_convergence_dx}, when the interface correction operator is fixed at spatial order 2, the domain decomposition error converges linearly ($O(\Delta x)$) across almost all configurations. \textcolor{red}{Crucially, this first-order convergence rate applies equally to both smooth (a, b, e) and non-smooth (c, d, f) profiles. This indicates that, for the tested configurations, the second-order interface correction introduces a first-order discrepancy relative to the monolithic PSTD reference, largely independently of the regularity of the underlying wavefield.}
+\textcolor{red}{As observed in Figure~\ref{fig:ard_convergence_dx}, which displays both quadratic ($O(\Delta x^2)$) and linear ($O(\Delta x)$) asymptotic reference slopes, the empirical domain decomposition error exhibits distinct convergence regimes depending on the profile smoothness and grid refinement. For the smooth standing-wave configurations (a) and (b), the error decreases quadratically as $O(\Delta x^2)$ on coarser grids, in agreement with the nominal second-order spatial accuracy of the interface stencil, before transitioning toward an $O(\Delta x)$ rate on finer meshes. Conversely, for the non-smooth configurations (c, d, f) and the propagating pulses, the error scales predominantly as $O(\Delta x)$ across the tested resolutions. This demonstrates that while smooth modes initially benefit from the quadratic accuracy of the interface operator, localized finite-difference truncation errors and splitting effects ultimately induce an $O(\Delta x)$ global discrepancy relative to the monolithic spectral solution.}
 
 \textcolor{red}{Furthermore, Figure~\ref{fig:ard_convergence_order} illustrates the effect of increasing the spatial order of the correction operator for a fixed grid resolution. While higher-order stencils do yield a lower domain decomposition error in these benchmarks, the convergence is slow and sublinear with respect to the spatial order. For the tested configurations and grid resolutions, wider explicit interface stencils provide comparatively modest accuracy improvements relative to their increased computational cost.}
 
@@ -4682,7 +4659,7 @@ As observed in Figure~\ref{fig:ard_convergence_dx}, when the interface correctio
     \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/pstd_snapshots/experiment_5/nodal_error_vs_monolithic.png} \caption{Smooth propagating pulse (undamped)} \end{subfigure}
     \hfill
     \begin{subfigure}[b]{0.48\textwidth} \centering \includegraphics[width=0.9\textwidth]{Images/pstd_snapshots/experiment_6/nodal_error_vs_monolithic.png} \caption{Non-smooth propagating pulse (undamped)} \end{subfigure}
-    \caption{Domain decomposition error versus spatial grid resolution $\Delta x$ for the ARD interface correction operator, evaluated for spatial order 2.}
+    \caption{\textcolor{red}{Domain decomposition error versus spatial grid resolution $\Delta x$ for the ARD interface correction operator (evaluated for spatial order 2), plotted alongside quadratic ($O(\Delta x^2)$) and linear ($O(\Delta x)$) reference rates.}}
     \label{fig:ard_convergence_dx}
 \end{figure}
 
@@ -5007,6 +4984,10 @@ Because the homogeneous Neumann boundary condition is the natural boundary condi
 
 \section{\textcolor{red}{Differentiable Physics Neural Networks for Inverse Problems}}
 \label{sec:dpnn}
+
+\subsection{\textcolor{red}{DPNN Architecture and Optimization Workflow}}
+\label{subsec:dpnn_arch}
+
 \textcolor{red}{In this section, we introduce a Differentiable Physics Neural Network (DPNN) architecture designed to solve joint inverse problems. Specifically, we consider the task of simultaneously reconstructing an unknown initial pressure field $u_0(x)$ and estimating the macroscopic physical damping parameters $\gamma$ and $\nu$ from sparse, noisy sensor measurements over time. The architecture consists of two tightly coupled components: a neural network parameterizing the unknown initial condition, and a differentiable numerical solver mapping the initial condition and physical parameters to observable sensor data. The complete workflow is illustrated in Figure~\ref{fig:dpnn_arch}.}
 
 \begin{figure}[H]

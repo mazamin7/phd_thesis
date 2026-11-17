@@ -50,7 +50,10 @@
 
 \title{\textbf{\Large Formal Response to Reviewer 2 (Dr.~Antoine Deleforge)}\\[0.3em]
 \large Re: Ph.D. Dissertation Review\\\emph{``Domain Decomposition and Differentiable Physics for the Viscoelastic Wave Equation''}}
-\author{\textbf{Candidate:} Gerardo Cicalese\\\textbf{Advisor:} Prof.~Fabio Antonacci\\\textbf{Institution:} Dipartimento di Elettronica, Informazione e Bioingegneria, Politecnico di Milano}
+\author{\textbf{Candidate:} Gerardo Cicalese\\[0.3em]
+\textbf{Advisor:} Prof.~Ilario Mazzieri\\[0.3em]
+\textbf{Co-Advisors:} Prof.~Gabriele Ciaramella, Prof.~Fabio Antonacci\\[0.3em]
+\textbf{Institution:} Politecnico di Milano}
 \date{November 2026}
 \maketitle
 
@@ -74,7 +77,7 @@ Below, we provide a point-by-point response to your General Assessment, all 17 M
 \end{revcomment}
 
 \begin{response}
-We agree that presenting a single qualitative 3D snapshot comparison limited the practical evaluation of the proposed solvers. In the revised dissertation, we significantly expanded Section~3.4 (3D ARD) and Section~4.2 (Limitations):
+We agree that presenting a single qualitative 3D snapshot comparison limited the practical evaluation of the proposed solvers. In the revised dissertation, we significantly expanded Section~3.2.6 (3D ARD) and Section~4.2 (Limitations):
 \begin{enumerate}
     \item \textbf{Comprehensive Multi-Solver 3D Benchmark:} We expanded the 3D room simulation ($L_x \times L_y \times L_z = 6.0\,\mathrm{m} \times 4.0\,\mathrm{m} \times 3.0\,\mathrm{m}$, $T = 0.24$\,s) into a systematic benchmark comparing five configurations: coarse FDTD ($h = 0.10$\,m), fine FDTD ($h = 0.05$\,m), coarse TD-FEM, fine TD-FEM, and our 3-subdomain ARD-PSTD solver.
     \item \textbf{Quantitative Execution Runtimes:} We added measured 8-core CPU runtimes: ARD-PSTD requires 102.4\,s per run ($1.63\times$ slower than coarse FDTD per step due to 3D DCT-II transforms, but $2.57\times$ faster than fine FDTD at 263.8\,s, and $4.0\times$ faster than fine TD-FEM at 409.6\,s).
@@ -89,11 +92,11 @@ We agree that presenting a single qualitative 3D snapshot comparison limited the
 \end{revcomment}
 
 \begin{response}
-We resolved this omission. In Chapter~2 (Sections~2.3.2 and~2.3.4) and Chapter~3 (Section~3.5), we added thorough physical and mathematical discussions:
+We resolved this omission. In Chapter~2 (Section~2.6, Numerical Results) and Chapter~3 (Section~3.3), we added thorough physical and mathematical discussions:
 \begin{enumerate}
     \item \textbf{Viscoelastic Regularization of FDTD (Table~2.2):} In Experiment~4 (damped non-smooth pulse), FDTD achieves a convergence rate of $\approx 2.22$, which exceeds its undamped rate of $1.03$ (Experiment~2). We explained that physical viscosity $\nu > 0$ introduces modal decay scaling as $s_- \sim -\nu k_m^2$, acting as a natural parabolic low-pass filter that smooths sharp corners over time and restores second-order algebraic convergence.
-    \item \textbf{Low-Frequency Attenuation Expansion (Section~1.3.1):} We derived the exact low-frequency attenuation $\alpha(\omega) \sim \frac{\nu}{2c^3}\omega^2$ for pure viscoelastic damping ($\gamma = 0$), capturing thermoviscous dissipation. For combined models ($\gamma > 0$), we derived the diffusive root $\alpha(\omega) \sim \sqrt{\frac{\gamma\omega}{2c^2}}$ and the weak-damping asymptotic $\alpha(\omega) \sim \frac{\gamma}{2c} + \frac{\nu}{2c^3}\omega^2$.
-    \item \textbf{High-Frequency Modal Asymptotics (Section~2.3.1):} We corrected the modal root scaling for $k_m \to \infty$: rather than uniform $\nu k_m^2$ decay across both branches, the system becomes overdamped with two distinct branches: $s_+ \sim -c^2/\nu$ and $s_- \sim -\nu k_m^2$.
+    \item \textbf{Low-Frequency Attenuation Expansion (Section~2.1):} We derived the exact low-frequency attenuation $\alpha(\omega) \sim \frac{\nu}{2c^3}\omega^2$ for pure viscoelastic damping ($\gamma = 0$), capturing thermoviscous dissipation. For combined models ($\gamma > 0$), we derived the diffusive root $\alpha(\omega) \sim \sqrt{\frac{\gamma\omega}{2c^2}}$ and the weak-damping asymptotic $\alpha(\omega) \sim \frac{\gamma}{2c} + \frac{\nu}{2c^3}\omega^2$.
+    \item \textbf{High-Frequency Modal Asymptotics (Section~2.2.4):} We corrected the modal root scaling for $k_m \to \infty$: rather than uniform $\nu k_m^2$ decay across both branches, the system becomes overdamped with two distinct branches: $s_+ \sim -c^2/\nu$ and $s_- \sim -\nu k_m^2$.
 \end{enumerate}
 \end{response}
 
@@ -129,7 +132,7 @@ For the two damped scenarios (the most novel contributions), there is in fact no
 \end{revcomment}
 
 \begin{response}
-We added in-depth discussions for Experiments~4 and~6 in Section~2.3.4:
+We added in-depth discussions for Experiments~4 and~6 in Section~2.6 (Numerical Results):
 \begin{itemize}
     \item \emph{Experiment~4 (Viscoelastic non-smooth pulse):} FDTD convergence increases from order $1.03$ (undamped) to $2.22$, demonstrating that physical viscosity $\nu > 0$ rapidly attenuates high-frequency corner singularities ($s_- \sim -\nu k_m^2$), regularizing the wavefield and restoring nominal algebraic convergence.
     \item \emph{Experiment~6 (Damped boundary reflection):} We clarified that PSTD achieves a $42.2\times$ reduction in error ($1.63$ orders of magnitude) over FDTD at $N=800$, with PSTD errors localized strictly to boundary stencils while FDTD suffers from grid dispersion throughout the domain.
@@ -212,7 +215,7 @@ The loss plots (Fig. 3.14, 3.17, 3.20...) feature abrupt changes, suggesting tha
 \end{revcomment}
 
 \begin{response}
-In Section~3.5, we provided the analytical equation for the Cosine Annealing learning rate schedule \citep{loshchilov2017sgdr} and explained the dual-scheduling strategy:
+In Section~3.3.1, we provided the analytical equation for the Cosine Annealing learning rate schedule \citep{loshchilov2017sgdr} and explained the dual-scheduling strategy:
 \begin{itemize}
     \item Network weights $\Theta$ are optimized with a conservative schedule ($\eta \in [10^{-5}, 10^{-3}]$) to preserve spatial representation stability.
     \item Logarithmic physical parameters $(\xi_\gamma, \xi_\nu)$ start with an initial learning rate $\eta = 5\cdot 10^{-2}$ to traverse non-convex loss valleys and escape poor local minima, and are annealed down to $10^{-3}$ to eliminate limit cycles and lock stably onto ground-truth values.
@@ -224,9 +227,9 @@ Sec 3.3.1: As in chapter 3, the comments on the experiments are extremely limite
 \end{revcomment}
 
 \begin{response}
-We thank the Reviewer for this crucial observation. In the revised thesis, we completely overhauled and upgraded Section~3.5 around a focused, rigorous narrative of three essential experimental investigation blocks, adding extensive quantitative benchmarks, a high-capacity baseline comparison, disentangled inversions, and regularization ablations:
+We thank the Reviewer for this crucial observation. In the revised thesis, we completely overhauled and upgraded Section~3.3 around a focused, rigorous narrative of essential experimental investigation blocks, adding extensive quantitative benchmarks, a high-capacity baseline comparison, disentangled inversions, and regularization ablations:
 \begin{enumerate}
-    \item \textbf{Comprehensive Benchmark Comparison and PINN Baseline (Section~3.5.1, Tables~3.2 and~3.3):} We integrated a complete numerical comparison reporting four quantitative error metrics across all three initial condition benchmarks (Multimodal Standing Waves, Smooth Gaussian Pulses, Non-Smooth Triangular Pulses) comparing our proposed PSTD-DPNN against FDTD-DPNN and a high-capacity Physics-Informed Neural Network (PINN) reference baseline \citep{raissi_pinn_2019,haghighat_sciann_2021}:
+    \item \textbf{Comprehensive Benchmark Comparison and PINN Baseline (Section~3.3.2, Tables~3.2 and~3.3):} We integrated a complete numerical comparison reporting four quantitative error metrics across all three initial condition benchmarks (Multimodal Standing Waves, Smooth Gaussian Pulses, Non-Smooth Triangular Pulses) comparing our proposed PSTD-DPNN against FDTD-DPNN and a high-capacity Physics-Informed Neural Network (PINN) reference baseline \citep{raissi_pinn_2019,haghighat_sciann_2021}:
     \begin{itemize}
         \item Normalized Mean Squared Error on initial pressure: $\mathrm{NMSE}(p_0) = \|p_0^{\mathrm{pred}} - p_0^*\|_2^2 / \|p_0^*\|_2^2$.
         \item Full spatiotemporal wavefield relative $L_2$ error: $\|u_{\mathrm{pred}} - u^*\|_2 / \|u^*\|_2$ (\%).
@@ -234,19 +237,19 @@ We thank the Reviewer for this crucial observation. In the revised thesis, we co
         \item Computational wall-clock training time per epoch (ms/epoch) evaluated on an Intel Xeon CPU workstation with an NVIDIA RTX GPU using PyTorch.
         \item \emph{Key findings}: On non-smooth triangular pulses, PSTD-DPNN attains $\mathrm{NMSE} = 4.49 \times 10^{-3}$ and a field relative error of $3.09\%$ with physical damping identified within $4.7\%$ for $\gamma$ and $3.6\%$ for $\nu$, whereas FDTD-DPNN yields $14.67\%$ field error and PINN yields $28.20\%$. While PINN fits smooth standing waves accurately ($\mathrm{NMSE} = 1.18 \times 10^{-3}$, field error $2.80\%$), its soft-collocation formulation struggles with sharp gradient discontinuities. In computational cost, PSTD-DPNN requires 12.1--13.8\,ms/epoch compared to 91.3--95.1\,ms/epoch for PINN (sampled with 2000 interior points), where automatic differentiation of mixed third-order derivatives $-\nu \partial_{txx} u$ contributes to the computational difference.
     \end{itemize}
-    \item \textbf{Disentangled Inversion Experiments (Section~3.5.2, Table~3.4):} To isolate the mechanisms of source-parameter coupling, we disentangled the inverse problem into three isolated regimes on the Gaussian benchmark:
+    \item \textbf{Disentangled Inversion Experiments (Section~3.3.3, Table~3.4):} To isolate the mechanisms of source-parameter coupling, we disentangled the inverse problem into three isolated regimes on the Gaussian benchmark:
     \begin{itemize}
         \item \emph{Experiment A ($u_0$ reconstruction only, $\gamma, \nu$ known)}: Attains an initial condition NMSE of $3.23 \times 10^{-3}$ and a field error of $3.94\%$.
         \item \emph{Experiment B (Parameter identification only, $u_0$ known)}: Under logarithmic parameterization $\gamma = \gamma_{\mathrm{ref}} e^{\xi_\gamma}, \nu = \nu_{\mathrm{ref}} e^{\xi_\nu}$ initialized at physical $(0.50, 1.00 \times 10^{-3})$, identifies the viscosity $\nu$ within $3.0\%$ ($\hat{\nu} = 4.85 \times 10^{-3}\,\mathrm{m}^2/\mathrm{s}$) and damping $\gamma$ within $10.8\%$ ($\hat{\gamma} = 0.1108\,\mathrm{s}^{-1}$), with field error $0.37\%$, confirming that physical parameters are accurately recovered when decoupled from source variations.
         \item \emph{Experiment C (Joint inversion, $u_0, \gamma, \nu$ unknown)}: Directly aligns with the main Gaussian benchmark (Table~3.2), achieving $1.68\%$ field error (NMSE $3.00 \times 10^{-3}$), recovering $\nu$ within $2.0\%$ ($\hat{\nu} = 5.10 \times 10^{-3}\,\mathrm{m}^2/\mathrm{s}$) and $\gamma$ within $3.5\%$ ($\hat{\gamma} = 0.0965\,\mathrm{s}^{-1}$).
     \end{itemize}
-    \item \textbf{Regularization Ablation Study and Elimination of $H^1$ (Section~3.5.3 \& Table~3.5):} We conducted a systematic 5-configuration ablation study (Data only, $L_1$ only, $H^1$ only, Coupled $L_1+H^1$, Decoupled $L_1+H^1$):
+    \item \textbf{Regularization Ablation Study and Elimination of $H^1$ (Section~3.3.4 \& Table~3.5):} We conducted a systematic 5-configuration ablation study (Data only, $L_1$ only, $H^1$ only, Coupled $L_1+H^1$, Decoupled $L_1+H^1$):
     \begin{itemize}
         \item \emph{Data fitting without explicit spatial regularization}: Relying on the implicit inductive bias of the low-capacity SIREN parameterization enables clean convergence without hyperparameter distortion, achieving $1.68\%$ field error on Gaussian and $3.09\%$ on Triangle pulses.
         \item \emph{Why Sobolev $H^1$ fails and was rejected}: Penalizing the $H^1$ gradient semi-norm $\|\partial_x p_0\|_2^2 \propto \sum k_m^2 |U_{0,m}|^2$ suppresses high-wavenumber modes, eliminating the spectral information required to estimate physical dissipation ($\nu k_m^2$). When coupled to $\nu$ in the loss, the optimizer collapses $\hat{\nu} \to 10^{-5}$ to minimize the penalty. Decoupling $\nu$ does not prevent high-frequency loss. Therefore, $H^1$ regularization was rejected from the proposed formulation.
     \end{itemize}
 \end{enumerate}
-The findings are synthesized in the Concluding Assessment (Section~3.5.4).
+The findings are synthesized in the Concluding Assessment (Section~3.3.5).
 \end{response}
 
 \begin{revcomment}{Comment R2C12: Retraction of ``Remarkable Robustness'' on Triangular Pulse}
@@ -254,11 +257,11 @@ P104: ``Figures 3.20 to 3.22 showcase the remarkable robustness of the carefully
 \end{revcomment}
 
 \begin{response}
-We completely retracted the phrase ``remarkable robustness''. Following your critique, our new systematic ablation study (Section~3.5.3, Table~3.5) revealed that Sobolev $H^1$ regularization was actually detrimental rather than robust for this non-smooth profile:
+We completely retracted the phrase ``remarkable robustness''. Following your critique, our new systematic ablation study (Section~3.3.4, Table~3.5) revealed that Sobolev $H^1$ regularization was actually detrimental rather than robust for this non-smooth profile:
 \begin{itemize}
     \item The proposed unregularized formulation achieves an initial condition NMSE of only $4.49 \times 10^{-3}$ and a full-field relative error of $3.09\%$, recovering $\gamma$ within $4.7\%$ and $\nu$ within $3.6\%$.
     \item In contrast, imposing Sobolev $H^1$ regularization degrades field error to $18.10\%$ and causes estimated physical viscosity $\nu$ to collapse to $7.66 \times 10^{-6}$ ($99.85\%$ relative error).
-    \item We explain the physical mechanism in Section~3.5.3: penalizing the $H^1$ gradient semi-norm $\|\partial_x p_0\|_2^2 \propto \sum k_m^2 |U_{0,m}|^2$ introduces excessive smoothing on slope discontinuities and penalizes high spatial wavenumbers, systematically eliminating the spectral information required to estimate physical dissipation. Furthermore, when coupled to $\nu$ in the loss, the optimizer trades off physical viscosity to minimize the regularization penalty.
+    \item We explain the physical mechanism in Section~3.3.4: penalizing the $H^1$ gradient semi-norm $\|\partial_x p_0\|_2^2 \propto \sum k_m^2 |U_{0,m}|^2$ introduces excessive smoothing on slope discontinuities and penalizes high spatial wavenumbers, systematically eliminating the spectral information required to estimate physical dissipation. Furthermore, when coupled to $\nu$ in the loss, the optimizer trades off physical viscosity to minimize the regularization penalty.
 \end{itemize}
 \end{response}
 
@@ -275,7 +278,7 @@ P107: ``Subsequently, we extended the Adaptive Rectangular Decomposition (ARD) m
 \end{revcomment}
 
 \begin{response}
-We corrected this statement in Chapter~4 (Summary of Main Contributions) and Section~3.4. The text now explicitly states that ARD was developed, formulated, and implemented exclusively for the PSTD framework.
+We corrected this statement in Chapter~4 (Summary of Main Contributions) and Section~3.2. The text now explicitly states that ARD was developed, formulated, and implemented exclusively for the PSTD framework.
 \end{response}
 
 \begin{revcomment}{Comment R2C15: Toning Down Superlative Claims on Sobolev Regularization}
@@ -283,7 +286,7 @@ P108: ``(...) Sobolev $H_1$ smoothness penalty gracefully suppressed high-freque
 \end{revcomment}
 
 \begin{response}
-We completely retracted ``gracefully suppressed (...) without smearing out sharp discontinuities''. We replaced this subjective claim with the rigorous 5-configuration ablation study in Section~3.5.3 (Table~3.5) and the concluding assessment in Section~3.5.4:
+We completely retracted ``gracefully suppressed (...) without smearing out sharp discontinuities''. We replaced this subjective claim with the rigorous 5-configuration ablation study in Section~3.3.4 (Table~3.5) and the concluding assessment in Section~3.3.5:
 \begin{itemize}
     \item We explicitly demonstrate that Sobolev $H^1$ regularization smears out sharp corners and does not preserve slope discontinuities.
     \item We show that $H^1$ penalization introduces excessive smoothing ($7.42\%$ error on Gaussian, $18.10\%$ on triangle) and creates an algorithmic trap where the optimizer drives physical viscosity $\nu \to 0$ to minimize the gradient penalty.
@@ -314,7 +317,7 @@ Section~4.3 was expanded from 3 lines to over 4 pages of continuous technical pr
     \item \emph{Section~4.3.1:} Geometric discretization and staircasing boundary error mitigation (Cartesian cut-cell, embedded boundary, curvilinear transformations).
     \item \emph{Section~4.3.2:} Energy stability and higher-order time integration for ARD (exact exponential Kick flow, midpoint Runge-Kutta, discrete energy estimates, high-order DtN Padé operators).
     \item \emph{Section~4.3.3:} Analytical min-max theory and adaptive transmission for OSWR.
-    \item \emph{Section~4.3.4:} Scalability, identifiability, and architectural ablation for differentiable learning (3D scaling, sensor sparsity, ablation of SIREN vs Fourier features).
+    \item \emph{Section~4.3.4:} Scaling DPNN to 3D and advanced inversion formulations (3D scaling, optimal sensor placement, edge-preserving Total Variation regularization, and comparison with FWI and TRA).
     \item \emph{Section~4.3.5:} Realistic acoustic modelling, advanced boundary conditions (CPML/CFS-PML with auxiliary memory variables, digital impedance filters), and GPU acceleration.
 \end{enumerate}
 \end{response}
@@ -419,8 +422,13 @@ We believe that these extensive revisions, enhanced quantitative benchmarks, dou
 \vspace{0.5cm}
 \noindent Sincerely,\\[0.3em]
 \textbf{Gerardo Cicalese}\\
-\emph{Ph.D. Candidate in Information Technology}\\
-\emph{Politecnico di Milano}
+\emph{Ph.D. Candidate in Information Technology, Politecnico di Milano}\\[0.5em]
+\textbf{Prof.~Ilario Mazzieri}\\
+\emph{Advisor, Associate Professor, Politecnico di Milano}\\[0.5em]
+\textbf{Prof.~Gabriele Ciaramella}\\
+\emph{Co-Advisor, Associate Professor, Politecnico di Milano}\\[0.5em]
+\textbf{Prof.~Fabio Antonacci}\\
+\emph{Co-Advisor, Associate Professor, Politecnico di Milano}
 
 \newpage
 \bibliographystyle{unsrtnat-nourl}

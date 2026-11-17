@@ -1,0 +1,155 @@
+=== PAGE 1 ===
+Report on the PhD thesis “Domain
+Decomposition and Differentiable Physics for
+the Viscoelastic Wave Equation”
+by Gerardo Cicalese
+Reviewer: Marcella Bonazzoli
+Overall comment.
+I have found the contents of the PhD thesis "Domain
+Decomposition and Differentiable Physics for the Viscoelastic Wave Equation"
+by Gerardo Cicalese very interesting, and reading the manuscript has been a
+rewarding experience: the various topics covered by the thesis are clearly ex-
+plained, the needed background is correctly recalled, and the novelties contained
+in each chapter are easy to detect. The thesis is a balanced interplay between
+theory and simulations: all the theoretical results are validated by extensive
+numerical experiments. The thesis deals with cutting edge problems for the nu-
+merical simulation of applications related to computational acoustics, incorpo-
+rating also atmospheric absorption. The studied model is the (time-dependent)
+damped wave equation with both telegrapher and viscoelastic damping terms.
+The original contributions contained in the thesis range from theoretical results
+(in particular, the stability/numerical dispersion analysis of the FDTD and
+PSTD methods in Chapter 2, the convergence analysis of the OSWR method
+and the extension of the ARD method to the damped case in Chapter 3) to
+the implementation of the developed tools, as well as their application to sound
+field reconstruction by incorporating them into a Differentiable Physics Neural
+Network architecture in Section 3.3. It is remarkable that the candidate was
+able to successfully and significantly contribute to the knowledge advance in
+three research domains that are often studied separately: stable discretization
+methods, efficient space-time solvers, and neural networks for inverse problems.
+As a general assessment, I consider the thesis as a very significant and excel-
+lent contribution to the knowledge advance in a field where several outstanding
+researchers are working actively. In view of the above considerations, I believe
+that the PhD thesis by Gerardo Cicalese conforms to the standards of a high
+quality international thesis, and it is my pleasure to recommend that he be
+admitted to the final defense of his doctoral dissertation.
+Detailed comments.
+The PhD manuscript contains 4 chapters, where the
+last one summarizes the thesis contributions and mentions future research lines.
+In order to highlight the significance of Gerardo Cicalese’s research, I will com-
+ment on each chapter separately.
+Chapter 1 is a comprehensive introduction and literature review about both
+the computational acoustics background and the numerical methods studied
+in the thesis. The drawbacks of classical geometrical techniques highlight the
+1
+
+
+=== PAGE 2 ===
+need for methods that simulate the wave propagation model. Applications such
+as room acoustics simulation require to include time-dependent behavior and
+atmospheric absorption in the model, and to accelerate wave-based methods,
+which is the objective of the thesis.
+Chapter 2 is devoted to the physical model, the definition of benchmark prob-
+lems and the analysis of two discretization methods: Finite-Difference Time-
+Domain (FDTD) and Pseudo-Spectral Time-Domain (PSTD). I have especially
+appreciated the discussion of several physics-related aspects: the choice of tele-
+grapher and viscoelastic damping terms, the derivation of the dispersion rela-
+tion, and the study of the absorbing properties of Robin boundary conditions.
+The modal expansion of the solution gives indications about the instability of
+the inverse problem of Chapter 3, when damping is present. This is a crucial
+and mathematically challenging aspect. Moreover, the careful definition of 6
+benchmark problems for the 1D undamped and damped equations will be very
+useful for the community to test the performance of new methods. The most
+substantial original contributions of Chapter 2 consist in extending FDTD and
+PSTD to the damped case and rigorously analyzing them.
+For FDTD, the
+candidate describes in detail the algorithmic treatment of all boundary con-
+ditions, and proves that the scheme is consistent and stable under the CFL
+condition. PSTD, which applies to the case of homogeneous Neumann bound-
+ary conditions, is based on expanding the solution in a spectral basis, so that the
+resulting uncoupled modal equations can be solved using an exact time integra-
+tor. The time integrator in the general damped case is far from being a trivial
+extension of the undamped one. The candidate proves unconditional stability
+and conducts error and dispersion analyses. Extensive numerical experiments
+on the 6 benchmarks validate the convergence theory.
+Chapter 3 explores two space-time domain decomposition techniques (Op-
+timized Schwarz Waveform Relaxation, OSWR, and Adaptive Rectangular De-
+composition, ARD) for the forward model, and the application of the developed
+tools to sound field reconstruction. The main focus for OSWR is the compu-
+tation of its convergence factor, for 1D/2D overlapping two-domain configura-
+tions, in order to optimize the parameters of the Robin transmission conditions
+at the subdomain interfaces.
+Numerical experiments study how the optimal
+transmission parameters and convergence factor depend on the damping coef-
+ficients. As the viscoelastic damping increases, choosing optimal parameters
+becomes more important to accelerate the convergence. While PSTD cannot
+be used in OSWR, both FDTD and PSTD can be used in ARD. Indeed, in
+ARD the non-overlapping subdomains evolve independently under homogeneous
+Neumann conditions, and subdomains coupling is imposed by a corrective force
+acting on their interfaces. Stability and convergence properties are illustrated
+numerically in 1D, and even a 3D simulation is performed. Finally, the candi-
+date combines the new techniques with a neural network architecture to solve a
+challenging unstable inverse problem. High-frequency artifacts are suppressed
+thanks to a carefully chosen regularization term.
+The initial condition and
+the viscoelastic coefficient are successfully reconstructed, while the telegrapher
+damping coefficient is not. Nevertheless, these numerical results are impressive
+and show the applicative potential of the developed mathematical and numerical
+technologies.
+2
+
+
+=== PAGE 3 ===
+Minor comments and typos
+• Page 9: what are the “tan” methods?
+• Pages 18, 21: the sentences "in the absence of damping, the Robin bound-
+ary condition coincides with the exact transparent boundary condition",
+"the reflection vanishes if Λ(iω) = ik(iω), that is, when the Robin opera-
+tor coincides with the exact Dirichlet-to-Neumann map" are not precise.
+Indeed, the impedance choice iω/c is a zero-th order approximation of the
+exact DtN transmission operator, see e.g. [§2.5.2, Dolean, Jolivet, Nataf
+2015].
+• Page 27: the ϕm have not been defined yet.
+• Page 30: f n
+i is missing in (2.8).
+• Pages 30-31: scheme (2.8) is actually never used. Since the derivation of
+scheme (2.9) (whose only difference with (2.8) is the centered approxima-
+tion for ∂t) is much more detailed, I suggest removing scheme (2.8).
+• Page 49: it would be useful to give the explicit expression of matrix Φ.
+• Page 50: the definition of the permuted versions ˜Z, ˜W is not clear, which
+permutation is precisely matrix P?
+• Page 55: can you give bibliographic references for fast DCT algorithms?
+• Page 75: how is the min-max problem (3.1) solved?
+Do you have an
+explicit expression of the optimal parameters q, r?
+• Page 78: Figure 3.3 is not mentioned in the main text.
+• Page 80: Figure 3.5 is not very informative because it does not give values
+for γ, ν. Since Figure 3.6 does give values for γ, ν, maybe you could remove
+Figure 3.5.
+• Page 81: please define explicitly the domain Ωfor the 2D experiment.
+• Page 92: it is written that "the domain decomposition error converges
+linearly", but in the legend of the corresponding Figure 3.9 you have put
+quadratic convergence.
+• Page 96: Please specify whether the original open environment is un-
+bounded in the z direction or also in other directions. When you write
+"three different viscoelastic damping coefficients", it is actually two. You
+say "the progressive attenuation and smoothing of the wavefronts scale
+consistently with the imposed viscoelastic parameter ν", but in Figure
+3.12 the difference between plots (a)-(b)-(c) with ν = 2 · 10−6 and plots
+(d)-(e)-(f) with ν = 10−5 is not clear visually.
+• Page 97 or page 101: please give more details about the considered sensor
+measurements over time (are their supports the points xi? Do you have
+measurements at each time step?)
+• Page 98: can you give bibliographic references for Softplus mappings?
+3
+
+
+=== PAGE 4 ===
+• Page 99: is the regularization scale ν in the cost functional the ˜ν in its
+argument?
+• Page 102: you write that the physical parameters γ and ν converge to
+"values close to the true ones", but in Figure 3.14 (and Figures 3.17, 3.20)
+it appears that γ is not well reconstructed actually.
+• Page 104: in the caption of Figure 3.19 you write "Notice the superior am-
+plitude preservation in the PSTD reconstruction", but visually the result
+with FDTD looks nearly the same as the PSTD one in this figure.
+4

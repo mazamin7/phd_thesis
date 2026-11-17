@@ -1,0 +1,436 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage[margin=2.5cm]{geometry}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{booktabs}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{titlesec}
+\usepackage{fancyhdr}
+\usepackage[most]{tcolorbox}
+\usepackage[round,authoryear]{natbib}
+\usepackage[hidelinks,colorlinks=true,linkcolor=blue!70!black,citecolor=blue!70!black,urlcolor=blue!70!black]{hyperref}
+
+% Page styling
+\setlength{\headheight}{14pt}
+\pagestyle{fancy}
+\fancyhf{}
+\lhead{\textsc{Response to Reviewer 1 --- Dr.~Marcella Bonazzoli}}
+\rhead{\textsc{Gerardo Cicalese}}
+\cfoot{\thepage}
+
+\definecolor{commentbg}{RGB}{245, 247, 250}
+\definecolor{commentframe}{RGB}{70, 95, 130}
+\definecolor{responseframe}{RGB}{40, 110, 70}
+
+\newtcolorbox{revcomment}[2][]{
+    enhanced,
+    breakable,
+    colback=commentbg,
+    colframe=commentframe,
+    fonttitle=\bfseries,
+    title={#2},
+    boxrule=0.8pt,
+    arc=2mm,
+    top=2mm, bottom=2mm, left=3mm, right=3mm,
+    before skip=3mm, after skip=2mm,
+    #1
+}
+
+\newenvironment{response}{
+    \par\vspace{1mm}\noindent\textbf{\textcolor{responseframe}{Response:}}\par\vspace{1mm}
+}{
+    \par\vspace{3mm}
+}
+
+\begin{document}
+
+\title{\textbf{\Large Formal Response to Reviewer 1 (Dr.~Marcella Bonazzoli)}\\[0.3em]
+\large Re: Ph.D. Dissertation Review\\\emph{``Domain Decomposition and Differentiable Physics for the Viscoelastic Wave Equation''}}
+\author{\textbf{Candidate:} Gerardo Cicalese\\[0.3em]
+\textbf{Advisor:} Prof.~Ilario Mazzieri\\[0.3em]
+\textbf{Co-Advisors:} Prof.~Gabriele Ciaramella, Prof.~Fabio Antonacci\\[0.3em]
+\textbf{Institution:} Politecnico di Milano}
+\date{November 2026}
+\maketitle
+
+\noindent Dear Dr.~Marcella Bonazzoli,\\[0.5em]
+We would like to express our sincere gratitude for your thorough, encouraging, and constructive evaluation of the doctoral dissertation \emph{``Domain Decomposition and Differentiable Physics for the Viscoelastic Wave Equation''}. We are deeply honored by your positive assessment of the originality, theoretical rigor, and balanced interplay between analytical derivations and extensive numerical simulations presented in the manuscript.
+
+Your detailed comments and precise mathematical observations have been invaluable in refining the manuscript. They have allowed us to eliminate residual ambiguities, correct formal mathematical definitions, refine transmission operator descriptions, provide complete algorithmic details, and ensure absolute consistency between our analytical statements and numerical figures.
+
+In accordance with the revision guidelines, \textbf{all textual modifications, newly derived equations, and expanded discussions in the revised dissertation are highlighted in \textcolor{blue}{blue}} (\texttt{\textbackslash textcolor\{blue\}\{...\}}).
+
+Below, we provide a point-by-point response to your General Assessment and all 19 detailed comments and suggestions.
+
+\tableofcontents
+\newpage
+
+% ==============================================================================
+\section{Response to the General Assessment}
+% ==============================================================================
+
+\begin{revcomment}{General Assessment by Reviewer 1}
+\emph{``I have found the contents of the PhD thesis `Domain Decomposition and Differentiable Physics for the Viscoelastic Wave Equation' by Gerardo Cicalese very interesting, and reading the manuscript has been a rewarding experience: the various topics covered by the thesis are clearly explained, the needed background is correctly recalled, and the novelties contained in each chapter are easy to detect. The thesis is a balanced interplay between theory and simulations: all the theoretical results are validated by extensive numerical experiments. [...] It is remarkable that the candidate was able to successfully and significantly contribute to the knowledge advance in three research domains that are often studied separately: stable discretization methods, efficient space-time solvers, and neural networks for inverse problems. As a general assessment, I consider the thesis as a very significant and excellent contribution to the knowledge advance in a field where several outstanding researchers are working actively. In view of the above considerations, I believe that the PhD thesis by Gerardo Cicalese conforms to the standards of a high quality international thesis, and it is my pleasure to recommend that he be admitted to the final defense of his doctoral dissertation.''}
+\end{revcomment}
+
+\begin{response}
+We are profoundly grateful to Dr.~Marcella Bonazzoli for this exceptionally generous, encouraging, and positive appraisal of the doctoral dissertation. Her recognition of the novel contributions across all three pillars of the research---stable numerical discretizations for dissipative media, space-time domain decomposition methods, and differentiable physics architectures for inverse acoustics---is a tremendous encouragement.
+
+In revising the manuscript, we have addressed every one of her 19 detailed comments with the utmost care, ensuring mathematical precision and clarity throughout the document.
+\end{response}
+
+\newpage
+% ==============================================================================
+\section{Point-by-Point Responses to Detailed Comments}
+% ==============================================================================
+
+% ------------------------------------------------------------------------------
+\subsection{Comments on Chapter 1: Introduction and Literature Review}
+% ------------------------------------------------------------------------------
+
+\begin{revcomment}{Comment 1 (Page 9): Typo in Room Acoustic Methods}
+\emph{``Page 9: what are the `tan' methods?''}
+\end{revcomment}
+
+\begin{response}
+We thank the reviewer for spotting this clerical typo. The string ``tan'' was an accidental transcription truncation of \emph{``time-domain''} wave-based methods. In the revised manuscript (Section~1.2 and Section~1.4), this has been corrected to explicitly read: \emph{``wave-based time-domain numerical methods (such as FDTD and PSTD)''}.
+\end{response}
+
+% ------------------------------------------------------------------------------
+\subsection{Comments on Chapter 2: Physical Model and Discretization Methods}
+% ------------------------------------------------------------------------------
+
+\begin{revcomment}{Comment 2 (Pages 18, 21): Precision on Robin / DtN Transparent Boundary Conditions}
+\emph{``Pages 18, 21: the sentences `in the absence of damping, the Robin boundary condition coincides with the exact transparent boundary condition', `the reflection vanishes if $\Lambda(i\omega) = ik(i\omega)$, that is, when the Robin operator coincides with the exact Dirichlet-to-Neumann map' are not precise. Indeed, the impedance choice $i\omega/c$ is a zero-th order approximation of the exact DtN transmission operator, see e.g. [\S2.5.2, Dolean, Jolivet, Nataf 2015].''}
+\end{revcomment}
+
+\begin{response}
+We completely agree with the reviewer's observation. The exact continuous Dirichlet-to-Neumann (DtN) operator for the wave equation in multi-dimensional domains or for oblique incident waves is non-local in space and time, depending intrinsically on the transverse wavenumber $k_\perp$ via the exact symbol $\sqrt{\omega^2/c^2 - |k_\perp|^2}$. The local Robin impedance choice $\Lambda(i\omega) = i\omega/c$ ($q=1/c, r=0$) coincides with the exact transparent DtN condition \emph{strictly and exclusively for one-dimensional plane waves propagating at normal incidence}. In general multi-dimensional settings, it constitutes a local zeroth-order Taylor/Engquist--Majda approximation to the exact DtN map.
+
+We have revised both passages in the manuscript accordingly, citing the recommended monograph by \citet{dolean_introduction_2015} as well as the foundational work of \citet{engquist_absorbing_1977}:
+\begin{itemize}[leftmargin=*]
+    \item \textbf{Section~2.1.2 (Page~20):}
+    \begin{quote}
+    \textcolor{red}{\emph{``Therefore, in the absence of damping, the Robin boundary condition coincides with the exact Dirichlet-to-Neumann (DtN) transparent boundary condition for one-dimensional plane waves at normal incidence, yielding perfect absorption across all frequencies. In multiple spatial dimensions, the exact DtN operator is non-local and angle-dependent; hence, the local Robin condition (2.2) represents a zeroth-order local approximation (in the sense of Engquist and Majda \cite{engquist_absorbing_1977,dolean_introduction_2015}) to the true transparent boundary condition.''}}
+    \end{quote}
+    \item \textbf{Section~2.3.1 (Page~27):}
+    \begin{quote}
+    \textcolor{red}{\emph{``that is, when the Robin operator coincides with the exact Dirichlet-to-Neumann map (which provides exact transparent absorption for 1D plane waves at normal incidence, but represents a zeroth-order local approximation in higher-dimensional geometries \cite{dolean_introduction_2015}).''}}
+    \end{quote}
+\end{itemize}
+\end{response}
+
+\vspace{2mm}
+\begin{revcomment}{Comment 3 (Page 27): Forward Definition of Eigenfunctions $\phi_m(x)$}
+\emph{``Page 27: the $\phi_m$ have not been defined yet.''}
+\end{revcomment}
+
+\begin{response}
+We thank the reviewer for highlighting this forward reference. In Section~2.4.1 (Configuration~I, Page~35), the spatial modal expansion $u(x,t) = \sum_{m \in \{1,3\}} U_m(t)\phi_m(x)$ was introduced prior to the general modal analysis in Section~2.7. 
+
+In the revised manuscript, we have added the explicit definition directly at its first occurrence in Configuration~I:
+\begin{quote}
+\textcolor{red}{\emph{``where $\phi_m(x) = \cos(m\pi x / L)$ denotes the spatial eigenfunctions of the Laplacian subject to homogeneous Neumann boundary conditions.''}}
+\end{quote}
+\end{response}
+
+\vspace{2mm}
+\begin{revcomment}{Comments 4 \& 5 (Pages 30--31): Scheme (2.8) and Redundant Non-Centered Formulation}
+\emph{``Page 30: $f_i^n$ is missing in (2.8).''}
+
+\emph{``Pages 30-31: scheme (2.8) is actually never used. Since the derivation of scheme (2.9) (whose only difference with (2.8) is the centered approximation for $\partial_t$) is much more detailed, I suggest removing scheme (2.8).''}
+\end{revcomment}
+
+\begin{response}
+We fully agree with the reviewer's suggestion. Scheme (2.8) in the previous draft was an introductory sketch that employed a backward-difference approximation in time for the mixed viscoelastic term, omitted the external force $f_i^n$, and was never actually implemented or analyzed in the subsequent stability proofs or numerical experiments.
+
+Following the reviewer's recommendation, \textbf{we have completely removed scheme (2.8)} from Section~2.5. The section now proceeds directly from the space and time grid discretization into the rigorous derivation of the centered leapfrog FDTD scheme (Equation~(2.8), Page~42), which properly includes the discrete source term $f_i^n$ and fully symmetric second-order approximations for all temporal and spatial derivatives.
+\end{response}
+
+\vspace{2mm}
+\begin{revcomment}{Comment 6 (Page 49): Explicit Expression of the DCT-II Matrix $\Phi$}
+\emph{``Page 49: it would be useful to give the explicit expression of matrix $\Phi$.''}
+\end{revcomment}
+
+\begin{response}
+We agree that writing out the explicit matrix formula is helpful for the reader. In Section~2.7.2 (Page~58), we have explicitly specified the transformation matrix $\Phi \in \mathbb{R}^{N \times N}$ in terms of the discrete orthonormal DCT-II basis functions:
+\begin{quote}
+\textcolor{red}{
+\emph{``For convenience, we introduce the orthonormal DCT-II change-of-basis matrix $\Phi \in \mathbb{R}^{N \times N}$, whose $(i,m)$-th entry is given by the discrete basis functions:
+\begin{equation*}
+\Phi_{i,m} = \phi_m(i) = \sqrt{\frac{2}{N}} \alpha_m \cos\!\left(\frac{m\pi}{N}\left(i + \frac{1}{2}\right)\right), \quad i, m = 0, \dots, N-1,
+\end{equation*}
+with scaling factors $\alpha_0 = 1/\sqrt{2}$ and $\alpha_m = 1$ for $m \ge 1$, satisfying $\Phi^{-1} = \Phi^T$.''}
+}
+\end{quote}
+\end{response}
+
+\vspace{2mm}
+\begin{revcomment}{Comment 7 (Page 50): Definition of Permuted Vectors and Permutation Matrix $P$}
+\emph{``Page 50: the definition of the permuted versions $\widetilde{\mathbf{Z}}, \widetilde{\mathbf{W}}$ is not clear, which permutation is precisely matrix $P$?''}
+\end{revcomment}
+
+\begin{response}
+We thank the reviewer for requesting clarification on this algebraic step. In the modal state-space formulation, the $2N$-dimensional state vector naturally arises in pairwise interleaved form, grouping modal displacement and velocity for each individual mode $m$:
+\[
+\mathbf{Z} = [U_0, V_0, U_1, V_1, \dots, U_{N-1}, V_{N-1}]^T \in \mathbb{R}^{2N}.
+\]
+However, applying the orthogonal block Discrete Cosine Transform $\operatorname{diag}(\Phi, \Phi)$ requires grouping all modal displacements together followed by all modal velocities:
+\[
+\widetilde{\mathbf{Z}} = [\mathbf{U}^T, \mathbf{V}^T]^T = [U_0, U_1, \dots, U_{N-1}, V_0, V_1, \dots, V_{N-1}]^T \in \mathbb{R}^{2N}.
+\]
+In the revised manuscript (Section~2.7.2, Page~60), we have added an explicit explanation:
+\begin{quote}
+\textcolor{red}{\emph{``where $P$ is the $2N\times2N$ orthogonal permutation matrix ($P^{-1} = P^T$) that reorders the pairwise interleaved modal state vector
+\begin{equation*}
+\mathbf Z = [U_0, V_0, U_1, V_1, \dots, U_{N-1}, V_{N-1}]^T
+\end{equation*}
+into the segregated block-component vector $\widetilde{\mathbf Z} = [\mathbf U^T, \mathbf V^T]^T$ grouping all modal displacements first, followed by all modal velocities.''}}
+\end{quote}
+\end{response}
+
+\vspace{2mm}
+\begin{revcomment}{Comment 8 (Page 55): Bibliographic References for Fast DCT Algorithms}
+\emph{``Page 55: can you give bibliographic references for fast DCT algorithms?''}
+\end{revcomment}
+
+\begin{response}
+We have added the foundational and standard modern references for fast $O(N \log N)$ Discrete Cosine Transform algorithms in Section~2.7.4 (Page~64):
+\begin{itemize}[leftmargin=*]
+    \item \citet{makhoul_fast_1980}: \emph{``A fast cosine transform in one and two dimensions''}, IEEE Transactions on Acoustics, Speech, and Signal Processing;
+    \item \citet{rao_discrete_1990}: \emph{``Discrete Cosine Transform: Algorithms, Advantages, Applications''}, Academic Press;
+    \item \citet{frigo_design_2005}: \emph{``The Design and Implementation of FFTW3''}, Proceedings of the IEEE.
+\end{itemize}
+The text now reads:
+\begin{quote}
+\textcolor{red}{\emph{``forward and inverse transforms are evaluated using fast DCT algorithms with computational complexity $O(N\log N)$ \cite{makhoul_fast_1980,rao_discrete_1990,frigo_design_2005}.''}}
+\end{quote}
+\end{response}
+
+% ------------------------------------------------------------------------------
+\subsection{Comments on Chapter 3: Domain Decomposition and Inverse Problems}
+% ------------------------------------------------------------------------------
+
+\begin{revcomment}{Comment 9 (Page 75): Solution of the OSWR Min-Max Optimization Problem}
+\emph{``Page 75: how is the min-max problem (3.1) solved? Do you have an explicit expression of the optimal parameters $q, r$?''}
+\end{revcomment}
+
+\begin{response}
+We thank the reviewer for raising this important methodological point. For the general viscoelastic damped wave equation, the convergence factor $\rho(\omega; q, r)$ depends nonlinearly on both the frequency $\omega$ and the physical damping parameters $\gamma$ and $\nu$ through the complex dispersion relation. Consequently, the continuous equioscillation min-max problem
+\[
+\min_{q, r > 0} \max_{\omega \in [\omega_{\min}, \omega_{\max}]} \rho(\omega; q, r)
+\]
+does not admit a general closed-form analytical solution for arbitrary $(\gamma, \nu)$.
+
+In Section~3.1.2 (Page~83) and in the expanded Future Work section (Section~4.3.3), we have explicitly clarified:
+\begin{enumerate}[leftmargin=*]
+    \item The min-max problem is solved \textbf{numerically} using an equioscillation-based optimization algorithm (combining a dense frequency sweep with the Nelder--Mead simplex method) to identify the equioscillating local extrema of $\rho(\omega; q, r)$ across the acoustic bandwidth $[\omega_{\min}, \omega_{\max}]$;
+    \item While explicit asymptotic formulas have been established in the literature for undamped wave equations or the classical telegrapher equation \citep{gander_absorbing_2004,al-khaleel_optimized_2024}, closed-form expressions for the combined telegrapher--viscoelastic wave equation remain an open mathematical challenge, which we have formally identified as a valuable direction for future research in Section~4.3.3.
+\end{enumerate}
+\end{response}
+
+\vspace{2mm}
+\begin{revcomment}{Comment 10 (Page 78): Citation of Figure 3.3 in Main Text}
+\emph{``Page 78: Figure 3.3 is not mentioned in the main text.''}
+\end{revcomment}
+
+\begin{response}
+We thank the reviewer for catching this omission. In Section~3.1.3 (Page~87), we have added an explicit citation and descriptive discussion of Figure~3.3:
+\begin{quote}
+\textcolor{red}{\emph{``Figure~3.3 displays the resulting optimized Robin parameters $q^\ast$ and $r^\ast$, along with the predicted convergence factor $\rho_{\mathrm{opt}}$, as a function of the viscoelastic damping $\nu$. As $\nu$ increases, the optimal parameter $r^\ast$ increases substantially to counteract high-frequency viscoelastic dissipation, while the asymptotic convergence factor remains well bounded.''}}
+\end{quote}
+\end{response}
+
+\vspace{2mm}
+\begin{revcomment}{Comment 11 (Page 80): Removal of Unannotated Scatter Plot Figure 3.5}
+\emph{``Page 80: Figure 3.5 is not very informative because it does not give values for $\gamma, \nu$. Since Figure 3.6 does give values for $\gamma, \nu$, maybe you could remove Figure 3.5.''}
+\end{revcomment}
+
+\begin{response}
+We fully agree with the reviewer's recommendation. Figure~3.5 in the previous draft was an unannotated scatter plot aggregating all $(q, r)$ points without identifying the underlying physical damping parameters $\gamma$ and $\nu$. By contrast, Figure~3.6 (now renumbered as Figure~3.5 in the revised thesis, Page~88) decomposes these points into clear parametric curves along constant $\gamma$ and constant $\nu$, equipped with explicit colorbars and scales.
+
+Following the reviewer's suggestion, \textbf{we have removed Figure~3.5 entirely} and updated the surrounding text to introduce the parametric trajectory curves directly.
+\end{response}
+
+\vspace{2mm}
+\begin{revcomment}{Comment 12 (Page 81): Explicit Definition of Domain $\Omega$ in 2D OSWR}
+\emph{``Page 81: please define explicitly the domain $\Omega$ for the 2D experiment.''}
+\end{revcomment}
+
+\begin{response}
+We thank the reviewer for noting this omission. In Section~3.1.4 (Page~90), we have updated the opening sentence to explicitly define the global two-dimensional computational domain $\Omega$:
+\begin{quote}
+\textcolor{red}{\emph{``Let us consider the damped wave equation in two spatial dimensions $(x, y)$ on the rectangular domain $\Omega = (0, L_x) \times (0, L_y)$, where the domain is partitioned along the $x$-axis (allowing the transverse $y$-direction to be decoupled via a spatial Fourier transform) into two overlapping subdomains $\Omega_1 = (0, b) \times (0, L_y)$ and $\Omega_2 = (a, L_x) \times (0, L_y)$ with $0 < a < b < L_x$ (sharing the overlap width $\delta = b - a > 0$).''}}
+\end{quote}
+\end{response}
+
+\vspace{2mm}
+\begin{revcomment}{Comment 13 (Page 92): Convergence Rate in ARD Interface Operator (Figure 3.9)}
+\emph{``Page 92: it is written that `the domain decomposition error converges linearly', but in the legend of the corresponding Figure 3.9 you have put quadratic convergence.''}
+\end{revcomment}
+
+\begin{response}
+We are very grateful to the reviewer for pointing out this apparent contradiction between the text and the figure legend. In the previous draft, Figure~3.9 plotted only an $O(\Delta x^2)$ reference line, while the accompanying text stated that the convergence was linear ($O(\Delta x)$).
+
+To resolve this issue rigorously:
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Updated Convergence Figures:} We have re-executed the grid refinement tests and updated all six subfigures of Figure~3.9 (Page~96) to display \textbf{both} a quadratic reference line ($O(\Delta x^2)$, dashed black line) and a linear reference line ($O(\Delta x)$, dotted black line) with clear legends.
+    \item \textbf{Physical and Numerical Interpretation:} The revised text in Section~3.2.3 (Page~95) accurately analyzes the observed behavior against both reference slopes:
+    \begin{quote}
+    \textcolor{red}{\emph{``As observed in Figure~3.9, which displays both quadratic ($O(\Delta x^2)$) and linear ($O(\Delta x)$) asymptotic reference slopes, the empirical domain decomposition error exhibits distinct convergence regimes depending on the profile smoothness and grid refinement. For the smooth standing-wave configurations (a) and (b), the error decreases quadratically as $O(\Delta x^2)$ on coarser grids, in agreement with the nominal second-order spatial accuracy of the interface stencil, before transitioning toward an $O(\Delta x)$ rate on finer meshes. Conversely, for the non-smooth configurations (c, d, f) and the propagating pulses, the error scales predominantly as $O(\Delta x)$ across the tested resolutions. This demonstrates that while smooth modes initially benefit from the quadratic accuracy of the interface operator, localized finite-difference truncation errors and splitting effects ultimately induce an $O(\Delta x)$ global discrepancy relative to the monolithic spectral solution.''}}
+    \end{quote}
+\end{enumerate}
+\end{response}
+
+\vspace{2mm}
+\begin{revcomment}{Comment 14 (Page 96): 3D Domain Boundary Conditions, Damping Parameter Count, and Viscosity Differences}
+\emph{``Page 96: Please specify whether the original open environment is unbounded in the $z$ direction or also in other directions. When you write `three different viscoelastic damping coefficients', it is actually two. You say `the progressive attenuation and smoothing of the wavefronts scale consistently with the imposed viscoelastic parameter $\nu$', but in Figure 3.12 the difference between plots (a)-(b)-(c) with $\nu = 2 \cdot 10^{-6}$ and plots (d)-(e)-(f) with $\nu = 10^{-5}$ is not clear visually.''}
+\end{revcomment}
+
+\begin{response}
+We thank the reviewer for these precise observations. We have addressed all three aspects in Section~3.2.4 (Pages~101--105):
+\begin{enumerate}[leftmargin=*]
+    \item \textbf{Boundary Conditions:} We explicitly clarified that the 3D room simulation is enclosed by rigid bounding walls with homogeneous Neumann boundary conditions on all six outer faces ($x, y, z$), which allows the exact DCT modal representation to be employed within each partitioned rectangular subdomain.
+    \item \textbf{Parameter Count:} We corrected the phrasing: the simulation investigates \emph{three distinct damping settings} comprising one undamped baseline ($\nu = 0$) and two dissipative viscoelastic regimes ($\nu = 2 \times 10^{-6}$ and $\nu = 10^{-5}$).
+    \item \textbf{Visual vs Spectral Attenuation in Figure~3.12:} We toned down the visual claims regarding spatial slice plots. Because realistic physical air viscosity at audio frequencies is weak ($\nu \sim 10^{-6}$--$10^{-5}$), the spatial wavefronts in 2D cross-sections appear visually very similar at early time steps. To clearly demonstrate the physical damping effect, we added a quantitative frequency-domain spectral analysis (Figure~3.13, Page~104) showing that high-frequency modes ($>1$\,kHz) undergo strong exponential attenuation that scales monotonically with $\nu$, exactly as predicted by the viscoelastic dispersion relation.
+\end{enumerate}
+\end{response}
+
+\vspace{2mm}
+\begin{revcomment}{Comment 15 (Pages 97, 101): Sensor Measurement Operator Details}
+\emph{``Page 97 or page 101: please give more details about the considered sensor measurements over time (are their supports the points $x_i$? Do you have measurements at each time step?)''}
+\end{revcomment}
+
+\begin{response}
+We thank the reviewer for requesting complete technical details on the measurement setup. In Section~3.3.1 and Section~3.3.2 (Pages~107--110), we have provided the full mathematical definition of the discrete observation operator $\mathcal{M}$:
+\begin{itemize}[leftmargin=*]
+    \item The sensor network comprises $S$ point-like receivers placed at fixed spatial coordinates $x_s \in \Omega$ aligned with the spatial grid nodes ($x_s = i_s \Delta x$);
+    \item Measurements are sampled at \textbf{every simulation time step} $t_n = n \Delta t$ over the entire simulation duration $[0, T]$ (i.e., no temporal subsampling or decimation is applied);
+    \item The observation vector is therefore $u_{\mathrm{obs}} \in \mathbb{R}^{S \times N_t}$, where each entry corresponds to $u(x_s, t_n)$ corrupted by additive Gaussian noise at a prescribed signal-to-noise ratio (SNR $= 30$\,dB in the baseline benchmarks).
+\end{itemize}
+\end{response}
+
+\vspace{2mm}
+\begin{revcomment}{Comment 16 (Page 98): Parameter Mapping and Softplus References}
+\emph{``Page 98: can you give bibliographic references for Softplus mappings?''}
+\end{revcomment}
+
+\begin{response}
+In the revised methodology (Section~3.3.1, Page~107), we have parameterized the physical damping parameters via a logarithmic mapping:
+\[
+\gamma = \gamma_{\mathrm{ref}} e^{\xi_\gamma}, \qquad \nu = \nu_{\mathrm{ref}} e^{\xi_\nu},
+\]
+which guarantees strict positivity without upper-bound saturation across orders of magnitude. We have also cited the foundational literature on smooth positive activation functions, including \citet{dugas_incorporating_2001} for the Softplus mapping.
+\end{response}
+
+\vspace{2mm}
+\begin{revcomment}{Comment 17 (Page 99): Regularization Scale and Cost Functional}
+\emph{``Page 99: is the regularization scale $\nu$ in the cost functional the $\widetilde{\nu}$ in its argument?''}
+\end{revcomment}
+
+\begin{response}
+In the original draft, the proposed loss function included an $H^1$ Sobolev smoothness penalty scaled by the viscoelastic parameter $\nu$. As noted by both reviewers, coupling the loss functional directly to an unknown optimization variable introduces complex scaling ambiguities and unintended feedback during gradient updates.
+
+In the revised dissertation (Section~3.3.1, Page~108), \textbf{we have eliminated the $H^1$ penalty from the proposed DPNN loss function}. The primary DPNN formulation now operates as a pure data-fitting objective:
+\[
+\mathcal{L}_{\mathrm{data}}(\Theta, \xi_\gamma, \xi_\nu) = \frac{1}{2 S N_t} \sum_{s=1}^S \sum_{n=0}^{N_t} \left| u(x_s, t_n; \Theta, \xi_\gamma, \xi_\nu) - u_{\mathrm{obs}}(x_s, t_n) \right|^2.
+\]
+The $H^1$ and $L^1$ penalties are retained strictly within a dedicated ablation study (Section~3.3.4, Table~3.5, Page~124), which documents why the data-only formulation yields superior parameter identification and field reconstruction.
+\end{response}
+
+\vspace{2mm}
+\begin{revcomment}{Comment 18 (Page 102): Physical Parameter Convergence ($\gamma$ vs $\nu$)}
+\emph{``Page 102: you write that the physical parameters $\gamma$ and $\nu$ converge to `values close to the true ones', but in Figure 3.14 (and Figures 3.17, 3.20) it appears that $\gamma$ is not well reconstructed actually.''}
+\end{revcomment}
+
+\begin{response}
+We thank the reviewer for this critical and insightful observation. The reviewer is entirely correct: while the viscoelastic parameter $\nu$ converges rapidly and accurately to its ground truth across all benchmarks, the telegrapher damping $\gamma$ exhibits significant estimation errors (frequently remaining close to its initial guess).
+
+In the revised dissertation, we have completely overhauled the discussion in Section~3.3.2, Section~3.3.3, and the Conclusion (Section~4.1) to state this result honestly and rigorously:
+\begin{enumerate}[leftmargin=*]
+    \item We explicitly state that \textbf{$\gamma$ is not well identified} under the short observation time window ($T = 2$\,s), whereas $\nu$ is recovered with high precision;
+    \item We provide numerical and physical evidence in Section~3.3.3 (Disentangled Inversion Experiments, Table~3.4) explaining the role of source-damping coupling:
+    \begin{itemize}
+        \item When the unknown initial condition is decoupled from the damping parameters and fixed to the true spatial profile (Experiment~B), the logarithmic formulation recovers the telegrapher parameter $\gamma$ within $10.8\%$ ($\hat{\gamma} = 0.1108\,\mathrm{s}^{-1}$) and the viscoelastic parameter $\nu$ within $3.0\%$ ($\hat{\nu} = 4.85 \times 10^{-3}\,\mathrm{m}^2/\mathrm{s}$). This confirms that both physical damping parameters can be accurately recovered when decoupled from source variations.
+        \item In joint simultaneous inversion (Experiment~C and the primary benchmarks), however, a compensation mechanism arises between the unknown spatial source amplitude and temporal dissipation. Because telegrapher damping $\gamma$ produces a spatially uniform temporal decay over the short observation window, its cumulative effect is easily absorbed by slight amplitude scaling in the neural network's initial-condition representation.
+        \item In contrast, viscoelastic damping $\nu$ scales quadratically with the spatial wavenumber ($\nu k_m^2$), inducing strong, wavenumber-dependent differential attenuation of high-frequency spatial modes across time that cannot be mimicked by a simple spatial scale adjustment, allowing $\nu$ to be identified with high precision ($2.0\%$--$3.6\%$ error) even in joint inversion.
+    \end{itemize}
+\end{enumerate}
+\end{response}
+
+\vspace{2mm}
+\begin{revcomment}{Comment 19 (Page 104): Visual Comparison of PSTD vs FDTD Reconstruction}
+\emph{``Page 104: in the caption of Figure 3.19 you write `Notice the superior amplitude preservation in the PSTD reconstruction', but visually the result with FDTD looks nearly the same as the PSTD one in this figure.''}
+\end{revcomment}
+
+\begin{response}
+We agree with the reviewer that claiming an obvious visual difference in Figure~3.19 was an overstatement. At the plotted resolution, both FDTD and PSTD capture the general envelope of the initial displacement quite well.
+
+In the revised caption and main text (Section~3.3.2, Pages~116--118), we have toned down this claim:
+\begin{quote}
+\textcolor{red}{\emph{``While both solvers visually capture the global profile envelope, quantitative evaluation in Table~3.2 confirms that PSTD-DPNN achieves lower initial-condition NMSE and superior parameter identification due to its exact spectral dispersion properties.''}}
+\end{quote}
+We emphasize that the principal advantage of PSTD-DPNN lies in the quantitative metrics reported in Table~3.2 and in its elimination of numerical dispersion errors over long temporal horizons, rather than in dramatic visual discrepancies on coarse 1D plots.
+\end{response}
+
+\newpage
+% ==============================================================================
+\section{Summary of Manuscript Changes}
+% ==============================================================================
+
+\begin{table}[ht]
+\centering
+\small
+\caption{Comprehensive Summary of Revisions in Response to Reviewer 1 (Dr.~Marcella Bonazzoli).}
+\vspace{2mm}
+\begin{tabular}{@{}llp{8.5cm}l@{}}
+\toprule
+\textbf{Comment} & \textbf{Section / Page} & \textbf{Nature of Revision} & \textbf{Status} \\
+\midrule
+1 & \S1.2, \S1.4 (p.~9) & Corrected typo: ``tan'' methods replaced by wave-based time-domain methods & Addressed \\
+2 & \S2.1.2, \S2.3.1 (pp.~20, 27) & Clarified that Robin impedance $i\omega/c$ is exact DtN for 1D normal incidence and 0th-order local approximation in multi-D \citep{dolean_introduction_2015} & Addressed \\
+3 & \S2.4.1 (p.~35) & Added explicit forward definition of spatial eigenfunctions $\phi_m(x) = \cos(m\pi x/L)$ in Configuration~I & Addressed \\
+4, 5 & \S2.5 (pp.~41--42) & Removed redundant uncentered scheme (2.8); derived centered leapfrog scheme with $f_i^n$ directly & Addressed \\
+6 & \S2.7.2 (p.~58) & Provided explicit matrix formula for orthonormal DCT-II matrix $\Phi$ & Addressed \\
+7 & \S2.7.2 (p.~60) & Clarified permutation matrix $P$ reordering interleaved $[U_m, V_m]$ into segregated block vector & Addressed \\
+8 & \S2.7.4 (p.~64) & Added standard citations for fast DCT algorithms \citep{makhoul_fast_1980,rao_discrete_1990,frigo_design_2005} & Addressed \\
+9 & \S3.1.2, \S4.2.2 (pp.~83, 147) & Explained numerical Remez/Nelder--Mead optimization for OSWR min-max problem and absence of general closed-form solutions & Addressed \\
+10 & \S3.1.3 (p.~87) & Added explicit in-text citation and discussion of Figure~3.3 & Addressed \\
+11 & \S3.1.3 (pp.~88--89) & Removed unannotated scatter plot Figure~3.5; retained parametric curves with colorbars (Figure~3.6) & Addressed \\
+12 & \S3.1.4 (p.~90) & Explicitly defined the 2D global domain $\Omega = (0, L_x) \times (0, L_y)$ & Addressed \\
+13 & \S3.2.3 (pp.~95--97) & Regenerated Figure~3.9 with both $O(\Delta x)$ and $O(\Delta x^2)$ reference lines; updated text to discuss asymptotic transition & Addressed \\
+14 & \S3.2.4 (pp.~101--105) & Clarified 3D room boundary conditions, corrected damping count, and added spectral verification of viscoelastic attenuation & Addressed \\
+15 & \S3.3.1, \S3.3.2 (pp.~107--110) & Specified complete sensor observation operator (grid node locations, un-decimated time steps) & Addressed \\
+16 & \S3.3.1 (p.~107) & Adopted logarithmic mapping for parameters; cited literature on positive activation mappings & Addressed \\
+17 & \S3.3.1, \S3.3.4 (pp.~108, 124) & Removed $H^1$ regularization from proposed DPNN loss; retained as comparative ablation study & Addressed \\
+18 & \S3.3.2, \S3.3.3 (pp.~110--118) & Reported parameter estimation limits honestly: $\nu$ accurately recovered, $\gamma$ exhibiting estimation sensitivity; explained via disentangled experiments and source-damping coupling & Addressed \\
+19 & \S3.3.2 (pp.~116--118) & Toned down visual superiority claims in Figure~3.19; referenced quantitative NMSE metrics & Addressed \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\noindent In conclusion, we are deeply grateful to Dr.~Marcella Bonazzoli for her thorough and constructive review, which has significantly enhanced the precision, clarity, and scholarly quality of this doctoral dissertation.
+
+\vspace{1cm}
+\noindent Respectfully submitted,\\[1em]
+\textbf{Gerardo Cicalese}\\
+Ph.D. Candidate in Information Technology, Politecnico di Milano\\[0.5em]
+\textbf{Prof.~Ilario Mazzieri}\\
+Advisor, Associate Professor, Politecnico di Milano\\[0.5em]
+\textbf{Prof.~Gabriele Ciaramella}\\
+Co-Advisor, Associate Professor, Politecnico di Milano\\[0.5em]
+\textbf{Prof.~Fabio Antonacci}\\
+Co-Advisor, Associate Professor, Politecnico di Milano
+
+\newpage
+% ==============================================================================
+% References
+% ==============================================================================
+\bibliographystyle{unsrtnat-nourl}
+\bibliography{Thesis_bibliography}
+
+\end{document}
