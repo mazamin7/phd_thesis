@@ -5217,35 +5217,212 @@ The final experiment pushes the DPNN framework to its limits by forcing the SIRE
 
 \section{Summary of Main Contributions}
 
-This thesis presented a comprehensive suite of numerical and deep learning methods designed to accelerate and invert wave propagation in highly damped viscoelastic media. By systematically addressing the limitations of classical explicit solvers, we introduced domain decomposition strategies and leveraged exact modal propagators \textcolor{red}{to substantially enhance computational efficiency and reduce numerical dispersion, particularly for sufficiently smooth solutions where spectral representations exhibit their full convergence potential}.
+\textcolor{red}{This thesis presented a comprehensive suite of numerical and machine learning methods designed to accelerate and invert wave propagation in damped viscoelastic media. By systematically addressing some of the limitations of classical explicit solvers, we introduced domain decomposition strategies and leveraged locally exact modal propagators to substantially enhance computational efficiency and reduce numerical dispersion, particularly for sufficiently smooth solutions where spectral representations exhibit their full convergence potential}.
 
 The first major contribution of this work was the derivation and analysis of a fully uncoupled Pseudo-Spectral Time Domain (PSTD) solver. By casting the damped wave equation into modal space, we obtained the exact analytic state-transition matrices governing the temporal evolution of the spectral modes. \textcolor{red}{This approach completely eliminated temporal dispersion errors locally within each subdomain and bypassed the severe stability restrictions traditionally associated with mixed spatial-temporal derivatives, enabling high-fidelity simulations of wave attenuation without requiring implicit global linear solves across the domain}.
 
-To scale these methods across distributed computing architectures, we investigated two distinct domain decomposition paradigms. First, we derived the Optimized Schwarz Waveform Relaxation (OSWR) method for the damped wave equation. Through a rigorous continuous min-max analysis, we computed optimal Robin transmission conditions that significantly accelerated the iteration contraction rate compared to classical approaches. Subsequently, we investigated the Adaptive Rectangular Decomposition (ARD) framework for wave propagation in partitioned domains. \textcolor{red}{While the theoretical feasibility and practical challenges of adapting ARD to explicit FDTD schemes were analyzed, the complete algorithmic formulation and numerical implementation were developed for the PSTD method. By replacing traditional interface boundary conditions with a localized, explicit correction operator, we circumvented the need for iterative solves while maintaining conditional stability. We showed that increasing the spatial order of the interface operator provides modest accuracy improvements, whereas the primary error reduction is driven by refining the spatial grid spacing and time step, while also properly containing Gibbs-like oscillations for non-smooth profiles}.
+To scale these methods across distributed computing architectures, we investigated two distinct domain decomposition paradigms. First, we derived the Optimized Schwarz Waveform Relaxation (OSWR) method for the damped wave equation. Through a rigorous continuous min-max analysis, we computed optimal Robin transmission conditions that significantly accelerated the iteration contraction rate compared to classical approaches. Subsequently, we investigated the Adaptive Rectangular Decomposition (ARD) framework for wave propagation in partitioned domains. \textcolor{red}{While the theoretical feasibility and practical challenges of adapting ARD to FDTD schemes were analyzed, the complete algorithmic formulation and numerical implementation were developed for the PSTD method. By replacing traditional interface boundary conditions with a localized, explicit correction operator, we circumvented the need for iterative solves while maintaining conditional stability. We showed that increasing the spatial order of the interface operator provides modest accuracy improvements, whereas the primary error reduction is driven by refining the spatial grid spacing and time step}.
 
-Finally, we bridged the gap between forward numerical modeling and inverse problem solving by introducing a Differentiable Physics Neural Network (DPNN) architecture. By directly embedding the exact, differentiable PSTD solver into the training loop of a Sinusoidal Representation Network (SIREN), we investigated the joint reconstruction of unknown initial pressure fields and the estimation of macroscopic physical damping parameters from sparse, noisy sensor data. \textcolor{red}{Although non-smooth initial profiles cannot be perfectly reconstructed due to limited sensor coverage and measurement noise, the formulation accounts for the physical nature of viscoelastic damping, which attenuates high-frequency modes at a rate proportional to $\nu k^2$ much faster than low-frequency components. Because high-frequency information is severely decayed before reaching the receivers, attempting an unconstrained inversion would inevitably amplify measurement noise into severe artifacts. The physically motivated Sobolev $H^1$ regularization deliberately suppresses these unconstrained high-frequency oscillations during training, effectively preferring a slightly smoothed reconstruction over spurious noise-driven patterns while still reliably recovering the macroscopic physical damping coefficients}.
+Finally, we bridged the gap between forward numerical modeling and inverse problem solving by introducing a Differentiable Physics Neural Network (DPNN) architecture. By directly embedding the locally exact, differentiable PSTD solver into the training loop of a Sinusoidal Representation Network (SIREN), we investigated the joint reconstruction of unknown initial pressure fields and the estimation of macroscopic physical damping parameters from sparse, noisy sensor data. \textcolor{red}{Although non-smooth initial profiles cannot be perfectly reconstructed due to limited sensor coverage and measurement noise, the formulation accounts for the physical nature of viscoelastic damping, which attenuates high-frequency modes at a rate proportional to $\nu k^2$ much faster than low-frequency components. Because high-frequency information is severely decayed before reaching the receivers, attempting an unconstrained inversion would inevitably amplify measurement noise into severe artifacts. The physically motivated Sobolev $H^1$ regularization deliberately suppresses these unconstrained high-frequency oscillations during training, effectively preferring a slightly smoothed reconstruction over spurious noise-driven patterns while still reliably recovering the macroscopic physical damping coefficients}.
 
 \section{Future Research Directions}
 \textcolor{red}{While this doctoral work has established the mathematical foundations, computational workflows, and numerical validation for accelerated pseudo-spectral modeling, domain decomposition, and differentiable inversion in viscoelastic media, it opens several avenues for future theoretical investigation and engineering extension. Addressing the practical limitations identified throughout our numerical benchmarks and scaling the methodologies toward production-grade architectural and biomedical applications motivates the following research directions.}
 
-\textcolor{red}{\subsection{Geometric Voxelization and Staircasing Boundary Errors}
-In the three-dimensional experiments conducted in Chapter~\ref{ch:acceleration}, a stepped non-convex computational domain was decomposed into canonical rectangular subdomains. While this multi-subdomain partitioning strategy applies seamlessly to both convex and non-convex enclosures, complex architectural settings characterized by oblique walls, slanted ceilings, or curved boundary surfaces inevitably introduce a geometric staircasing approximation when voxelized onto regular Cartesian grids. Throughout this study, we operated under the standard acoustic modeling assumption that staircasing errors remain second-order and negligible within the low-frequency modal regime, where the acoustic wavelength $\lambda = c_0/f$ is substantially larger than the spatial cell spacing $\Delta h$ ($\lambda \gg \Delta h$).
-However, at higher modal densities or along grazing-angle reflections, artificial stepped boundaries can induce spurious localized diffraction and phase errors that corrupt the late reverberant coda. A systematic error analysis quantifying the boundary staircasing error as a function of incidence angle and frequency represents a crucial next step. To eliminate geometric staircasing while retaining the $\mathcal{O}(N \log N)$ computational efficiency of Discrete Cosine Transforms in the domain interior, future work should investigate embedded boundary methods, Cartesian cut-cell techniques, or boundary-conforming curvilinear coordinate transformations in boundary-adjacent cells.}
+\subsection{\textcolor{red}{Geometric Voxelization and Staircasing Boundary Errors}}
+\textcolor{red}{In the three-dimensional experiments conducted in Chapter~\ref{ch:acceleration}, a stepped non-convex computational domain was decomposed into canonical rectangular subdomains. While this multi-subdomain partitioning strategy applies seamlessly to both convex and non-convex enclosures, complex architectural settings characterized by oblique walls, slanted ceilings, or curved boundary surfaces inevitably introduce a geometric staircasing approximation when voxelized onto regular Cartesian grids. Throughout this study, we operated under the standard acoustic modeling assumption that staircasing errors remain negligible within the low-frequency modal regime, where the acoustic wavelength $\lambda = c_0/f$ is substantially larger than the spatial cell spacing $\Delta h$ ($\lambda \gg \Delta h$).
+However, at higher modal densities or along grazing-angle reflections, artificial stepped boundaries might induce spurious localized diffraction and phase errors that corrupt the late reverberant tail. A systematic error analysis quantifying the boundary staircasing error as a function of incidence angle and frequency represents a crucial next step. To eliminate geometric staircasing while retaining the computational advantages of Discrete Cosine Transforms in the regular domain interior, future work should investigate hybrid geometric discretization strategies. Promising approaches include embedded boundary methods for acoustic and wave propagation on Cartesian grids \cite{alsalem_embedded_2018,appelo_fourth_2012}, high-order Cartesian cut-cell techniques \cite{popescu_finite_2008}, and boundary-conforming curvilinear coordinate transformations \cite{cerimele_numerical_2008,yuan_perfectly_2014}. A hybrid implementation could restrict geometric corrections to boundary-adjacent regions while retaining the DCT-based spectral treatment in the regular Cartesian interior. However, since these geometric treatments generally modify the spatial operator near the physical boundaries, preserving the exact global modal decoupling of the original DCT formulation is not guaranteed. The development of a suitable interior--boundary coupling strategy, together with its stability and computational complexity analysis, therefore represents an important open problem.}
 
-\textcolor{red}{\subsection{Advanced Interface Correction Schemes for ARD-PSTD}
-The Adaptive Rectangular Decomposition framework developed in Section~\ref{sec:pstd_multi_subdomain} bridges adjacent subdomains via explicit finite-difference residue operators $C_{\mathrm{res}}$ applied across artificial interfaces $\Gamma_i$. While conditionally stable, computationally lightweight, and completely uncoupled across subdomains within each time step, our empirical accuracy studies in Section~\ref{sec:accuracy_analysis} revealed that increasing the spatial differencing order of $C_{\mathrm{res}}$ yields modest accuracy gains compared to uniform spatial mesh refinement.
-Future research should target the derivation of higher-order, spectrally matched interface correction operators. Promising formulations include Hermite polynomial interface reconstructions, localized Dirichlet-to-Neumann (DtN) spectral transfer maps, or discontinuous Galerkin (DG) penalty couplings across virtual boundaries. Developing energy-conserving, spectrally matched transmission operators will be particularly essential for coupling non-conforming interfaces with disparate spatial resolutions (adaptive mesh refinement across subdomains) and for suppressing residual high-frequency interface reflections without triggering Gibbs phenomena.}
+\subsection{\textcolor{red}{Advanced Interface Correction Schemes for ARD-PSTD}}
+\textcolor{red}{The Adaptive Rectangular Decomposition framework developed in Section~\ref{sec:pstd_multi_subdomain} bridges adjacent subdomains through explicit finite-difference residue operators $C_{\mathrm{res}}$ applied across artificial interfaces $\Gamma_i$, following the original ARD interface coupling strategy \cite{raghuvanshi_efficient_2009}. While computationally lightweight and avoiding iterative global interface solves, the method exhibits conditional stability. Our empirical accuracy studies in Section~\ref{sec:accuracy_analysis} revealed that increasing the spatial differencing order of $C_{\mathrm{res}}$ yields modest accuracy gains compared to uniform spatial mesh refinement.}
 
-\textcolor{red}{\subsection{Physical Interpretation and Analytical Min-Max Solutions for OSWR}
-In the Optimized Schwarz Waveform Relaxation (OSWR) method presented in Chapter~\ref{ch:acceleration} (Section~\ref{sec:oswr}), the optimized Robin transmission parameters ($q$ and $r$) were computed numerically using an equioscillation min-max algorithm over discretized frequency sets. Although this numerical optimizer consistently delivers rapidly contracting iteration factors $\rho_{\max} < 1$, it operates effectively as a black-box routine, leaving the exact physical correspondence between the optimal transmission coefficients and the underlying medium properties largely opaque.
-A key theoretical goal is to derive closed-form analytical asymptotic expansions for the min-max equioscillation problem over bounded acoustic frequency bands $[\omega_{\min}, \omega_{\max}]$. Expressing the optimal parameters $q^*$ and $r^*$ analytically as explicit functions of the characteristic acoustic impedance $\rho_0 c_0$, the viscoelastic relaxation length $\sqrt{\nu / \omega}$, the subdomain aspect ratio, and the spatial overlap will directly reveal how viscous dissipation alters the impedance matching condition at artificial boundaries. This analytical foundation will provide valuable physical intuition and eliminate the computational overhead of numerical pre-optimization across varying geometries.}
+\textcolor{red}{Future research should target the derivation of higher-order, dispersion-aware interface correction operators. Promising approaches include Hermite-based local interface reconstructions, potentially combined with overset-grid formulations that retain Cartesian grids in the domain interior \cite{appelo_hermite_2018,beznosov_hermite_2021}, localized approximations of Dirichlet-to-Neumann (DtN) transmission operators, for instance through high-order Pad\'e approximations \cite{caudron_optimized_2020}, and discontinuous Galerkin (DG) formulations with penalty-based coupling across non-conforming interfaces \cite{heinz_nonconforming_dg_2023,appelo_energy_2019}. Related high-order finite-difference approaches based on interpolation, projection, and penalty operators have already demonstrated energy-stable coupling for wave equations across non-conforming grids with different spatial resolutions \cite{wang_virta_kreiss_2016,wang_improved_2018,eriksson_nonconforming_2023}.}
 
-\textcolor{red}{\subsection{Scaling DPNN to 3D and Comparative Benchmarking}
-The Differentiable Physics Neural Network (DPNN) introduced in Section~\ref{sec:dpnn} served as a one-dimensional proof of concept, demonstrating that embedding an exact, differentiable PSTD solver into the backpropagation graph of a Sinusoidal Representation Network (SIREN) enables stable joint reconstruction of unknown initial states and macroscopic attenuation parameters.
-A paramount engineering priority is extending the DPNN framework to fully three-dimensional enclosures. In three dimensions, the combination of sensor sparsity and complex room reverberation presents severe inverse-scattering challenges. Furthermore, the DPNN methodology must be rigorously benchmarked against established classical and modern inverse problem solvers. Such a comparative framework includes adjoint-state Full-Waveform Inversion (FWI) to evaluate convergence rates and sensitivity to initial parameter guesses, classical Time-Reversal Acoustics (TRA) with regularized post-filtering to assess spatial focal spot resolution under sparse receiver arrays, non-linear least-squares Gauss--Newton and Levenberg--Marquardt methods to compare memory consumption and Hessian approximation scaling, as well as standard Physics-Informed Neural Networks (PINNs) relying on soft PDE residual penalties to evaluate parameter recovery speed and training stability. Key evaluation metrics in this comparative study will include reconstruction accuracy under non-smooth profiles, gradient memory overhead through checkpointed automatic differentiation, and robustness against non-Gaussian measurement noise.}
+\textcolor{red}{The ultimate objective is to develop energy-stable, spectrally matched transmission operators capable of coupling non-conforming interfaces and subdomains with disparate spatial resolutions, while minimizing residual high-frequency reflections and interface-induced oscillations. Preserving the physical energy dissipation of the viscoelastic medium while avoiding artificial numerical energy growth will be particularly important for maintaining stability and accuracy over long simulation times.}
 
-\textcolor{red}{\subsection{Practical Considerations Arising from Numerical Experiments}
-Finally, the empirical findings obtained across our numerical benchmarks suggest three broad technical directions. First, addressing the mitigation of Gibbs oscillations remains essential: non-smooth initial states and sharp boundary corners excite high-frequency oscillations when projected onto global DCT-II bases. Future work should investigate adaptive spectral vanishing viscosity and localized modal filtering to selectively attenuate Gibbs ripples without compromising the formal spectral accuracy of smooth wavefronts. Second, extending the solver formulation to spatially heterogeneous media represents an important mathematical progression. While the current modal formulation assumes piecewise-constant acoustic properties within each subdomain, realistic media often feature continuously varying sound speeds $c_0(\mathbf{x})$ and damping fields $\nu(\mathbf{x})$, such as thermal stratification in concert halls or soft tissue variations in ultrasound. Incorporating spatially variable coefficients within PSTD via Chebyshev polynomial expansions or generalized Sturm--Liouville bases will broaden its physical applicability. Third, developing high-performance computing and GPU acceleration will unlock large-scale simulations. Because the temporal modal integration in PSTD is entirely uncoupled and the ARD interface exchanges operate locally, the proposed solvers exhibit massive fine-grained data parallelism. A fully GPU-accelerated implementation using CUDA, cuFFT, and multi-GPU distributed memory scaling via MPI will enable broadband architectural auralization across the entire human audible spectrum ($20\text{--}20{,}000$\,Hz).}
+\subsection{\textcolor{red}{Physical Interpretation and Analytical Min-Max Solutions for OSWR}}
+
+\textcolor{red}{In the Optimized Schwarz Waveform Relaxation (OSWR) method
+presented in Chapter~\ref{ch:acceleration}
+(Section~\ref{sec:oswr}), the optimized Robin transmission
+parameters ($q$ and $r$) were computed numerically using
+an equioscillation-based min-max algorithm over discretized
+frequency sets. The optimization of transmission conditions
+for waveform relaxation methods has been extensively
+investigated for evolution equations, including the wave
+equation and advection--diffusion problems
+\cite{gander_optimal_2003,gander_absorbing_2004,
+	gander_optimized_2007,martin_optimized_2005}.
+More recently, explicit asymptotic expressions for optimized
+transmission parameters have been derived for the telegrapher
+equation \cite{al-khaleel_optimized_2024}, while related
+min-max optimization strategies have been investigated
+for wave--heat coupling problems
+\cite{chouly_optimized_2025}.}
+
+\textcolor{red}{Despite these developments, the physical interpretation
+and analytical characterization of the optimal transmission
+parameters for the present viscoelastic damped-wave model
+remain open questions. In particular, our numerical
+optimization procedure provides rapidly contracting
+iteration factors $\rho_{\max}<1$, but does not yet
+explicitly reveal how the optimal parameters depend on
+the physical and geometrical properties of the problem.}
+
+\textcolor{red}{A key theoretical goal is therefore to extend existing
+asymptotic optimization analyses to derive closed-form
+approximations for the min-max equioscillation problem
+over bounded acoustic frequency bands
+$[\omega_{\min},\omega_{\max}]$. Expressing the optimal
+parameters $q^*$ and $r^*$ analytically as functions of
+the physical parameters $c$, $\gamma$ and $\nu$, together
+with the subdomain geometry and overlap, would directly
+reveal how viscoelastic dissipation modifies the impedance
+matching conditions at artificial interfaces. This
+analytical foundation would provide valuable physical
+intuition and potentially eliminate the computational
+overhead of numerical pre-optimization across varying
+geometries.}
+
+\subsection{\textcolor{red}{Scaling DPNN to 3D and Comparative Benchmarking}}
+
+\textcolor{red}{The Differentiable Physics Neural Network (DPNN) introduced
+in Section~\ref{sec:dpnn} served as a one-dimensional
+proof of concept, demonstrating that embedding an exact,
+differentiable PSTD solver into the computational graph of
+a Sinusoidal Representation Network (SIREN) enables the
+joint reconstruction of unknown initial conditions and
+macroscopic physical attenuation parameters
+\cite{sitzmann_implicit_2020}. Related differentiable-physics
+approaches have recently been investigated for acoustic
+sound-field reconstruction, coupling neural representations
+of unknown initial conditions with differentiable numerical
+wave solvers and comparing their performance against
+standard PINNs \cite{verburg_differentiable_2025}.
+However, extending this framework to damped viscoelastic
+wave propagation and the simultaneous identification of
+initial conditions and physical attenuation parameters
+remains an important direction for further investigation.}
+
+\textcolor{red}{A paramount engineering priority is extending the proposed
+DPNN framework to fully three-dimensional enclosures.
+In three dimensions, the combination of spatially sparse
+sensor configurations, complex enclosure geometries, and
+long reverberant decay times introduces significant
+computational and inverse-problem challenges.
+Furthermore, the DPNN methodology should be rigorously
+benchmarked against established classical and modern
+inverse-problem solvers.}
+
+\textcolor{red}{This comparative framework should include adjoint-state
+Full-Waveform Inversion (FWI), providing a reference for
+gradient-based physical parameter estimation and enabling
+the assessment of convergence behavior and sensitivity
+to initial parameter guesses
+\cite{plessix_adjoint_2006,pratt_gauss_newton_1998}.
+Classical Time-Reversal Acoustics (TRA), optionally
+supplemented by regularized post-filtering, should also
+be considered to evaluate spatial localization and
+reconstruction accuracy under sparse receiver
+configurations \cite{fink_time_1992,kahana_time_2022}.
+Moreover, non-linear least-squares optimization methods,
+including Gauss--Newton and Levenberg--Marquardt schemes,
+would provide complementary model-based alternatives
+for assessing convergence, computational cost, and
+the memory requirements associated with Jacobian and
+Hessian approximations
+\cite{pratt_gauss_newton_1998,marquardt_1963}.
+Finally, comparisons against standard Physics-Informed
+Neural Networks (PINNs), which impose the governing
+wave equation through soft PDE-residual penalties,
+would help quantify the benefits of enforcing the
+physical dynamics through an explicit numerical solver
+rather than through penalty-based constraints
+\cite{raissi_pinn_2019,olivieri_physics-informed_2024}.}
+
+\textcolor{red}{The comparative evaluation should consider multiple
+aspects of inverse-problem performance, including
+reconstruction accuracy for non-smooth initial profiles,
+the accuracy and identifiability of the recovered
+attenuation parameters, and sensitivity to sensor
+density, sensor placement, and measurement noise.
+Computational scalability should additionally be assessed
+in terms of training time, memory consumption, and
+gradient-evaluation overhead, particularly when employing
+checkpointed automatic differentiation to reduce the
+memory requirements of backpropagation through long
+time-dependent simulations \cite{griewank_revolve_2000}.
+Finally, robustness should be investigated under different
+noise distributions, including non-Gaussian and
+multiplicative measurement perturbations, as well as
+under increasingly sparse sensor configurations.}
+
+\subsection{\textcolor{red}{Practical Considerations Arising from Numerical Experiments}}
+
+\textcolor{red}{Finally, the empirical findings obtained across our numerical
+benchmarks suggest three important directions for further
+investigation.}
+
+\textcolor{red}{First, the mitigation of Gibbs oscillations remains essential:
+non-smooth initial states and sharp boundary features can
+excite spurious high-frequency oscillations when represented
+using global DCT-II bases. Future work should investigate
+adaptive spectral filtering and spectral vanishing viscosity
+techniques to selectively attenuate these oscillations while
+preserving the high-order convergence properties of the
+spectral approximation for sufficiently smooth solutions
+\cite{tadmor_spectral_1989,gottlieb_gibbs_1997}.
+In particular, localized modal filtering strategies could
+be explored to limit the modification of well-resolved
+low-frequency components while controlling oscillations
+associated with sharp spatial transitions.}
+
+\textcolor{red}{Second, further improvements to the Perfectly Matched Layer
+(PML) formulation should be investigated. This implementation employs a prescribed, frequency-independent
+damping profile within the absorbing layer. Although
+classical PML formulations are theoretically perfectly
+matched at the continuous level, their discrete
+implementations may still produce residual reflections,
+particularly for grazing-incidence waves and low-frequency
+components. Promising alternatives include convolutional
+PML (CPML) and complex-frequency-shifted PML (CFS-PML)
+formulations, which introduce additional stretching
+parameters and auxiliary memory variables to improve
+the absorption of outgoing waves. Such approaches have
+been successfully investigated for second-order wave
+equations, pseudo-spectral wave propagation, and
+viscoelastic media
+\cite{li_bou_matar_cpml_2010,martin_komatitsch_cpml_2009,
+gao_cfs_pml_2015}. Future work should assess their
+integration into the proposed PSTD framework, with
+particular attention to broadband absorption performance,
+grazing-incidence reflections, numerical stability, and
+the additional computational cost associated with
+the auxiliary variables. The optimization of the
+absorbing-layer parameters over prescribed frequency
+bands could further improve the accuracy of transient
+simulations.}
+
+\textcolor{red}{Third, extending the treatment of acoustic absorption
+to frequency-dependent boundary conditions represents
+an important direction for applications in architectural
+acoustics. In realistic enclosures, the acoustic response
+of wall materials and absorbers varies significantly
+with frequency and cannot generally be represented
+accurately by a constant absorption coefficient.
+Rather than using a PML to represent physical wall
+absorption, future developments should investigate
+frequency-dependent complex surface impedance models,
+which account for both the amplitude and phase of
+reflected acoustic waves. In time-domain formulations,
+these boundary conditions can be implemented through
+rational approximations and digital impedance filters
+\cite{kowalczyk_vanwalstijn_2008,
+mondet_absorption_impedance_2020}. Integrating such
+models into the PSTD-ARD framework would enable a more
+realistic representation of frequency-dependent material
+properties while retaining the spectral treatment of
+wave propagation within the computational subdomains.}
+
 
 
 %-------------------------------------------------------------------------
