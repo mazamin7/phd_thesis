@@ -1,5 +1,7 @@
 # Response to Reviewer 2 (Dr. Antoine Deleforge)
 
+> **Archived working draft — do not submit.** This Markdown copy is stale and contains obsolete experimental values and claims. The current response is [Response_to_Reviewer_2_Deleforge.tex](Response_to_Reviewer_2_Deleforge.tex).
+
 **PhD Thesis:** *Domain Decomposition and Differentiable Physics for the Viscoelastic Wave Equation*  
 **Candidate:** Gerardo Cicalese  
 **Advisor:** Prof. Ilario Mazzieri  

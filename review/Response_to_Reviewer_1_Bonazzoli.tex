@@ -97,7 +97,7 @@ In revising the manuscript, we have addressed every one of her 19 detailed comme
 \end{revcomment}
 
 \begin{response}
-We thank the reviewer for spotting this clerical typo. The string ``tan'' was an accidental transcription truncation of \emph{``time-domain''} wave-based methods. In the revised manuscript (Section~1.2 and Section~1.4), this has been corrected to explicitly read: \emph{``wave-based time-domain numerical methods (such as FDTD and PSTD)''}.
+We thank the reviewer for spotting this clerical typo. The stray ``tan'' text was removed. The current introduction states: \textcolor{blue}{\emph{``Although time-dependent wave-based methods date back to the late 1960s and 1970s in geophysics and seismology, their application to room acoustics emerged in the 1990s.''}} This wording distinguishes the development of wave-based schemes from their later adoption in room acoustics.
 \end{response}
 
 % ------------------------------------------------------------------------------
@@ -115,11 +115,11 @@ We have revised both passages in the manuscript accordingly, citing the recommen
 \begin{itemize}[leftmargin=*]
     \item \textbf{Section~2.1.2 (Page~20):}
     \begin{quote}
-    \textcolor{red}{\emph{``Therefore, in the absence of damping, the Robin boundary condition coincides with the exact Dirichlet-to-Neumann (DtN) transparent boundary condition for one-dimensional plane waves at normal incidence, yielding perfect absorption across all frequencies. In multiple spatial dimensions, the exact DtN operator is non-local and angle-dependent; hence, the local Robin condition (2.2) represents a zeroth-order local approximation (in the sense of Engquist and Majda \cite{engquist_absorbing_1977,dolean_introduction_2015}) to the true transparent boundary condition.''}}
+    \textcolor{blue}{\emph{``Therefore, in the absence of damping, the Robin boundary condition coincides with the exact Dirichlet-to-Neumann (DtN) transparent boundary condition for one-dimensional plane waves at normal incidence, yielding perfect absorption across all frequencies. In multiple spatial dimensions, the exact DtN operator is non-local and angle-dependent; hence, the local Robin condition (2.2) represents a zeroth-order local approximation (in the sense of Engquist and Majda \cite{engquist_absorbing_1977,dolean_introduction_2015}) to the true transparent boundary condition.''}}
     \end{quote}
     \item \textbf{Section~2.3.1 (Page~27):}
     \begin{quote}
-    \textcolor{red}{\emph{``that is, when the Robin operator coincides with the exact Dirichlet-to-Neumann map (which provides exact transparent absorption for 1D plane waves at normal incidence, but represents a zeroth-order local approximation in higher-dimensional geometries \cite{dolean_introduction_2015}).''}}
+    \textcolor{blue}{\emph{``that is, when the Robin operator coincides with the exact Dirichlet-to-Neumann map (which provides exact transparent absorption for 1D plane waves at normal incidence, but represents a zeroth-order local approximation in higher-dimensional geometries \cite{dolean_introduction_2015}).''}}
     \end{quote}
 \end{itemize}
 \end{response}
@@ -134,7 +134,7 @@ We thank the reviewer for highlighting this forward reference. In Section~2.4.1 
 
 In the revised manuscript, we have added the explicit definition directly at its first occurrence in Configuration~I:
 \begin{quote}
-\textcolor{red}{\emph{``where $\phi_m(x) = \cos(m\pi x / L)$ denotes the spatial eigenfunctions of the Laplacian subject to homogeneous Neumann boundary conditions.''}}
+\textcolor{blue}{\emph{``where $\phi_m(x) = \cos(m\pi x / L)$ denotes the spatial eigenfunctions of the Laplacian subject to homogeneous Neumann boundary conditions.''}}
 \end{quote}
 \end{response}
 
@@ -222,7 +222,7 @@ The text now reads:
 \begin{response}
 We thank the reviewer for raising this methodological point. We state the continuous-frequency min--max objective, but select the parameters numerically over a sampled frequency set:
 \[
-\min_{q, r > 0} \max_{\omega \in [\omega_{\min}, \omega_{\max}]} \rho(\omega; q, r)
+\min_{q, r \ge 0} \max_{\omega \in [\omega_{\min}, \omega_{\max}]} \rho(\omega; q, r)
 \]
 For arbitrary $(\gamma,\nu)$, this continuous-frequency problem has no general closed-form analytical solution.
 
@@ -241,7 +241,7 @@ In Section~3.1.2 (Page~83) and in the expanded Future Work section (Section~4.3.
 \begin{response}
 We thank the reviewer for catching this omission. In Section~3.1.3 (Page~87), we have added an explicit citation and descriptive discussion of Figure~3.3:
 \begin{quote}
-\textcolor{red}{\emph{``Figure~3.3 displays the resulting optimized Robin parameters $q^\ast$ and $r^\ast$, along with the predicted convergence factor $\rho_{\mathrm{opt}}$, as a function of the viscoelastic damping $\nu$. As $\nu$ increases, the optimal parameter $r^\ast$ increases substantially to counteract high-frequency viscoelastic dissipation, while the asymptotic convergence factor remains well bounded.''}}
+    \textcolor{blue}{\emph{``Figure~3.3 displays the parameters $q^\ast$ and $r^\ast$ selected by the sampled-frequency min--max search, together with the corresponding predicted factor $\rho_{\mathrm{opt}}$. In the tested parameter range, the sampled-frequency factors remain below one. Since the search uses a finite frequency set, this result does not establish a bound on the continuous-frequency maximum.''}}
 \end{quote}
 \end{response}
 
@@ -281,7 +281,7 @@ To resolve this issue rigorously:
     \item \textbf{Updated Convergence Figures:} We have re-executed the grid refinement tests and updated all six subfigures of Figure~3.8 to display \textbf{both} a quadratic reference line ($O(\Delta x^2)$, dashed black line) and a linear reference line ($O(\Delta x)$, dotted black line) with clear legends.
     \item \textbf{Physical and Numerical Interpretation:} The revised text in Section~3.2.3 (Page~95) accurately analyzes the observed behavior against both reference slopes:
     \begin{quote}
-    \textcolor{red}{\emph{``As observed in Figure~3.8, which displays both quadratic ($O(\Delta x^2)$) and linear ($O(\Delta x)$) asymptotic reference slopes, the empirical domain decomposition error exhibits distinct convergence regimes depending on the profile smoothness and grid refinement. For the smooth standing-wave configurations (a) and (b), the error decreases quadratically as $O(\Delta x^2)$ on coarser grids, in agreement with the nominal second-order spatial accuracy of the interface stencil, before transitioning toward an $O(\Delta x)$ rate on finer meshes. Conversely, for the non-smooth configurations (c, d, f) and the propagating pulses, the error scales predominantly as $O(\Delta x)$ across the tested resolutions. This demonstrates that while smooth modes initially benefit from the quadratic accuracy of the interface operator, localized finite-difference truncation errors and splitting effects ultimately induce an $O(\Delta x)$ global discrepancy relative to the monolithic spectral solution.''}}
+    \textcolor{red}{\emph{``As observed in Figure~3.8, which displays quadratic ($O(\Delta x^2)$) and linear ($O(\Delta x)$) reference slopes, the empirical domain decomposition error exhibits different trends across the tested profiles and grid refinements. For the smooth standing-wave configurations (a) and (b), the error decreases approximately quadratically on coarser grids and approaches a linear trend on finer meshes. For the non-smooth configurations (c, d, f) and propagating pulses, the error is predominantly consistent with a linear trend over the tested resolutions. These observations are compatible with contributions from interface truncation and splitting error, but the experiments do not isolate their individual effects or establish a general asymptotic rate.''}}
     \end{quote}
 \end{enumerate}
 \end{response}
@@ -308,9 +308,9 @@ We thank the reviewer for these precise observations. We have addressed the boun
 \begin{response}
 We thank the reviewer for requesting complete technical details on the measurement setup. In Section~3.3.1 and Section~3.3.2 (Pages~107--110), we have provided the full mathematical definition of the discrete observation operator $\mathcal{M}$:
 \begin{itemize}[leftmargin=*]
-    \item The sensor network comprises $S$ point-like receivers placed at fixed spatial coordinates $x_s \in \Omega$ aligned with the spatial grid nodes ($x_s = i_s \Delta x$);
-    \item Measurements are sampled at \textbf{every simulation time step} $t_n = n \Delta t$ over the entire simulation duration $[0, T]$ (i.e., no temporal subsampling or decimation is applied);
-    \item The observation vector is therefore $u_{\mathrm{obs}} \in \mathbb{R}^{S \times N_t}$, where each entry corresponds to $u(x_s, t_n)$ corrupted by additive Gaussian noise at a prescribed signal-to-noise ratio (SNR $= 30$\,dB in the baseline benchmarks).
+    \item The benchmark uses 10 fixed interior PSTD cell-centered receivers at $x_i=(i+\tfrac12)\Delta x$, selected once using seed 123. For FDTD, each location is mapped to the nearest endpoint-grid node.
+    \item Measurements are recorded at all 41 time samples $t_n=n\Delta t$, $n=0,\ldots,40$, for $T=2$\,s and $\Delta t=0.05$\,s; there is no temporal subsampling.
+    \item The observation array is in $\mathbb{R}^{10\times41}$. Additive Gaussian noise is normalized to 30\,dB relative SNR; the seed is reset for each profile.
 \end{itemize}
 \end{response}
 
@@ -372,7 +372,7 @@ We agree with the reviewer that claiming an obvious visual difference in the ini
 
 In the revised caption and main text (Section~3.3.2), we have toned down this claim:
 \begin{quote}
-    \textcolor{red}{\emph{``Both solvers visually capture the global profile envelope. Table~3.2 reports lower initial-condition NMSE and full-field relative error for PSTD-DPNN than for FDTD-DPNN in the tested benchmarks; these metrics do not by themselves establish a general parameter-identification advantage.''}}
+    \textcolor{red}{\emph{``Figure~3.20 shows that both DPNN solvers capture the Gaussian envelope; Table~3.2 provides the quantitative comparison.''}}
 \end{quote}
 We emphasize the quantitative comparisons in Table~3.2. The modal propagator has no temporal integration error for retained modes, while spatial truncation and representation errors remain; the reported experiments do not establish zero dispersion for all modes or a general long-horizon advantage.
 \end{response}
@@ -404,7 +404,7 @@ We emphasize the quantitative comparisons in Table~3.2. The modal propagator has
 12 & \S3.1.4 (p.~90) & Explicitly defined the 2D global domain $\Omega = (0, L_x) \times (0, L_y)$ & Addressed \\
 13 & ARD convergence discussion  & Regenerated Figure~3.8 with both $O(\Delta x)$ and $O(\Delta x^2)$ reference lines; updated text to discuss asymptotic transition & Addressed \\
 14 & 3D ARD experiment & Clarified the rigid outer boundary conditions and four damping values; distinguished qualitative damping snapshots from the lossless cross-solver frequency-response comparison & Addressed \\
-15 & \S3.3.1, \S3.3.2 (pp.~107--110) & Specified complete sensor observation operator (grid node locations, un-decimated time steps) & Addressed \\
+15 & \S3.3.1, \S3.3.2 (pp.~107--110) & Specified PSTD cell-center coordinates, nearest-node FDTD mapping, and all 41 time samples & Addressed \\
 16 & \S3.3.1 & Replaced Softplus with a logarithmic positive-parameter mapping & Addressed \\
 17 & \S3.3.1, \S3.3.4 (pp.~108, 124) & Removed $H^1$ regularization from proposed DPNN loss; retained as comparative ablation study & Addressed \\
 18 & \S3.3.2, \S3.3.3 & Reported profile-dependent parameter errors and limited the source--damping interpretation to a hypothesis for future study & Addressed \\

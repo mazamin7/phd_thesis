@@ -124,7 +124,7 @@ Sec. 1.3 and 1.4: Highly specialized terms are repeatedly used without defining 
 \end{revcomment}
 
 \begin{response}
-In Sections~1.3 and~1.4, we added introductory explanations for all specialized numerical terminology upon first mention, including Runge-Kutta multistage integrators, Courant-Friedrichs-Lewy (CFL) stability bounds, Butcher tableaus, Krylov subspace methods, and spectral projection operators, citing standard treatises \citep{trefethen_spectral_2000,canuto_spectral_2006,hairer_solving_1993,butcher_numerical_2016}.
+In Sections~1.3 and~1.4, we added explanations at first use for the numerical concepts needed to follow the discussion, including Runge--Kutta methods, the CFL condition, preconditioning, Krylov subspaces, and transmission conditions. The revision does not claim to define every specialized term in the field.
 \end{response}
 
 \begin{revcomment}{Comment R2C2: Numerical Results on Damped Benchmarks (Pages 66--67)}
@@ -160,7 +160,7 @@ Sec. 3.2.3: ``the second term introduces a strict parabolic stability limit ($\D
 \end{revcomment}
 
 \begin{response}
-We tested the full spectra of the implemented $C_{\mathrm{res}}$ matrices for orders $2,4,6,8$ and $N_x=20,40,80,160,320,640,800$. The eigenvalues were real to numerical precision, but non-positive only for order 2. For orders 4, 6, and 8, small positive eigenvalues were present (largest values approximately $1.04\times10^{-2}$, $8.30\times10^{-3}$, and $2.91\times10^{-3}$). We therefore withdrew the general claim that the isolated viscous Kick satisfies the standard parabolic stability bound: that argument requires a non-positive spectrum, which the implemented higher-order residual matrices do not have. The revised discussion distinguishes this isolated Kick observation from the numerical stability study of the full split-step amplification matrix. Section~4.3.2 retains the exact exponential Kick as future work, without claiming that it has already removed the restriction in the implemented method.
+We withdrew the general claim that the implemented method has the parabolic bound $\Delta t\le\Delta x^2/\nu$. The revised text reports the tested residual spectra: they were real to numerical precision but non-positive only for order 2; orders 4, 6, and 8 had small positive eigenvalues. We also added a proposition in the ARD stability analysis, proving a sufficient power-boundedness condition for the full unforced, undamped order-2 KDK update on the specified one-dimensional, cell-centered grid with two equal Neumann subdomains when $\mathrm{CFL}\le1/2$, apart from the physical mean drift. That conservative result does not cover the damped or higher-order updates. The reported full-matrix thresholds remain numerical estimates and do not prove a general stability limit.
 \end{response}
 
 \begin{revcomment}{Comment R2C6: Initialization of the Iterative ARD Algorithm}
@@ -211,10 +211,10 @@ The loss plots (Fig. 3.14, 3.17, 3.20...) feature abrupt changes, suggesting tha
 \end{revcomment}
 
 \begin{response}
-In Section~3.3.1, we added the Cosine Annealing schedule equation and described the separate schedules used for network weights and physical parameters:
+After comparing the text with the checked-in benchmark script, we removed the unsupported cosine-annealing description. The script uses two Adam optimizers with fixed learning rates, $10^{-3}$ for network weights and $5\times10^{-2}$ for the logarithmic physical parameters; it has no scheduler. It trains for 350 epochs.
 \begin{itemize}
-    \item Network weights $\Theta$ use a learning-rate range of $\eta \in [10^{-5},10^{-3}]$.
-    \item The logarithmic parameters $(\xi_\gamma,\xi_\nu)$ start at $\eta=5\cdot10^{-2}$ and are annealed to $10^{-3}$. The thesis reports these settings; it does not establish that the schedule escapes poor minima or guarantees convergence to ground truth.
+    \item Network weights $\Theta$ use the fixed learning rate $\eta=10^{-3}$.
+    \item The logarithmic parameters $(\xi_\gamma,\xi_\nu)$ use the fixed learning rate $\eta=5\cdot10^{-2}$.
 \end{itemize}
 \end{response}
 
@@ -225,13 +225,13 @@ Sec 3.3.1: As in chapter 3, the comments on the experiments are extremely limite
 \begin{response}
 We thank the Reviewer for this observation. In the revised thesis, we expanded Section~3.3 with quantitative benchmarks, a high-capacity baseline comparison, disentangled inversions, and regularization ablations. These experiments broaden the evidence for the selected one-dimensional configurations, while the limitations of this scope remain explicitly acknowledged:
 \begin{enumerate}
-    \item \textbf{Quantitative benchmark comparison and PINN baseline (Section~3.3.2, Tables~3.2 and~3.3):} We added a numerical comparison reporting four error and cost metrics for the three tested initial-condition benchmarks (multimodal standing waves, smooth Gaussian pulses, and non-smooth triangular pulses), comparing PSTD-DPNN and FDTD-DPNN with one high-capacity Physics-Informed Neural Network (PINN) baseline \citep{raissi_pinn_2019,haghighat_sciann_2021}:
+    \item \textbf{Quantitative benchmark comparison and PINN baseline (Section~3.3.2, Tables~3.2 and~3.3):} We added a numerical comparison reporting five quantities for the three tested initial-condition benchmarks (multimodal standing waves, smooth Gaussian pulses, and non-smooth triangular pulses), comparing PSTD-DPNN and FDTD-DPNN with one PINN baseline \citep{raissi_pinn_2019,haghighat_sciann_2021}:
     \begin{itemize}
         \item Normalized Mean Squared Error on initial pressure: $\mathrm{NMSE}(p_0) = \|p_0^{\mathrm{pred}} - p_0^*\|_2^2 / \|p_0^*\|_2^2$.
         \item Full spatiotemporal wavefield relative $L_2$ error: $\|u_{\mathrm{pred}} - u^*\|_2 / \|u^*\|_2$ (\%).
         \item Physical attenuation parameter estimation: telegrapher damping $\hat{\gamma}$ and viscoelastic damping $\hat{\nu}$ alongside relative errors.
-        \item Computational wall-clock training time per epoch (ms/epoch) evaluated on an Intel Xeon CPU workstation with an NVIDIA RTX GPU using PyTorch.
-        \item \emph{Results in these configurations}: On the tested triangular pulse, PSTD-DPNN attains $\mathrm{NMSE} = 4.49 \times 10^{-3}$ and field relative error $3.09\%$, while FDTD-DPNN and the PINN baseline yield $14.67\%$ and $28.20\%$ field error, respectively. The PINN baseline also attains $2.80\%$ field error on the tested smooth standing-wave case. PSTD-DPNN requires 12.1--13.8\,ms/epoch compared with 91.3--95.1\,ms/epoch for this PINN setup (2000 interior points). These measurements compare the selected implementations and settings; they do not establish superiority over PINNs or black-box inverse methods in general.
+        \item Wall-clock training time per epoch (ms/epoch). The checked-in script explicitly runs on CPU; it does not use the available GPU, and does not record the host CPU model.
+        \item \emph{Results in these configurations}: On the tested triangular pulse, PSTD-DPNN attains $\mathrm{NMSE}=4.49\times10^{-3}$ and field relative error $3.09\%$, while FDTD-DPNN and the PINN baseline yield $14.67\%$ and $28.20\%$ field error. The PINN baseline also attains $2.80\%$ field error on the tested standing-wave case. PSTD-DPNN requires 12.1--13.8\,ms/epoch compared with 91.3--95.1\,ms/epoch for this PINN setup, which uses 300 interior collocation points per epoch. These measurements compare the selected implementations and settings; they do not establish superiority over PINNs or black-box inverse methods in general.
     \end{itemize}
     \item \textbf{Disentangled Inversion Experiments (Section~3.3.3, Table~3.4):} To compare parameter-only and joint inversion in one Gaussian benchmark, we report three settings:
     \begin{itemize}
@@ -295,11 +295,11 @@ P108: ``(...), significantly outperforming purely data-driven black-box inversio
 \end{revcomment}
 
 \begin{response}
-We retracted the unbacked phrase ``significantly outperforming purely data-driven black-box inversions''. Table~3.2 now reports quantitative results for the tested Differentiable Physics solvers and one high-capacity Physics-Informed Neural Network (PINN) baseline (4 layers, 128 units, $\sim 50{,}000$ parameters) \citep{raissi_pinn_2019,haghighat_sciann_2021}. In the tested non-smooth case, PSTD-DPNN has lower reconstruction error than this PINN setup, and the measured epoch times are lower under the reported hardware and settings:
+We retracted the unbacked phrase ``significantly outperforming purely data-driven black-box inversions''. Table~3.2 reports quantitative results for the tested differentiable-physics solvers and one PINN baseline (4 hidden layers, 128 units, $50{,}049$ network parameters plus two damping variables) \citep{raissi_pinn_2019,haghighat_sciann_2021}. In the tested non-smooth case, PSTD-DPNN has lower reconstruction error than this PINN setup, and the measured epoch times are lower in the CPU-only script configuration:
 \begin{itemize}
     \item On the tested triangular pulse, the reported field errors are $3.09\%$ for PSTD-DPNN and $28.20\%$ for this PINN baseline.
-    \item Under the reported implementation and hardware, PSTD-DPNN's measured epoch time is 6.6 to 7.7 times lower than this PINN setup. This comparison is configuration-dependent and does not imply the same speed ratio for other architectures or implementations.
-    \item In this setup, DPNN uses approximately 1,155 trainable parameters compared with approximately 50,000 for the PINN, reflecting their different parameterizations.
+    \item Under the reported implementation and CPU-only configuration, PSTD-DPNN's measured epoch time is 6.6 to 7.7 times lower than this PINN setup. This comparison is configuration-dependent and does not imply the same speed ratio for other architectures or implementations.
+    \item The DPNN SIREN has 2,209 weights and biases; including its two damping variables gives 2,211 trainable quantities. The PINN has 50,049 network weights and biases plus two damping variables. This counts the specific networks in the checked-in benchmark script.
 \end{itemize}
 \end{response}
 
@@ -328,7 +328,7 @@ The author writes that ``The first time-dependent wave-based methods appeared ar
 \end{revcomment}
 
 \begin{response}
-We clarified Section~1.1: geometrical acoustics ray-tracing methods emerged in the late 1960s and early 1970s \citep{krokstad_calculating_1968}, whereas time-dependent wave-based numerical schemes (such as Yee's FDTD) were introduced in computational electromagnetics in 1966 and were later adopted in architectural acoustics in the late 1990s \citep{botteldooren_finitedifference_1995}.
+We clarified Section~1.1 to distinguish the fields and timelines: the current text says that time-dependent wave-based methods date to the late 1960s and 1970s in geophysics and seismology \citep{alterman_propagation_1968,ottaviani_elastic-wave_1971,alford_accuracy_1974}, while their application to room acoustics emerged in the 1990s \citep{botteldooren_finitedifference_1995}. It no longer attributes the earlier developments to room acoustics.
 \end{response}
 
 \begin{revcomment}{Comment R2m2: Structural Placement of DPNN Paragraphs (P12)}
@@ -360,7 +360,7 @@ The usefulness of stating Proposition 2.4 in full detail is not clear, as this s
 \end{revcomment}
 
 \begin{response}
-We added a concise remark in Section~2.2 explaining that Proposition~2.4 establishes the exact modal transition matrix under combined viscoelastic and telegrapher dissipation, providing the necessary mathematical foundation for the modal PSTD stability proofs in Proposition~2.5.
+We clarified the scope of Proposition~2.4 in the text immediately following it. The identity $T_m=A_m^{-1}(S_m-I)$ is included as an implementation formula for the piecewise-constant modal forcing update on non-constant modes; the singular constant mode is evaluated directly in Appendix~A. We do not present this standard identity as a new result or as a stability theorem.
 \end{response}
 
 \begin{revcomment}{Comment R2m6: Clarification of ``Advanced in the Modal Domain'' (P54)}
