@@ -1,4 +1,4 @@
-\documentclass[11pt,a4paper]{article}
+﻿\documentclass[11pt,a4paper]{article}
 
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -62,7 +62,7 @@ We would like to express our sincere gratitude for your thorough, encouraging, a
 
 Your detailed comments and precise mathematical observations have been invaluable in refining the manuscript. They have allowed us to eliminate residual ambiguities, correct formal mathematical definitions, refine transmission operator descriptions, provide complete algorithmic details, and ensure absolute consistency between our analytical statements and numerical figures.
 
-In accordance with the revision guidelines, \textbf{all textual modifications, newly derived equations, and expanded discussions in the revised dissertation are highlighted in \textcolor{blue}{blue}} (\texttt{\textbackslash textcolor\{blue\}\{...\}}).
+In the revised dissertation, modifications specifically addressing your comments are highlighted in \textcolor{blue}{blue}; modifications addressing comments shared across the reviewer reports are highlighted in \textcolor{red}{red}. This distinction is used throughout the manuscript (\texttt{\textbackslash textcolor\{blue\}\{...\}} and \texttt{\textbackslash textcolor\{red\}\{...\}}).
 
 Below, we provide a point-by-point response to your General Assessment and all 19 detailed comments and suggestions.
 
@@ -220,16 +220,16 @@ The text now reads:
 \end{revcomment}
 
 \begin{response}
-We thank the reviewer for raising this important methodological point. For the general viscoelastic damped wave equation, the convergence factor $\rho(\omega; q, r)$ depends nonlinearly on both the frequency $\omega$ and the physical damping parameters $\gamma$ and $\nu$ through the complex dispersion relation. Consequently, the continuous equioscillation min-max problem
+We thank the reviewer for raising this methodological point. We state the continuous-frequency min--max objective, but select the parameters numerically over a sampled frequency set:
 \[
 \min_{q, r > 0} \max_{\omega \in [\omega_{\min}, \omega_{\max}]} \rho(\omega; q, r)
 \]
-does not admit a general closed-form analytical solution for arbitrary $(\gamma, \nu)$.
+For arbitrary $(\gamma,\nu)$, this continuous-frequency problem has no general closed-form analytical solution.
 
 In Section~3.1.2 (Page~83) and in the expanded Future Work section (Section~4.3.3), we have explicitly clarified:
 \begin{enumerate}[leftmargin=*]
-    \item The min-max problem is solved \textbf{numerically} using an equioscillation-based optimization algorithm (combining a dense frequency sweep with the Nelder--Mead simplex method) to identify the equioscillating local extrema of $\rho(\omega; q, r)$ across the acoustic bandwidth $[\omega_{\min}, \omega_{\max}]$;
-    \item While explicit asymptotic formulas have been established in the literature for undamped wave equations or the classical telegrapher equation \citep{gander_absorbing_2004,al-khaleel_optimized_2024}, closed-form expressions for the combined telegrapher--viscoelastic wave equation remain an open mathematical challenge, which we have formally identified as a valuable direction for future research in Section~4.3.3.
+    \item The min--max parameters are selected numerically using the equioscillation-based procedure over the frequency samples described in Section~3.1.2. The resulting factors apply to those samples; the computation does not rule out a larger value between samples.
+    \item Closed-form expressions for the combined telegrapher--viscoelastic case are left for future work, as now stated in Section~4.3.3.
 \end{enumerate}
 \end{response}
 
@@ -278,10 +278,10 @@ We are very grateful to the reviewer for pointing out this apparent contradictio
 
 To resolve this issue rigorously:
 \begin{enumerate}[leftmargin=*]
-    \item \textbf{Updated Convergence Figures:} We have re-executed the grid refinement tests and updated all six subfigures of Figure~3.9 (Page~96) to display \textbf{both} a quadratic reference line ($O(\Delta x^2)$, dashed black line) and a linear reference line ($O(\Delta x)$, dotted black line) with clear legends.
+    \item \textbf{Updated Convergence Figures:} We have re-executed the grid refinement tests and updated all six subfigures of Figure~3.8 to display \textbf{both} a quadratic reference line ($O(\Delta x^2)$, dashed black line) and a linear reference line ($O(\Delta x)$, dotted black line) with clear legends.
     \item \textbf{Physical and Numerical Interpretation:} The revised text in Section~3.2.3 (Page~95) accurately analyzes the observed behavior against both reference slopes:
     \begin{quote}
-    \textcolor{red}{\emph{``As observed in Figure~3.9, which displays both quadratic ($O(\Delta x^2)$) and linear ($O(\Delta x)$) asymptotic reference slopes, the empirical domain decomposition error exhibits distinct convergence regimes depending on the profile smoothness and grid refinement. For the smooth standing-wave configurations (a) and (b), the error decreases quadratically as $O(\Delta x^2)$ on coarser grids, in agreement with the nominal second-order spatial accuracy of the interface stencil, before transitioning toward an $O(\Delta x)$ rate on finer meshes. Conversely, for the non-smooth configurations (c, d, f) and the propagating pulses, the error scales predominantly as $O(\Delta x)$ across the tested resolutions. This demonstrates that while smooth modes initially benefit from the quadratic accuracy of the interface operator, localized finite-difference truncation errors and splitting effects ultimately induce an $O(\Delta x)$ global discrepancy relative to the monolithic spectral solution.''}}
+    \textcolor{red}{\emph{``As observed in Figure~3.8, which displays both quadratic ($O(\Delta x^2)$) and linear ($O(\Delta x)$) asymptotic reference slopes, the empirical domain decomposition error exhibits distinct convergence regimes depending on the profile smoothness and grid refinement. For the smooth standing-wave configurations (a) and (b), the error decreases quadratically as $O(\Delta x^2)$ on coarser grids, in agreement with the nominal second-order spatial accuracy of the interface stencil, before transitioning toward an $O(\Delta x)$ rate on finer meshes. Conversely, for the non-smooth configurations (c, d, f) and the propagating pulses, the error scales predominantly as $O(\Delta x)$ across the tested resolutions. This demonstrates that while smooth modes initially benefit from the quadratic accuracy of the interface operator, localized finite-difference truncation errors and splitting effects ultimately induce an $O(\Delta x)$ global discrepancy relative to the monolithic spectral solution.''}}
     \end{quote}
 \end{enumerate}
 \end{response}
@@ -292,11 +292,11 @@ To resolve this issue rigorously:
 \end{revcomment}
 
 \begin{response}
-We thank the reviewer for these precise observations. We have addressed all three aspects in Section~3.2.4 (Pages~101--105):
+We thank the reviewer for these precise observations. We have addressed the boundary description and damping comparison in the Chapter~3 3D ARD experiment discussion:
 \begin{enumerate}[leftmargin=*]
     \item \textbf{Boundary Conditions:} We explicitly clarified that the 3D room simulation is enclosed by rigid bounding walls with homogeneous Neumann boundary conditions on all six outer faces ($x, y, z$), which allows the exact DCT modal representation to be employed within each partitioned rectangular subdomain.
-    \item \textbf{Parameter Count:} We corrected the phrasing: the simulation investigates \emph{three distinct damping settings} comprising one undamped baseline ($\nu = 0$) and two dissipative viscoelastic regimes ($\nu = 2 \times 10^{-6}$ and $\nu = 10^{-5}$).
-    \item \textbf{Visual vs Spectral Attenuation in Figure~3.12:} We toned down the visual claims regarding spatial slice plots. Because realistic physical air viscosity at audio frequencies is weak ($\nu \sim 10^{-6}$--$10^{-5}$), the spatial wavefronts in 2D cross-sections appear visually very similar at early time steps. To clearly demonstrate the physical damping effect, we added a quantitative frequency-domain spectral analysis (Figure~3.13, Page~104) showing that high-frequency modes ($>1$\,kHz) undergo strong exponential attenuation that scales monotonically with $\nu$, exactly as predicted by the viscoelastic dispersion relation.
+    \item \textbf{Damping settings:} The revised snapshots compare four values: an undamped case ($\nu=0$) and three positive values ($\nu\approx2.4\times10^{-6}$, $1.2\times10^{-5}$, and $5.9\times10^{-5}$\,m$^2$/s).
+    \item \textbf{Scope of the comparison:} The snapshots provide a qualitative comparison of the displayed fields. The receiver frequency-response comparison is for the lossless case and focuses on cross-solver consistency below $200$\,Hz; it is not a quantitative measurement of attenuation as a function of $\nu$. The revised text therefore avoids claiming a spectral verification of the damping sweep.
 \end{enumerate}
 \end{response}
 
@@ -320,11 +320,11 @@ We thank the reviewer for requesting complete technical details on the measureme
 \end{revcomment}
 
 \begin{response}
-In the revised methodology (Section~3.3.1, Page~107), we have parameterized the physical damping parameters via a logarithmic mapping:
+In the revised methodology (Section~3.3.1), we replaced the positive-activation mapping with a logarithmic parameterization:
 \[
 \gamma = \gamma_{\mathrm{ref}} e^{\xi_\gamma}, \qquad \nu = \nu_{\mathrm{ref}} e^{\xi_\nu},
 \]
-which guarantees strict positivity without upper-bound saturation across orders of magnitude. We have also cited the foundational literature on smooth positive activation functions, including \citet{dugas_incorporating_2001} for the Softplus mapping.
+This mapping enforces positive parameter values. The revised formulation does not use a Softplus mapping, so the Softplus citation is not part of the parameterization used in the thesis.
 \end{response}
 
 \vspace{2mm}
@@ -339,7 +339,7 @@ In the revised dissertation (Section~3.3.1, Page~108), \textbf{we have eliminate
 \[
 \mathcal{L}_{\mathrm{data}}(\Theta, \xi_\gamma, \xi_\nu) = \frac{1}{2 S N_t} \sum_{s=1}^S \sum_{n=0}^{N_t} \left| u(x_s, t_n; \Theta, \xi_\gamma, \xi_\nu) - u_{\mathrm{obs}}(x_s, t_n) \right|^2.
 \]
-The $H^1$ and $L^1$ penalties are retained strictly within a dedicated ablation study (Section~3.3.4, Table~3.5, Page~124), which documents why the data-only formulation yields superior parameter identification and field reconstruction.
+The $H^1$ and $L^1$ penalties are retained within the ablation study (Section~3.3.4, Table~3.5). Among the tested configurations, data-only fitting gives the better combined field-and-parameter trade-off; $L^1$ lowers the Gaussian initial-condition NMSE but worsens its field error, and the tested $H^1$ configurations perform poorly.
 \end{response}
 
 \vspace{2mm}
@@ -348,16 +348,16 @@ The $H^1$ and $L^1$ penalties are retained strictly within a dedicated ablation 
 \end{revcomment}
 
 \begin{response}
-We thank the reviewer for this critical and insightful observation. The reviewer is entirely correct: while the viscoelastic parameter $\nu$ converges rapidly and accurately to its ground truth across all benchmarks, the telegrapher damping $\gamma$ exhibits significant estimation errors (frequently remaining close to its initial guess).
+We thank the reviewer for this critical observation. The revised results show that parameter recovery depends on the initial profile: PSTD-DPNN has a large $\gamma$ error in the multimodal standing-wave case, while the reported Gaussian and triangular runs recover both parameters more accurately. The estimates therefore do not support a blanket statement that $\gamma$ is poorly identified or that $\nu$ is consistently recovered with high precision across all benchmarks.
 
 In the revised dissertation, we have completely overhauled the discussion in Section~3.3.2, Section~3.3.3, and the Conclusion (Section~4.1) to state this result honestly and rigorously:
 \begin{enumerate}[leftmargin=*]
-    \item We explicitly state that \textbf{$\gamma$ is not well identified} under the short observation time window ($T = 2$\,s), whereas $\nu$ is recovered with high precision;
-    \item We provide numerical and physical evidence in Section~3.3.3 (Disentangled Inversion Experiments, Table~3.4) explaining the role of source-damping coupling:
+    \item We report the profile-dependent parameter errors and limit the conclusion to the tested profiles, sensors, noise level, and training runs;
+    \item We provide a Gaussian parameter-only run and a Gaussian joint run in Section~3.3.3 (Table~3.4), but these results do not establish a general source-damping coupling mechanism:
     \begin{itemize}
-        \item When the unknown initial condition is decoupled from the damping parameters and fixed to the true spatial profile (Experiment~B), the logarithmic formulation recovers the telegrapher parameter $\gamma$ within $10.8\%$ ($\hat{\gamma} = 0.1108\,\mathrm{s}^{-1}$) and the viscoelastic parameter $\nu$ within $3.0\%$ ($\hat{\nu} = 4.85 \times 10^{-3}\,\mathrm{m}^2/\mathrm{s}$). This confirms that both physical damping parameters can be accurately recovered when decoupled from source variations.
-        \item In joint simultaneous inversion (Experiment~C and the primary benchmarks), however, a compensation mechanism arises between the unknown spatial source amplitude and temporal dissipation. Because telegrapher damping $\gamma$ produces a spatially uniform temporal decay over the short observation window, its cumulative effect is easily absorbed by slight amplitude scaling in the neural network's initial-condition representation.
-        \item In contrast, viscoelastic damping $\nu$ scales quadratically with the spatial wavenumber ($\nu k_m^2$), inducing strong, wavenumber-dependent differential attenuation of high-frequency spatial modes across time that cannot be mimicked by a simple spatial scale adjustment, allowing $\nu$ to be identified with high precision ($2.0\%$--$3.6\%$ error) even in joint inversion.
+        \item In the parameter-only Gaussian run, the reported relative errors are $10.8\%$ for $\gamma$ and $3.0\%$ for $\nu$; in the joint Gaussian run they are $3.5\%$ and $2.0\%$, respectively. These single-run values do not show joint estimation to be consistently harder.
+        \item The results motivate further investigation of source--parameter confounding, but do not establish that it caused the profile-dependent errors observed here.
+        \item The viscoelastic term has wavenumber-dependent modal effects in the model, but the experiments do not establish that this is the cause of the observed parameter-recovery differences.
     \end{itemize}
 \end{enumerate}
 \end{response}
@@ -368,13 +368,13 @@ In the revised dissertation, we have completely overhauled the discussion in Sec
 \end{revcomment}
 
 \begin{response}
-We agree with the reviewer that claiming an obvious visual difference in Figure~3.19 was an overstatement. At the plotted resolution, both FDTD and PSTD capture the general envelope of the initial displacement quite well.
+We agree with the reviewer that claiming an obvious visual difference in the initial-profile comparison was an overstatement. The reviewer refers to Figure~3.19 in the previous draft; the corresponding Gaussian initial-condition comparison is Figure~3.20 in the revised thesis.
 
-In the revised caption and main text (Section~3.3.2, Pages~116--118), we have toned down this claim:
+In the revised caption and main text (Section~3.3.2), we have toned down this claim:
 \begin{quote}
-\textcolor{red}{\emph{``While both solvers visually capture the global profile envelope, quantitative evaluation in Table~3.2 confirms that PSTD-DPNN achieves lower initial-condition NMSE and superior parameter identification due to its exact spectral dispersion properties.''}}
+    \textcolor{red}{\emph{``Both solvers visually capture the global profile envelope. Table~3.2 reports lower initial-condition NMSE and full-field relative error for PSTD-DPNN than for FDTD-DPNN in the tested benchmarks; these metrics do not by themselves establish a general parameter-identification advantage.''}}
 \end{quote}
-We emphasize that the principal advantage of PSTD-DPNN lies in the quantitative metrics reported in Table~3.2 and in its elimination of numerical dispersion errors over long temporal horizons, rather than in dramatic visual discrepancies on coarse 1D plots.
+We emphasize the quantitative comparisons in Table~3.2. The modal propagator has no temporal integration error for retained modes, while spatial truncation and representation errors remain; the reported experiments do not establish zero dispersion for all modes or a general long-horizon advantage.
 \end{response}
 
 \newpage
@@ -398,17 +398,17 @@ We emphasize that the principal advantage of PSTD-DPNN lies in the quantitative 
 6 & \S2.7.2 (p.~58) & Provided explicit matrix formula for orthonormal DCT-II matrix $\Phi$ & Addressed \\
 7 & \S2.7.2 (p.~60) & Clarified permutation matrix $P$ reordering interleaved $[U_m, V_m]$ into segregated block vector & Addressed \\
 8 & \S2.7.4 (p.~64) & Added standard citations for fast DCT algorithms \citep{makhoul_fast_1980,rao_discrete_1990,frigo_design_2005} & Addressed \\
-9 & \S3.1.2, \S4.2.2 (pp.~83, 147) & Explained numerical Remez/Nelder--Mead optimization for OSWR min-max problem and absence of general closed-form solutions & Addressed \\
+9 & \S3.1.2, \S4.3.3  & Explained numerical Remez/Nelder--Mead optimization for OSWR min-max problem and absence of general closed-form solutions & Addressed \\
 10 & \S3.1.3 (p.~87) & Added explicit in-text citation and discussion of Figure~3.3 & Addressed \\
 11 & \S3.1.3 (pp.~88--89) & Removed unannotated scatter plot Figure~3.5; retained parametric curves with colorbars (Figure~3.6) & Addressed \\
 12 & \S3.1.4 (p.~90) & Explicitly defined the 2D global domain $\Omega = (0, L_x) \times (0, L_y)$ & Addressed \\
-13 & \S3.2.3 (pp.~95--97) & Regenerated Figure~3.9 with both $O(\Delta x)$ and $O(\Delta x^2)$ reference lines; updated text to discuss asymptotic transition & Addressed \\
-14 & \S3.2.4 (pp.~101--105) & Clarified 3D room boundary conditions, corrected damping count, and added spectral verification of viscoelastic attenuation & Addressed \\
+13 & ARD convergence discussion  & Regenerated Figure~3.8 with both $O(\Delta x)$ and $O(\Delta x^2)$ reference lines; updated text to discuss asymptotic transition & Addressed \\
+14 & 3D ARD experiment & Clarified the rigid outer boundary conditions and four damping values; distinguished qualitative damping snapshots from the lossless cross-solver frequency-response comparison & Addressed \\
 15 & \S3.3.1, \S3.3.2 (pp.~107--110) & Specified complete sensor observation operator (grid node locations, un-decimated time steps) & Addressed \\
-16 & \S3.3.1 (p.~107) & Adopted logarithmic mapping for parameters; cited literature on positive activation mappings & Addressed \\
+16 & \S3.3.1 & Replaced Softplus with a logarithmic positive-parameter mapping & Addressed \\
 17 & \S3.3.1, \S3.3.4 (pp.~108, 124) & Removed $H^1$ regularization from proposed DPNN loss; retained as comparative ablation study & Addressed \\
-18 & \S3.3.2, \S3.3.3 (pp.~110--118) & Reported parameter estimation limits honestly: $\nu$ accurately recovered, $\gamma$ exhibiting estimation sensitivity; explained via disentangled experiments and source-damping coupling & Addressed \\
-19 & \S3.3.2 (pp.~116--118) & Toned down visual superiority claims in Figure~3.19; referenced quantitative NMSE metrics & Addressed \\
+18 & \S3.3.2, \S3.3.3 & Reported profile-dependent parameter errors and limited the source--damping interpretation to a hypothesis for future study & Addressed \\
+19 & \S3.3.2  & Toned down visual superiority claims in Figure~3.20; referenced quantitative NMSE metrics & Addressed \\
 \bottomrule
 \end{tabular}
 \end{table}
