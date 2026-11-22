@@ -3779,7 +3779,7 @@ This benchmark evaluates propagating wavepacket transport for a non-smooth trian
 To solve the damped wave equation on large computational domains, we employ an overlapping Schwarz Waveform Relaxation (SWR) method. \textcolor{red}{The formulation studied here uses Robin-like transmission conditions parameterized by $q$ and $r$; the OSWR parameters are selected numerically to reduce the convergence factor over a sampled frequency set.} As the PSTD method only supports homogeneous Neumann conditions, we employ SWR only for FDTD.
 
 \subsection{SWR Algorithm}
-\textcolor{red}{As is standard in domain decomposition theory \citep{quarteroni_domain_1999,gander_optimized_2007,dolean_introduction_2015}, our analysis considers a canonical two-subdomain configuration to derive its frequency-dependent convergence factor and select transmission parameters. Extending this analysis to other multi-subdomain layouts requires accounting for their interface coupling. The overlap $\delta=b-a>0$ affects information transfer between subdomains and can improve convergence; the size of that effect depends on the equation and configuration.}
+\textcolor{red}{As is standard in domain decomposition theory \citep{quarteroni_domain_1999,gander_optimized_2007,dolean_introduction_2015}, our analysis considers a canonical two-subdomain configuration to derive its frequency-dependent convergence factor and select transmission parameters. This isolates the effect of the transmission operator without introducing additional interfaces or partition-graph choices; it is not a comparison of the optimal number of subdomains. Extending the analysis to three or more subdomains requires accounting for their interface coupling. Non-overlapping formulations require their own transmission-condition analysis and are not compared here. The overlap $\delta=b-a>0$ affects information transfer between subdomains and can improve convergence; the size of that effect depends on the equation and configuration.}
 Let $\Omega=(0,L)$ be decomposed into the two overlapping subdomains $\Omega_1=(0,b)$ and $\Omega_2=(a,L)$, with
 \[
 0<a<b<L,
@@ -4024,7 +4024,7 @@ Hence, the convergence factor is
 \begin{equation*}
 \rho(s)
 =
-|G(s)|
+|G(s)|^2
 =
 \left|
 \frac{
@@ -4036,7 +4036,7 @@ ik(s)\sinh\bigl(ik(s)b\bigr)
 +
 \Lambda(s)\cosh\bigl(ik(s)b\bigr)
 }
-\right|.
+\right|^2.
 \end{equation*}
 
 To obtain optimized transmission conditions, we restrict the Laplace
@@ -4057,7 +4057,7 @@ ik(i\omega)\sinh\bigl(ik(i\omega)b\bigr)
 +
 \Lambda(i\omega)\cosh\bigl(ik(i\omega)b\bigr)
 }
-\right|,
+\right|^2,
 \qquad
 \Lambda(i\omega)=iq\omega+r.
 \end{equation*}
@@ -4071,7 +4071,7 @@ For the numerical min--max design, we choose the frequency band
 \omega_{\max}=\frac{\pi}{\Delta t}.
 \]
 The upper endpoint is the temporal Nyquist frequency. The lower cutoff $\pi/T$ is a modelling convention for the finite observation window, not a strict lower bound on the frequencies present in a general transient signal. The objective below therefore optimizes the convergence factor over this chosen band.
-\textcolor{blue}{While $\omega_{\max} = \pi/\Delta t$ corresponds to the temporal Nyquist frequency, the lower bound $\omega_{\min} = \pi/T$ represents a modelling choice reflecting the lowest transient frequency component that can complete a half-cycle over the time window $[0,T]$ (in contrast to the fundamental periodic angular frequency $2\pi/T$). In our numerical implementation, this continuous min-max problem is approximated by sampling the frequency interval over a discrete grid, which provides a practical numerical approximation to the continuous equioscillation problem. Optimizing the transmission conditions therefore amounts to choosing $(q,r)$ so as to minimize the largest value that $\rho$ attains over this finite band, i.e.\ solving the min-max problem}
+\textcolor{blue}{While $\omega_{\max} = \pi/\Delta t$ corresponds to the temporal Nyquist frequency, the lower bound $\omega_{\min} = \pi/T$ represents a modelling choice reflecting the lowest transient frequency component that can complete a half-cycle over the time window $[0,T]$ (in contrast to the fundamental periodic angular frequency $2\pi/T$). Here $\rho=|G|^2$ is the contraction factor over the two-iteration recurrence $A_u^{(k+2)}=G^2A_u^{(k)}$. In the MATLAB implementation, we sample the band at 4,000 logarithmically spaced frequencies and minimize the sampled maximum using the constrained \texttt{patternsearch} optimizer over $q,r\ge0$, initialized at $(q_0,r_0)=(1/c,\gamma/(2c))$. Thus, the reported factors are numerical minima over the sampled objective; they do not certify the continuous-frequency maximum, and the implementation is not a dedicated equioscillation algorithm.}
 
 \begin{equation}
 \operatorname*{min}_{q,r\ge0}
@@ -5426,7 +5426,7 @@ Finally, we introduced a Differentiable Physics Neural Network (DPNN) architectu
 
 \subsection{\textcolor{red}{Physical Interpretation and Analytical Min-Max Solutions for OSWR}}
 
-\textcolor{red}{In the Optimized Schwarz Waveform Relaxation (OSWR) method presented in Chapter~\ref{ch:acceleration} (Section~\ref{sec:oswr}), the optimized Robin transmission parameters ($q$ and $r$) were computed numerically using an equioscillation-based min-max algorithm over discretized frequency sets. The optimization of transmission conditions for waveform relaxation methods has been extensively investigated for evolution equations, including the wave equation and advection--diffusion problems \cite{gander_optimal_2003,gander_absorbing_2004,gander_optimized_2007,martin_optimized_2005}. More recently, explicit asymptotic expressions for optimized transmission parameters have been derived for the telegrapher equation \cite{al-khaleel_optimized_2024}, while related min-max optimization strategies have been investigated for wave--heat coupling problems \cite{chouly_optimized_2025}.}
+\textcolor{red}{In the Optimized Schwarz Waveform Relaxation (OSWR) method presented in Chapter~\ref{ch:acceleration} (Section~\ref{sec:oswr}), the optimized Robin transmission parameters ($q$ and $r$) were computed with MATLAB's constrained \texttt{patternsearch} optimizer over 4,000 logarithmically spaced frequency samples, subject to $q,r\ge0$. The minimized quantity is the squared modulus $|G|^2$, the contraction factor over the two-iteration recurrence, evaluated on the sampled set. This is a numerical minimization of the sampled objective, not a dedicated equioscillation algorithm and not a guarantee on the continuous-frequency maximum. The optimization of transmission conditions for waveform relaxation methods has been extensively investigated for evolution equations, including the wave equation and advection--diffusion problems \cite{gander_optimal_2003,gander_absorbing_2004,gander_optimized_2007,martin_optimized_2005}. More recently, explicit asymptotic expressions for optimized transmission parameters have been derived for the telegrapher equation \cite{al-khaleel_optimized_2024}, while related min-max optimization strategies have been investigated for wave--heat coupling problems \cite{chouly_optimized_2025}.}
 
 \textcolor{red}{The physical interpretation and analytical characterization of the optimal transmission parameters for the present viscoelastic damped-wave model remain open. The numerical min--max search evaluates the continuous-frequency convergence factor on a discrete frequency set; its reported factors below one therefore apply to the sampled frequencies and do not rule out extrema between samples. The upper frequency is set by the temporal Nyquist frequency $\pi/\Delta t$, while the lower bound $\pi/T$ is a modelling convention rather than the fundamental nonzero periodic angular frequency $2\pi/T$. A denser or adaptive frequency search and a bound between samples are needed to support a continuous-band convergence claim.}
 

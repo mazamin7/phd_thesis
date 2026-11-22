@@ -113,11 +113,11 @@ We completely agree with the reviewer's observation. The exact continuous Dirich
 
 We have revised both passages in the manuscript accordingly, citing the recommended monograph by \citet{dolean_introduction_2015} as well as the foundational work of \citet{engquist_absorbing_1977}:
 \begin{itemize}[leftmargin=*]
-    \item \textbf{Section~2.1.2 (Page~20):}
+    \item \textbf{Section~2.1.2:}
     \begin{quote}
     \textcolor{blue}{\emph{``Therefore, in the absence of damping, the Robin boundary condition coincides with the exact Dirichlet-to-Neumann (DtN) transparent boundary condition for one-dimensional plane waves at normal incidence, yielding perfect absorption across all frequencies. In multiple spatial dimensions, the exact DtN operator is non-local and angle-dependent; hence, the local Robin condition (2.2) represents a zeroth-order local approximation (in the sense of Engquist and Majda \cite{engquist_absorbing_1977,dolean_introduction_2015}) to the true transparent boundary condition.''}}
     \end{quote}
-    \item \textbf{Section~2.3.1 (Page~27):}
+    \item \textbf{Section~2.3.1:}
     \begin{quote}
     \textcolor{blue}{\emph{``that is, when the Robin operator coincides with the exact Dirichlet-to-Neumann map (which provides exact transparent absorption for 1D plane waves at normal incidence, but represents a zeroth-order local approximation in higher-dimensional geometries \cite{dolean_introduction_2015}).''}}
     \end{quote}
@@ -130,7 +130,7 @@ We have revised both passages in the manuscript accordingly, citing the recommen
 \end{revcomment}
 
 \begin{response}
-We thank the reviewer for highlighting this forward reference. In Section~2.4.1 (Configuration~I, Page~35), the spatial modal expansion $u(x,t) = \sum_{m \in \{1,3\}} U_m(t)\phi_m(x)$ was introduced prior to the general modal analysis in Section~2.7. 
+We thank the reviewer for highlighting this forward reference. In Section~2.4.1 (Configuration~I), the spatial modal expansion $u(x,t) = \sum_{m \in \{1,3\}} U_m(t)\phi_m(x)$ was introduced prior to the general modal analysis in Section~2.7.
 
 In the revised manuscript, we have added the explicit definition directly at its first occurrence in Configuration~I:
 \begin{quote}
@@ -148,7 +148,7 @@ In the revised manuscript, we have added the explicit definition directly at its
 \begin{response}
 We fully agree with the reviewer's suggestion. Scheme (2.8) in the previous draft was an introductory sketch that employed a backward-difference approximation in time for the mixed viscoelastic term, omitted the external force $f_i^n$, and was never actually implemented or analyzed in the subsequent stability proofs or numerical experiments.
 
-Following the reviewer's recommendation, \textbf{we have completely removed scheme (2.8)} from Section~2.5. The section now proceeds directly from the space and time grid discretization into the rigorous derivation of the centered leapfrog FDTD scheme (Equation~(2.8), Page~42), which properly includes the discrete source term $f_i^n$ and fully symmetric second-order approximations for all temporal and spatial derivatives.
+Following the reviewer's recommendation, \textbf{we have completely removed the former introductory scheme (2.8)} from Section~2.5. The section now proceeds directly from the space and time grid discretization into the derivation of the centered leapfrog FDTD scheme, now numbered Equation~(2.8), which properly includes the discrete source term $f_i^n$ and centered second-order approximations for the temporal and spatial derivatives.
 \end{response}
 
 \vspace{2mm}
@@ -157,7 +157,7 @@ Following the reviewer's recommendation, \textbf{we have completely removed sche
 \end{revcomment}
 
 \begin{response}
-We agree that writing out the explicit matrix formula is helpful for the reader. In Section~2.7.2 (Page~58), we have explicitly specified the transformation matrix $\Phi \in \mathbb{R}^{N \times N}$ in terms of the discrete orthonormal DCT-II basis functions:
+We agree that writing out the explicit matrix formula is helpful for the reader. In Section~2.7.2, we have explicitly specified the transformation matrix $\Phi \in \mathbb{R}^{N \times N}$ in terms of the discrete orthonormal DCT-II basis functions:
 \begin{quote}
 \textcolor{red}{
 \emph{``For convenience, we introduce the orthonormal DCT-II change-of-basis matrix $\Phi \in \mathbb{R}^{N \times N}$, whose $(i,m)$-th entry is given by the discrete basis functions:
@@ -183,7 +183,7 @@ However, applying the orthogonal block Discrete Cosine Transform $\operatorname{
 \[
 \widetilde{\mathbf{Z}} = [\mathbf{U}^T, \mathbf{V}^T]^T = [U_0, U_1, \dots, U_{N-1}, V_0, V_1, \dots, V_{N-1}]^T \in \mathbb{R}^{2N}.
 \]
-In the revised manuscript (Section~2.7.2, Page~60), we have added an explicit explanation:
+In the revised manuscript (Section~2.7.2), we have added an explicit explanation:
 \begin{quote}
 \textcolor{red}{\emph{``where $P$ is the $2N\times2N$ orthogonal permutation matrix ($P^{-1} = P^T$) that reorders the pairwise interleaved modal state vector
 \begin{equation*}
@@ -199,7 +199,7 @@ into the segregated block-component vector $\widetilde{\mathbf Z} = [\mathbf U^T
 \end{revcomment}
 
 \begin{response}
-We have added the foundational and standard modern references for fast $O(N \log N)$ Discrete Cosine Transform algorithms in Section~2.7.4 (Page~64):
+We have added foundational and standard references for fast $O(N \log N)$ Discrete Cosine Transform algorithms in Section~2.7.4:
 \begin{itemize}[leftmargin=*]
     \item \citet{makhoul_fast_1980}: \emph{``A fast cosine transform in one and two dimensions''}, IEEE Transactions on Acoustics, Speech, and Signal Processing;
     \item \citet{rao_discrete_1990}: \emph{``Discrete Cosine Transform: Algorithms, Advantages, Applications''}, Academic Press;
@@ -226,9 +226,9 @@ We thank the reviewer for raising this methodological point. We state the contin
 \]
 For arbitrary $(\gamma,\nu)$, this continuous-frequency problem has no general closed-form analytical solution.
 
-In Section~3.1.2 (Page~83) and in the expanded Future Work section (Section~4.3.3), we have explicitly clarified:
+In Section~3.1.2 and the expanded Future Work section (Section~4.3.3), we have explicitly clarified:
 \begin{enumerate}[leftmargin=*]
-    \item The min--max parameters are selected numerically using the equioscillation-based procedure over the frequency samples described in Section~3.1.2. The resulting factors apply to those samples; the computation does not rule out a larger value between samples.
+    \item The parameters are selected using MATLAB's constrained \texttt{patternsearch} optimizer over 4,000 logarithmically spaced frequency samples, with $q,r\ge0$ and initial guess $(1/c,\gamma/(2c))$. The minimized quantity is $|G|^2$, the contraction factor over the two-iteration recurrence $A_u^{(k+2)}=G^2A_u^{(k)}$. This is a numerical sampled-grid solution, so it does not rule out a larger value between samples.
     \item Closed-form expressions for the combined telegrapher--viscoelastic case are left for future work, as now stated in Section~4.3.3.
 \end{enumerate}
 \end{response}
@@ -239,7 +239,7 @@ In Section~3.1.2 (Page~83) and in the expanded Future Work section (Section~4.3.
 \end{revcomment}
 
 \begin{response}
-We thank the reviewer for catching this omission. In Section~3.1.3 (Page~87), we have added an explicit citation and descriptive discussion of Figure~3.3:
+We thank the reviewer for catching this omission. In Section~3.1.3, we have added an explicit citation and descriptive discussion of Figure~3.3:
 \begin{quote}
     \textcolor{blue}{\emph{``Figure~3.3 displays the parameters $q^\ast$ and $r^\ast$ selected by the sampled-frequency min--max search, together with the corresponding predicted factor $\rho_{\mathrm{opt}}$. In the tested parameter range, the sampled-frequency factors remain below one. Since the search uses a finite frequency set, this result does not establish a bound on the continuous-frequency maximum.''}}
 \end{quote}
@@ -251,9 +251,9 @@ We thank the reviewer for catching this omission. In Section~3.1.3 (Page~87), we
 \end{revcomment}
 
 \begin{response}
-We fully agree with the reviewer's recommendation. Figure~3.5 in the previous draft was an unannotated scatter plot aggregating all $(q, r)$ points without identifying the underlying physical damping parameters $\gamma$ and $\nu$. By contrast, Figure~3.6 (now renumbered as Figure~3.5 in the revised thesis, Page~88) decomposes these points into clear parametric curves along constant $\gamma$ and constant $\nu$, equipped with explicit colorbars and scales.
+We fully agree with the reviewer's recommendation. Figure~3.5 in the previous draft was an unannotated scatter plot aggregating all $(q, r)$ points without identifying the underlying physical damping parameters $\gamma$ and $\nu$. It has been removed. The revised Figure~3.5 shows parametric trajectories along constant $\gamma$ and constant $\nu$, with the damping values indicated by color.
 
-Following the reviewer's suggestion, \textbf{we have removed Figure~3.5 entirely} and updated the surrounding text to introduce the parametric trajectory curves directly.
+Following the reviewer's suggestion, we removed the unannotated scatter plot and updated the surrounding text to introduce the parametric trajectory curves directly.
 \end{response}
 
 \vspace{2mm}
@@ -262,7 +262,7 @@ Following the reviewer's suggestion, \textbf{we have removed Figure~3.5 entirely
 \end{revcomment}
 
 \begin{response}
-We thank the reviewer for noting this omission. In Section~3.1.4 (Page~90), we have updated the opening sentence to explicitly define the global two-dimensional computational domain $\Omega$:
+We thank the reviewer for noting this omission. In Section~3.1.4, we have updated the opening sentence to explicitly define the global two-dimensional computational domain $\Omega$:
 \begin{quote}
 \textcolor{red}{\emph{``Let us consider the damped wave equation in two spatial dimensions $(x, y)$ on the rectangular domain $\Omega = (0, L_x) \times (0, L_y)$, where the domain is partitioned along the $x$-axis (allowing the transverse $y$-direction to be decoupled via a spatial Fourier transform) into two overlapping subdomains $\Omega_1 = (0, b) \times (0, L_y)$ and $\Omega_2 = (a, L_x) \times (0, L_y)$ with $0 < a < b < L_x$ (sharing the overlap width $\delta = b - a > 0$).''}}
 \end{quote}
@@ -279,7 +279,7 @@ We are very grateful to the reviewer for pointing out this apparent contradictio
 To resolve this issue rigorously:
 \begin{enumerate}[leftmargin=*]
     \item \textbf{Updated Convergence Figures:} We have re-executed the grid refinement tests and updated all six subfigures of Figure~3.8 to display \textbf{both} a quadratic reference line ($O(\Delta x^2)$, dashed black line) and a linear reference line ($O(\Delta x)$, dotted black line) with clear legends.
-    \item \textbf{Physical and Numerical Interpretation:} The revised text in Section~3.2.3 (Page~95) accurately analyzes the observed behavior against both reference slopes:
+    \item \textbf{Physical and Numerical Interpretation:} The revised text in Section~3.2.4 analyzes the observed behavior against both reference slopes:
     \begin{quote}
     \textcolor{red}{\emph{``As observed in Figure~3.8, which displays quadratic ($O(\Delta x^2)$) and linear ($O(\Delta x)$) reference slopes, the empirical domain decomposition error exhibits different trends across the tested profiles and grid refinements. For the smooth standing-wave configurations (a) and (b), the error decreases approximately quadratically on coarser grids and approaches a linear trend on finer meshes. For the non-smooth configurations (c, d, f) and propagating pulses, the error is predominantly consistent with a linear trend over the tested resolutions. These observations are compatible with contributions from interface truncation and splitting error, but the experiments do not isolate their individual effects or establish a general asymptotic rate.''}}
     \end{quote}
@@ -306,7 +306,7 @@ We thank the reviewer for these precise observations. We have addressed the boun
 \end{revcomment}
 
 \begin{response}
-We thank the reviewer for requesting complete technical details on the measurement setup. In Section~3.3.1 and Section~3.3.2 (Pages~107--110), we have provided the full mathematical definition of the discrete observation operator $\mathcal{M}$:
+We thank the reviewer for requesting complete technical details on the measurement setup. In Sections~3.3.1 and~3.3.2, we have provided the mathematical definition of the discrete observation operator $\mathcal{M}$:
 \begin{itemize}[leftmargin=*]
     \item The benchmark uses 10 fixed interior PSTD cell-centered receivers at $x_i=(i+\tfrac12)\Delta x$, selected once using seed 123. For FDTD, each location is mapped to the nearest endpoint-grid node.
     \item Measurements are recorded at all 41 time samples $t_n=n\Delta t$, $n=0,\ldots,40$, for $T=2$\,s and $\Delta t=0.05$\,s; there is no temporal subsampling.
@@ -335,7 +335,7 @@ This mapping enforces positive parameter values. The revised formulation does no
 \begin{response}
 In the original draft, the proposed loss function included an $H^1$ Sobolev smoothness penalty scaled by the viscoelastic parameter $\nu$. As noted by both reviewers, coupling the loss functional directly to an unknown optimization variable introduces complex scaling ambiguities and unintended feedback during gradient updates.
 
-In the revised dissertation (Section~3.3.1, Page~108), \textbf{we have eliminated the $H^1$ penalty from the proposed DPNN loss function}. The primary DPNN formulation now operates as a pure data-fitting objective:
+In the revised dissertation (Section~3.3.1), \textbf{we have eliminated the $H^1$ penalty from the proposed DPNN loss function}. The primary DPNN formulation now operates as a pure data-fitting objective:
 \[
 \mathcal{L}_{\mathrm{data}}(\Theta, \xi_\gamma, \xi_\nu) = \frac{1}{2 S N_t} \sum_{s=1}^S \sum_{n=0}^{N_t} \left| u(x_s, t_n; \Theta, \xi_\gamma, \xi_\nu) - u_{\mathrm{obs}}(x_s, t_n) \right|^2.
 \]
@@ -389,26 +389,26 @@ We emphasize the quantitative comparisons in Table~3.2. The modal propagator has
 \vspace{2mm}
 \begin{tabular}{@{}llp{8.5cm}l@{}}
 \toprule
-\textbf{Comment} & \textbf{Section / Page} & \textbf{Nature of Revision} & \textbf{Status} \\
+\textbf{Comment} & \textbf{Section} & \textbf{Nature of Revision} & \textbf{Status} \\
 \midrule
-1 & \S1.2, \S1.4 (p.~9) & Corrected typo: ``tan'' methods replaced by wave-based time-domain methods & Addressed \\
-2 & \S2.1.2, \S2.3.1 (pp.~20, 27) & Clarified that Robin impedance $i\omega/c$ is exact DtN for 1D normal incidence and 0th-order local approximation in multi-D \citep{dolean_introduction_2015} & Addressed \\
-3 & \S2.4.1 (p.~35) & Added explicit forward definition of spatial eigenfunctions $\phi_m(x) = \cos(m\pi x/L)$ in Configuration~I & Addressed \\
-4, 5 & \S2.5 (pp.~41--42) & Removed redundant uncentered scheme (2.8); derived centered leapfrog scheme with $f_i^n$ directly & Addressed \\
-6 & \S2.7.2 (p.~58) & Provided explicit matrix formula for orthonormal DCT-II matrix $\Phi$ & Addressed \\
-7 & \S2.7.2 (p.~60) & Clarified permutation matrix $P$ reordering interleaved $[U_m, V_m]$ into segregated block vector & Addressed \\
-8 & \S2.7.4 (p.~64) & Added standard citations for fast DCT algorithms \citep{makhoul_fast_1980,rao_discrete_1990,frigo_design_2005} & Addressed \\
-9 & \S3.1.2, \S4.3.3  & Explained numerical Remez/Nelder--Mead optimization for OSWR min-max problem and absence of general closed-form solutions & Addressed \\
-10 & \S3.1.3 (p.~87) & Added explicit in-text citation and discussion of Figure~3.3 & Addressed \\
-11 & \S3.1.3 (pp.~88--89) & Removed unannotated scatter plot Figure~3.5; retained parametric curves with colorbars (Figure~3.6) & Addressed \\
-12 & \S3.1.4 (p.~90) & Explicitly defined the 2D global domain $\Omega = (0, L_x) \times (0, L_y)$ & Addressed \\
-13 & ARD convergence discussion  & Regenerated Figure~3.8 with both $O(\Delta x)$ and $O(\Delta x^2)$ reference lines; updated text to discuss asymptotic transition & Addressed \\
+1 & \S1.2, \S1.4 & Corrected typo: ``tan'' methods replaced by wave-based time-domain methods & Addressed \\
+2 & \S2.1.2, \S2.3.1 & Clarified that Robin impedance $i\omega/c$ is exact DtN for 1D normal incidence and a zeroth-order local approximation in multi-D \citep{dolean_introduction_2015} & Addressed \\
+3 & \S2.4.1 & Added explicit forward definition of spatial eigenfunctions $\phi_m(x) = \cos(m\pi x/L)$ in Configuration~I & Addressed \\
+4, 5 & \S2.5 & Removed the former introductory scheme (2.8); derived the centered leapfrog scheme with $f_i^n$ & Addressed \\
+6 & \S2.7.2 & Provided explicit matrix formula for orthonormal DCT-II matrix $\Phi$ & Addressed \\
+7 & \S2.7.2 & Clarified permutation matrix $P$ reordering interleaved $[U_m, V_m]$ into segregated block vector & Addressed \\
+8 & \S2.7.4 & Added standard citations for fast DCT algorithms \citep{makhoul_fast_1980,rao_discrete_1990,frigo_design_2005} & Addressed \\
+9 & \S3.1.2, \S4.3.3 & Specified the constrained pattern-search minimization over sampled frequencies and the absence of a general closed-form solution & Addressed \\
+10 & \S3.1.3 & Added in-text citation and discussion of Figure~3.3 & Addressed \\
+11 & \S3.1.3 & Removed the former unannotated scatter plot; retained parametric trajectories as Figure~3.5 & Addressed \\
+12 & \S3.1.4 & Explicitly defined the 2D global domain $\Omega = (0, L_x) \times (0, L_y)$ & Addressed \\
+13 & \S3.2.4 & Regenerated Figure~3.8 with both $O(\Delta x)$ and $O(\Delta x^2)$ reference lines; qualified the observed trends & Addressed \\
 14 & 3D ARD experiment & Clarified the rigid outer boundary conditions and four damping values; distinguished qualitative damping snapshots from the lossless cross-solver frequency-response comparison & Addressed \\
-15 & \S3.3.1, \S3.3.2 (pp.~107--110) & Specified PSTD cell-center coordinates, nearest-node FDTD mapping, and all 41 time samples & Addressed \\
+15 & \S3.3.1, \S3.3.2 & Specified PSTD cell-center coordinates, nearest-node FDTD mapping, and all 41 time samples & Addressed \\
 16 & \S3.3.1 & Replaced Softplus with a logarithmic positive-parameter mapping & Addressed \\
-17 & \S3.3.1, \S3.3.4 (pp.~108, 124) & Removed $H^1$ regularization from proposed DPNN loss; retained as comparative ablation study & Addressed \\
+17 & \S3.3.1, \S3.3.4 & Removed $H^1$ regularization from proposed DPNN loss; retained it in the comparative ablation study & Addressed \\
 18 & \S3.3.2, \S3.3.3 & Reported profile-dependent parameter errors and limited the source--damping interpretation to a hypothesis for future study & Addressed \\
-19 & \S3.3.2  & Toned down visual superiority claims in Figure~3.20; referenced quantitative NMSE metrics & Addressed \\
+19 & \S3.3.2 & Toned down visual superiority claims in Figure~3.20; referred readers to the quantitative results in Table~3.2 & Addressed \\
 \bottomrule
 \end{tabular}
 \end{table}
