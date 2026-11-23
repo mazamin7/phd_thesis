@@ -144,7 +144,7 @@ In the revised manuscript, we have added the explicit definition directly at its
 \begin{response}
 We fully agree with the reviewer's suggestion. Scheme (2.8) in the previous draft was an introductory sketch that employed a backward-difference approximation in time for the mixed viscoelastic term, omitted the external force $f_i^n$, and was never actually implemented or analyzed in the subsequent stability proofs or numerical experiments.
 
-Following the reviewer's recommendation, \textbf{we have completely removed the former introductory scheme (2.8)} from Section~2.4. The section now proceeds directly from the space and time grid discretization into the derivation of the centered leapfrog FDTD scheme, now numbered Equation~(2.8), which properly includes the discrete source term $f_i^n$ and centered second-order approximations for the temporal and spatial derivatives.
+Following the reviewer's recommendation, \textbf{we have completely removed the former introductory scheme (2.8)} from Section~2.4. The section now proceeds directly from the space and time grid discretization into the derivation of the centered leapfrog finite-difference time-domain (FDTD) scheme, now numbered Equation~(2.8), which properly includes the discrete source term $f_i^n$ and centered second-order approximations for the temporal and spatial derivatives.
 \end{response}
 
 \vspace{2mm}
@@ -153,7 +153,7 @@ Following the reviewer's recommendation, \textbf{we have completely removed the 
 \end{revcomment}
 
 \begin{response}
-We agree that writing out the explicit matrix formula is helpful for the reader. In Section~2.5.3, we have explicitly specified the transformation matrix $\Phi \in \mathbb{R}^{N \times N}$ in terms of the discrete orthonormal DCT-II basis functions:
+We agree that writing out the explicit matrix formula is helpful for the reader. In Section~2.5.3, we have explicitly specified the transformation matrix $\Phi \in \mathbb{R}^{N \times N}$ in terms of the discrete orthonormal type-II discrete cosine transform (DCT-II) basis functions:
 \begin{quote}
 \emph{``For convenience, we introduce the orthonormal DCT-II change-of-basis matrix $\Phi \in \mathbb{R}^{N \times N}$, whose $(i,m)$-th entry is given by the discrete basis functions in~(2.18):
 \begin{equation*}
@@ -213,16 +213,16 @@ The text now reads:
 \end{revcomment}
 
 \begin{response}
-We thank the reviewer for raising this methodological point. We state the continuous-frequency min--max objective, but select the parameters numerically over a sampled frequency set:
+We thank the reviewer for raising this methodological point. For the Optimized Schwarz Waveform Relaxation (OSWR) method, we state the continuous-frequency min--max objective but select the parameters numerically over a sampled frequency set:
 \[
 \min_{q, r \ge 0} \max_{\omega \in [\omega_{\min}, \omega_{\max}]} \rho(\omega; q, r)
 \]
-For arbitrary $(\gamma,\nu)$, this continuous-frequency problem has no general closed-form analytical solution.
+We do not derive closed-form expressions for the optimal parameters for arbitrary $(\gamma,\nu)$.
 
 In Section~3.1.2 and the expanded Future Work section (Section~4.3.3), we have explicitly clarified:
 \begin{enumerate}[leftmargin=*]
     \item The parameters are selected using MATLAB's constrained \texttt{patternsearch} optimizer over 4,000 logarithmically spaced frequency samples, with $q,r\ge0$ and initial guess $(1/c,\gamma/(2c))$. The minimized quantity is $|G|^2$, the contraction factor over the two-iteration recurrence $A_u^{(k+2)}=G^2A_u^{(k)}$. This is a numerical sampled-grid solution, so it does not rule out a larger value between samples.
-    \item Closed-form expressions for the combined telegrapher--viscoelastic case are left for future work, as now stated in Section~4.3.3.
+    \item Section~4.3.3 identifies a closed-form analysis for the combined telegrapher--viscoelastic case as future work.
 \end{enumerate}
 \end{response}
 
@@ -285,7 +285,7 @@ We updated the figure and the accompanying discussion in Section~3.2.6.2:
 \end{revcomment}
 
 \begin{response}
-We thank the reviewer for these precise observations. We have addressed the boundary description and damping comparison in the Chapter~3 3D ARD experiment discussion:
+We thank the reviewer for these precise observations. We have addressed the boundary description and damping comparison in the Chapter~3 three-dimensional Adaptive Rectangular Decomposition (ARD) experiment discussion:
 \begin{enumerate}[leftmargin=*]
     \item \textbf{Boundary Conditions:} We explicitly clarified that the 3D room simulation is enclosed by rigid bounding walls with homogeneous Neumann boundary conditions on all six outer faces ($x, y, z$), which allows the exact DCT modal representation to be employed within each partitioned rectangular subdomain.
     \item \textbf{Damping settings:} The revised snapshots compare four values: an undamped case ($\nu=0$) and three positive values ($\nu\approx2.4\times10^{-6}$, $1.2\times10^{-5}$, and $5.9\times10^{-5}$\,m$^2$/s).
@@ -301,9 +301,9 @@ We thank the reviewer for these precise observations. We have addressed the boun
 \begin{response}
 We thank the reviewer for requesting complete technical details on the measurement setup. In Sections~3.3.1 and~3.3.2, we have provided the mathematical definition of the discrete observation operator $\mathcal{M}$:
 \begin{itemize}[leftmargin=*]
-    \item The benchmark uses 10 fixed interior PSTD cell-centered receivers at $x_i=(i+\tfrac12)\Delta x$, selected once using seed 123. For FDTD, each location is mapped to the nearest endpoint-grid node.
+    \item The benchmark uses 10 fixed interior pseudo-spectral time-domain (PSTD) cell-centered receivers at $x_i=(i+\tfrac12)\Delta x$, selected once using seed 123. For finite-difference time-domain (FDTD), each location is mapped to the nearest endpoint-grid node.
     \item Measurements are recorded at all 41 time samples $t_n=n\Delta t$, $n=0,\ldots,40$, for $T=2$\,s and $\Delta t=0.05$\,s; there is no temporal subsampling.
-    \item The observation array is in $\mathbb{R}^{10\times41}$. Additive Gaussian noise is normalized to 30\,dB relative SNR; the seed is reset for each profile.
+    \item The observation array is in $\mathbb{R}^{10\times41}$. Additive Gaussian noise is normalized to a 30\,dB relative signal-to-noise ratio (SNR); the seed is reset for each profile.
 \end{itemize}
 \end{response}
 
@@ -328,11 +328,11 @@ This mapping enforces positive parameter values. The revised formulation does no
 \begin{response}
 In the original draft, the proposed loss function included an $H^1$ Sobolev smoothness penalty scaled by the viscoelastic parameter $\nu$. As noted by both reviewers, coupling the loss functional directly to an unknown optimization variable introduces complex scaling ambiguities and unintended feedback during gradient updates.
 
-In the revised dissertation (Section~3.3.1), \textbf{we have eliminated the $H^1$ penalty from the proposed DPNN loss function}. The primary DPNN formulation now operates as a pure data-fitting objective:
+In the revised dissertation (Section~3.3.1), \textbf{we have eliminated the $H^1$ penalty from the proposed Differentiable Physics Neural Network (DPNN) loss function}. The primary DPNN formulation now operates as a pure data-fitting objective:
 \[
 \mathcal{L}_{\mathrm{data}}(\Theta, \xi_\gamma, \xi_\nu) = \frac{1}{2 S N_t} \sum_{s=1}^S \sum_{n=0}^{N_t} \left| u(x_s, t_n; \Theta, \xi_\gamma, \xi_\nu) - u_{\mathrm{obs}}(x_s, t_n) \right|^2.
 \]
-The $H^1$ and $L^1$ penalties are retained within the ablation study (Section~3.3.4, Table~3.5). Among the tested configurations, data-only fitting gives the better combined field-and-parameter trade-off; $L^1$ lowers the Gaussian initial-condition NMSE but worsens its field error, and the tested $H^1$ configurations perform poorly.
+The $H^1$ and $L^1$ penalties are retained within the ablation study (Section~3.3.4, Table~3.5). Among the tested configurations, data-only fitting gives the better combined field-and-parameter trade-off; $L^1$ lowers the Gaussian initial-condition normalized mean squared error (NMSE) but worsens its field error, and the tested $H^1$ configurations perform poorly.
 \end{response}
 
 \vspace{2mm}
@@ -341,7 +341,7 @@ The $H^1$ and $L^1$ penalties are retained within the ablation study (Section~3.
 \end{revcomment}
 
 \begin{response}
-We thank the reviewer for this critical observation. The revised results show that parameter recovery depends on the initial profile: PSTD-DPNN has a large $\gamma$ error in the multimodal standing-wave case, while the reported Gaussian and triangular runs recover both parameters more accurately. The estimates therefore do not support a blanket statement that $\gamma$ is poorly identified or that $\nu$ is consistently recovered with high precision across all benchmarks.
+We thank the reviewer for this critical observation. The revised results show that parameter recovery depends on the initial profile: the DPNN using the pseudo-spectral time-domain solver (PSTD-DPNN) has a large $\gamma$ error in the multimodal standing-wave case, while the reported Gaussian and triangular runs recover both parameters more accurately. The estimates therefore do not support a blanket statement that $\gamma$ is poorly identified or that $\nu$ is consistently recovered with high precision across all benchmarks.
 
 We revised Sections~3.3.2 and~3.3.3 and the Conclusion (Section~4.1) to report the profile-dependent results and their limits:
 \begin{enumerate}[leftmargin=*]

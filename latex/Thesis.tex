@@ -989,7 +989,7 @@ The constants $A_m$ and $B_m$ are determined from the initial conditions.
 
 \subsection{Time Reversibility}
 
-\thesischange{red}{An important qualitative difference between the three physical models (or damping regimes) considered in this work (namely the undamped wave equation $\gamma=\nu=0$, the telegrapher equation with $\gamma>0, \nu=0$, and the viscoelastic wave equation with $\nu>0$) concerns their behavior under time reversal}, which directly affects the stability of recovering earlier states from measurements at a later time. For general aspects of time reversibility and inverse problems for partial differential equations, the reader may refer to \cite{isakov_inverse_2006}.
+\thesischange{red}{An important qualitative difference between the three physical models (or damping regimes) considered in this work (namely the undamped wave equation $\gamma=\nu=0$, the telegrapher equation with $\gamma>0, \nu=0$, and the combined telegrapher--viscoelastic model with $\gamma>0, \nu>0$) concerns their behavior under time reversal}, which directly affects the stability of recovering earlier states from measurements at a later time. For general aspects of time reversibility and inverse problems for partial differential equations, the reader may refer to \cite{isakov_inverse_2006}.
 
 To illustrate this property, consider the homogeneous problem
 \begin{equation*}
@@ -3798,7 +3798,7 @@ This benchmark evaluates propagating wavepacket transport for a non-smooth trian
 \section{Optimized Schwarz Waveform Relaxation}
 \label{sec:oswr}
 
-To solve the damped wave equation on large computational domains, we employ an overlapping Schwarz Waveform Relaxation (SWR) method. \thesischange{red}{The formulation studied here uses Robin-like transmission conditions parameterized by $q$ and $r$; the OSWR parameters are selected numerically to reduce the convergence factor over a sampled frequency set.} As the PSTD method only supports homogeneous Neumann conditions, we employ SWR only for FDTD.
+To solve the damped wave equation on large computational domains, we employ an overlapping Schwarz Waveform Relaxation (SWR) method \citep{gander_optimal_2003}. \thesischange{red}{The formulation studied here uses Robin-like transmission conditions parameterized by $q$ and $r$; the OSWR parameters are selected numerically to reduce the convergence factor over a sampled frequency set.} As the PSTD method only supports homogeneous Neumann conditions, we employ SWR only for FDTD.
 
 \subsection{SWR Algorithm}
 \thesischange{red}{As is standard in domain decomposition theory \citep{quarteroni_domain_1999,gander_optimized_2007,dolean_introduction_2015}, our analysis considers a canonical two-subdomain configuration to derive its frequency-dependent convergence factor and select transmission parameters. This isolates the effect of the transmission operator without introducing additional interfaces or partition-graph choices; it is not a comparison of the optimal number of subdomains. Extending the analysis to three or more subdomains requires accounting for their interface coupling. Non-overlapping formulations require their own transmission-condition analysis and are not compared here. The overlap $\delta=b-a>0$ affects information transfer between subdomains and can improve convergence; the size of that effect depends on the equation and configuration.}
@@ -4378,8 +4378,6 @@ In the undamped limit ($\nu \to 0$), the velocity flow reduces to $\mathbf v(t+\
 \end{equation}
 Because the forward Euler approximation introduces a $B^2$ contribution with coefficient $1/4$ instead of the exact coefficient $1/2$ at order $\Delta t^2$, the composition with forward Euler Kick substeps is formally first-order accurate in time for the damped interface operator.}
 
-\thesischange{red}{For the isolated viscous half-kick, a homogeneous velocity perturbation is updated by $\delta\mathbf{v}^{n+1} = (I + \tau\nu C_{\mathrm{res}})\delta\mathbf{v}^{n}$. We computed the full spectra of the matrices returned by \texttt{get\_residue\_matrix} for interface orders $2,4,6,8$ and grid sizes $N_x=20,40,80,160,320,640,800$; the reproducible script is provided in the accompanying code. All tested eigenvalues were real to numerical precision (maximum imaginary part zero at the reported precision), but non-positivity held only for order 2. For orders 4, 6, and 8, the largest eigenvalues were approximately $1.04\times10^{-2}$, $8.30\times10^{-3}$, and $2.91\times10^{-3}$, respectively, independent of the tested $N_x$. Thus, the tested higher-order residual stencils are not dissipative for the isolated viscous kick. The whole step stability sweep is reported under the heading \emph{Stability} in Section~\ref{sec:ard_stability_numerical}.}
-
 \subsection{FDTD Context and Scope}
 
 For context, the undamped FDTD leapfrog update can be written in the staggered-velocity form used by velocity Verlet. This single-domain identity does not define a complete FDTD-based ARD solver. A decomposed method would also need a local Drift step that enforces the subdomain boundary conditions and is compatible with the Kick state updates.
@@ -4575,7 +4573,7 @@ For the full split update with viscoelastic damping ($\nu > 0$), we also examine
 \[
 S = \frac{\nu \Delta t}{\Delta x^2}.
 \]
-A finite-dimensional numerical search of the full amplification matrix estimates the stable range in $S$ for a specified grid and parameter set. The tested residue matrices have positive eigenvalues for orders 4, 6, and 8. At $N=200$, $L=c=\nu=1$, and $\gamma=0$, the numerical search returns the following estimates:
+A finite-dimensional numerical search of the full amplification matrix estimates the stable range in $S$ for a specified grid and parameter set. At $N=200$, $L=c=\nu=1$, and $\gamma=0$, the numerical search returns the following estimates:
 \[
 S_{\max} =
 2.000,\;
@@ -5351,7 +5349,7 @@ Finally, we introduced a Differentiable Physics Neural Network (DPNN; see Sectio
 
 \subsection{\thesischange{red}{Kick Integration for Damped ARD}}
 
-\thesischange{red}{For $\nu>0$, the implemented viscous interface Kick is advanced with forward Euler, and the tested residual matrices have positive eigenvalues for orders 4, 6, and 8. These results motivate future investigation of alternative Kick integrators and interface operators for the damped, higher-order configurations.}
+\thesischange{red}{For $\nu>0$, the implemented viscous interface Kick is advanced with forward Euler. This motivates future investigation of alternative Kick integrators and interface operators for the damped, higher-order configurations.}
 
 \thesischange{red}{Future work should separate spatial interface error from temporal splitting error and develop higher-order, dispersion-aware interface corrections. Some changes could preserve the current PSTD subdomain Drift and act only through the physical-space Kick. Hermite-based one-sided trace reconstructions are one candidate for this purpose \citep{appelo_hermite_2018}. High-order finite-difference methods using interpolation, projection, and penalty operators provide further design ideas for coupling non-conforming grids \citep{wang_virta_kreiss_2016,wang_improved_2018,eriksson_nonconforming_2023}. Their energy estimates rely on summation-by-parts operators and compatible interface transfers, however, and do not establish stability for the DCT-based modal Drift and the residual Kick used here; any adapted correction requires analysis of the complete PSTD--Kick update.}
 

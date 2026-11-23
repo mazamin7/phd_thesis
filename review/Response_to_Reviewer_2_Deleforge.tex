@@ -122,7 +122,7 @@ Major Comment 2: ``The damped numerical results on pages 66 and 67 are shown wit
 \end{revcomment}
 
 \begin{response}
-In Section~2.6, we added comments on the numerical results for the two damped standing-wave benchmarks, comparing FDTD and PSTD:
+In Section~2.6, we added comments on the numerical results for the two damped standing-wave benchmarks, comparing the finite-difference time-domain (FDTD) and pseudo-spectral time-domain (PSTD) methods:
 \begin{itemize}
     \item \emph{Experiment~3 (smooth damped standing wave):} Table~2.1 reports an FDTD convergence rate of approximately $1.92$ and an error of $2.89\times10^{-7}$ at $N=800$; the PSTD errors remain around $10^{-14}$. Figures~2.5 and~2.6 show the corresponding snapshots and space-time fields.
     \item \emph{Experiment~4 (non-smooth damped standing wave):} Table~2.1 reports an FDTD rate of approximately $2.22$ with error $5.97\times10^{-7}$ at $N=800$, and a PSTD rate of approximately $1.58$ with error $4.55\times10^{-7}$. Figures~2.7 and~2.8 show the corresponding snapshots and space-time fields.
@@ -143,7 +143,7 @@ Sec. 3.2: ``Although the FDTD formulation is presented for completeness''. It is
 \end{revcomment}
 
 \begin{response}
-We clarified the scope in the Introduction, Chapter~3 overview, and Chapter~4 summary: the ARD solver implemented and evaluated here uses PSTD within the subdomains. The FDTD subsection relates undamped leapfrog to velocity Verlet as context; it does not present the implementation of an FDTD-based ARD solver.
+We clarified the scope in the Introduction, Chapter~3 overview, and Chapter~4 summary: the Adaptive Rectangular Decomposition (ARD) solver implemented and evaluated here uses the pseudo-spectral time-domain (PSTD) method within the subdomains. The finite-difference time-domain (FDTD) subsection relates undamped leapfrog to velocity Verlet as context; it does not present the implementation of an FDTD-based ARD solver.
 \end{response}
 
 \begin{revcomment}{Comment R2C5: Justification of Parabolic Stability Limit}
@@ -167,7 +167,7 @@ P96: ``validating the accuracy of the multi-domain pseudo-spectral time-domain (
 \end{revcomment}
 
 \begin{response}
-The revised thesis presents a numerical study rather than a validation of general 3D accuracy. It compares five solver/resolution configurations in a lossless frequency-response analysis, reports runtimes for the stated setup, and separately shows ARD-PSTD snapshots for four damping values.
+The revised thesis presents a numerical study rather than a validation of general three-dimensional accuracy. It compares five solver/resolution configurations in a lossless frequency-response analysis, reports runtimes for the stated setup, and separately shows snapshots from the Adaptive Rectangular Decomposition (ARD) solver using the pseudo-spectral time-domain (PSTD) method for four damping values.
 \end{response}
 
 \begin{revcomment}{Comment R2C8: Internal Boundary Handling in 3D ARD Snapshots}
@@ -175,7 +175,7 @@ Fig. 3.12: ``The solver seamlessly handles the internal boundaries between the t
 \end{revcomment}
 
 \begin{response}
-Figure~3.11 was replaced with high-resolution snapshots showing the wavefield across the virtual interface lines $\Gamma_1$ and $\Gamma_2$, marked with dashed red lines. The snapshots indicate visually continuous fields in the displayed case; they do not by themselves establish the absence of reflections or phase distortions.
+The reviewed Figure~3.12 is Figure~3.11 in the revised thesis. It was replaced with high-resolution snapshots showing the wavefield across the virtual interface lines $\Gamma_1$ and $\Gamma_2$, marked with dashed red lines. The snapshots indicate visually continuous fields in the displayed case; they do not by themselves establish the absence of reflections or phase distortions.
 \end{response}
 
 \begin{revcomment}{Comment R2C9: Quantitative Error Visualization for Figure 3.16}
@@ -183,7 +183,7 @@ Fig. 3.16 is not very informative. It is impossible to see differences between t
 \end{revcomment}
 
 \begin{response}
-We agree that the earlier plots did not make quantitative differences easy to assess. In the revised differentiable-physics neural network (DPNN) figures \citep{verburg_differentiable_2025}, we added field-error panels for the displayed cases. For the 3D ARD experiment, we retained wavefield snapshots and added a shared colorbar and four damping values; these remain qualitative comparisons rather than relative-error plots.
+We agree that the earlier plots did not make quantitative differences easy to assess. In the revised differentiable-physics neural network (DPNN) figures \citep{verburg_differentiable_2025}, we added field-error panels for the displayed cases.
 \begin{enumerate}
     \item \textbf{DPNN error panels in Figures~3.18, 3.21, and 3.24:} The revised spatiotemporal figures show the ground-truth field alongside absolute-error panels for the DPNN coupled to FDTD (FDTD-DPNN), the DPNN coupled to PSTD (PSTD-DPNN), and a physics-informed neural network (PINN) baseline \citep{raissi_pinn_2019,haghighat_sciann_2021}, using a shared scale.
     \begin{itemize}
@@ -193,7 +193,6 @@ We agree that the earlier plots did not make quantitative differences easy to as
         \item Panel~(d): Standard PINN baseline absolute error $|u_{\mathrm{PINN}}(x,t) - u^*(x,t)|$.
     \end{itemize}
     The panels show the spatial error patterns in the displayed cases. Quantitative comparisons in Table~3.2 show that performance depends on the initial profile, with the PINN baseline achieving lower field error on the multimodal standing-wave case.
-    \item \textbf{3D damping comparisons:} We added ARD-PSTD snapshots for four values of $\nu$ and described the visible changes over the simulated interval. The thesis treats this as a qualitative comparison; it does not claim a frequency-domain measurement of attenuation versus $\nu$.
 \end{enumerate}
 \end{response}
 
@@ -216,7 +215,7 @@ Sec 3.3.1: As in chapter 3, the comments on the experiments are extremely limite
 \begin{response}
 Section~3.3 now reports quantitative comparisons, a PINN baseline, separate inversions for the initial condition and physical parameters, and regularization ablations. These results are limited to the one-dimensional configurations described below:
 \begin{enumerate}
-    \item \textbf{Quantitative benchmark comparison and PINN baseline (Section~3.3.2, Tables~3.2 and~3.3):} We added a numerical comparison reporting five quantities for the three tested initial-condition benchmarks (multimodal standing waves, smooth Gaussian pulses, and non-smooth triangular pulses), comparing PSTD-DPNN and FDTD-DPNN with one PINN baseline \citep{raissi_pinn_2019,haghighat_sciann_2021}:
+    \item \textbf{Quantitative benchmark comparison and PINN baseline (Section~3.3.2, Tables~3.2 and~3.3):} We added a numerical comparison reporting five quantities for the three tested initial-condition benchmarks (multimodal standing waves, smooth Gaussian pulses, and non-smooth triangular pulses), comparing the differentiable-physics neural network using pseudo-spectral time-domain propagation (PSTD-DPNN), the same network using finite-difference time-domain propagation (FDTD-DPNN), and one physics-informed neural network (PINN) baseline \citep{raissi_pinn_2019,haghighat_sciann_2021}:
     \begin{itemize}
         \item Normalized mean squared error (NMSE) on initial pressure: $\mathrm{NMSE}(p_0) = \|p_0^{\mathrm{pred}} - p_0^*\|_2^2 / \|p_0^*\|_2^2$.
         \item Full spatiotemporal wavefield relative $L_2$ error: $\|u_{\mathrm{pred}} - u^*\|_2 / \|u^*\|_2$ (\%).
@@ -244,10 +243,10 @@ P104: ``Figures 3.20 to 3.22 showcase the remarkable robustness of the carefully
 \end{revcomment}
 
 \begin{response}
-We retracted the phrase ``remarkable robustness''. Following your critique, our new systematic ablation study (Section~3.3.4, Table~3.5) revealed that Sobolev $H^1$ regularization was actually detrimental rather than robust for this non-smooth profile:
+We retracted the phrase ``remarkable robustness''. The ablation study (Section~3.3.4, Table~3.5) shows that the tested $H^1$-only configuration did not improve reconstruction for the triangular profile:
 \begin{itemize}
-    \item The proposed unregularized formulation achieves an initial condition NMSE of only $4.49 \times 10^{-3}$ and a full-field relative error of $3.09\%$, recovering $\gamma$ within $4.7\%$ and $\nu$ within $3.6\%$.
-    \item In contrast, imposing Sobolev $H^1$ regularization degrades field error to $18.10\%$ and causes estimated physical viscosity $\nu$ to collapse to $7.66 \times 10^{-6}$ ($99.85\%$ relative error).
+    \item Data-only fitting has initial-pressure NMSE $4.49\times10^{-3}$, corresponding to a relative $L_2$ error of approximately $6.7\%$, and full-field relative error $3.09\%$; the tested estimates of $\gamma$ and $\nu$ are within $4.7\%$ and $3.6\%$, respectively.
+    \item For $H^1$-only fitting, the initial-pressure NMSE is $0.1052$ (relative $L_2$ error approximately $32.4\%$), the full-field relative error is $18.10\%$, and the estimated viscosity is $7.66\times10^{-6}$ ($99.85\%$ relative error).
     \item The thesis notes that the $H^1$ penalty suppresses high-wavenumber content and can remove information relevant to estimating physical dissipation. In the tested coupled-weight configuration, the estimated viscosity is very small; the ablation does not establish this mechanism for other settings.
 \end{itemize}
 \end{response}
@@ -257,7 +256,7 @@ P107: ``achieve unprecedented computational efficiency and spatial accuracy.'' T
 \end{revcomment}
 
 \begin{response}
-We retracted the superlative claim. In the reported 3D setup, eight-core ARD-PSTD runtime is about $36.0$\,s, compared with $22.1$\,s for coarse FDTD, $92.6$\,s for fine FDTD, and $144.3$\,s for fine TD-FEM. The lossless frequency-response comparison shows closer agreement below $200$\,Hz for the tested fine-grid references; it does not establish zero dispersion or absolute accuracy.
+We retracted the superlative claim. In the reported three-dimensional setup, the eight-core ARD-PSTD runtime is about $36.0$\,s, compared with $22.1$\,s for coarse FDTD, $92.6$\,s for fine FDTD, and $144.3$\,s for fine time-domain finite-element method (TD-FEM). The lossless frequency-response comparison shows closer agreement below $200$\,Hz for the tested fine-grid references; it does not establish zero dispersion or absolute accuracy.
 \end{response}
 
 \begin{revcomment}{Comment R2C14: Retraction of Claim Extending ARD to FDTD}
@@ -301,7 +300,7 @@ P108: 3 lines on future work is an order of magnitude less than what one would t
 \begin{response}
 Section~4.3 was expanded from 3 lines to over 4 pages of continuous technical prose, detailing 5 distinct research avenues:
 \begin{enumerate}
-    \item \emph{Section~4.3.1:} Geometric discretization and staircasing boundary-error mitigation using Cartesian cut-cell, embedded-boundary, and curvilinear methods \citep{popescu_finite_2008,alsalem_embedded_2018,appelo_fourth_2012,cerimele_numerical_2008,yuan_perfectly_2014}. An ARD-inspired Fourier--spectral element method (SEM) hybrid is also discussed for complex boundaries \citep{borrel_jensen_fourier_sem_2022}; the cited numerical tests are one-dimensional and do not demonstrate curved-boundary accuracy.
+    \item \emph{Section~4.3.1:} Geometric discretization and staircasing boundary-error mitigation using Cartesian cut-cell, embedded-boundary, and curvilinear methods \citep{popescu_finite_2008,alsalem_embedded_2018,appelo_fourth_2012,cerimele_numerical_2008,yuan_perfectly_2014}. An Adaptive Rectangular Decomposition (ARD)-inspired Fourier--spectral element method (SEM) hybrid is also discussed for complex boundaries \citep{borrel_jensen_fourier_sem_2022}; the cited numerical tests are one-dimensional and do not demonstrate curved-boundary accuracy.
     \item \emph{Section~4.3.2:} Damped ARD Kick integration and higher-order interface corrections. The text distinguishes candidates to adapt within the physical-space Kick from localized Pad\'e Dirichlet-to-Neumann (DtN) approximations \citep{caudron_optimized_2020} and discontinuous Galerkin (DG) methods \citep{heinz_nonconforming_dg_2023}; these would require new time-domain, hybrid, or replacement formulations and a separate stability analysis.
     \item \emph{Section~4.3.3:} Analytical min--max analysis of Optimized Schwarz Waveform Relaxation (OSWR) transmission conditions \citep{gander_optimal_2003}.
     \item \emph{Section~4.3.4:} Scaling the DPNN to three dimensions and advanced inversion formulations, including optimal sensor placement, edge-preserving Total Variation regularization, and comparison with full-waveform inversion (FWI) \citep{plessix_adjoint_2006,pratt_gauss_newton_1998} and time-reversal acoustics (TRA) \citep{fink_time_1992,kahana_time_2022}.
@@ -343,7 +342,7 @@ We added a label to the continuous dispersion relation in Section~2.2.2 (Dispers
 \end{revcomment}
 
 \begin{response}
-Section~2.2.5 (Time Reversibility) now names the three damping regimes explicitly: the undamped wave equation ($\gamma=\nu=0$), the telegrapher equation ($\gamma>0,\nu=0$), and the viscoelastic case ($\nu>0$).
+Section~2.2.5 (Time Reversibility) now names the three damping regimes explicitly: the undamped wave equation ($\gamma=\nu=0$), the telegrapher equation ($\gamma>0,\nu=0$), and the combined telegrapher--viscoelastic model ($\gamma>0,\nu>0$).
 \end{response}
 
 \begin{revcomment}{Comment R2m5: Role of Proposition 2.4 (P40)}
@@ -359,7 +358,7 @@ We clarified the scope of Proposition~2.4 in the text immediately following it. 
 \end{revcomment}
 
 \begin{response}
-In Section~2.5.5.1, we replaced the vague description with a direct explanation of the time integration: \emph{``In this formulation, the time-stepping integration is performed directly in the modal (spectral) domain.''}
+In Section~2.5.5.1, we now explain the operation explicitly: the initial displacement, velocity, and forcing are transformed with the type-II discrete cosine transform (DCT-II); each modal state is then advanced independently with its exact transition matrix; and the updated coefficients are transformed back to physical space with the inverse DCT-II.
 \end{response}
 
 \begin{revcomment}{Comment R2m7: Grammatical Structure in Section 3.1 (P71)}
@@ -367,7 +366,7 @@ In Section~2.5.5.1, we replaced the vague description with a direct explanation 
 \end{revcomment}
 
 \begin{response}
-We removed the malformed sentence when revising Section~3.1. The current text introduces the tested formulation as follows: \emph{``To solve the damped wave equation on large computational domains, we employ an overlapping Schwarz waveform relaxation (SWR) method \citep{gander_optimal_2003}. The formulation studied here uses Robin-like transmission conditions parameterized by $q$ and $r$; the optimized Schwarz waveform relaxation (OSWR) parameters are selected numerically to reduce the convergence factor over a sampled frequency set.''}
+We removed the malformed sentence when revising Section~3.1. The revised text now reads: \emph{``To solve the damped wave equation on large computational domains, we employ an overlapping Schwarz Waveform Relaxation (SWR) method \citep{gander_optimal_2003}. The formulation studied here uses Robin-like transmission conditions parameterized by $q$ and $r$; the OSWR parameters are selected numerically to reduce the convergence factor over a sampled frequency set.''}
 \end{response}
 
 \begin{revcomment}{Comment R2m8: Overlap Definition $a < b$ (P81)}
@@ -399,7 +398,15 @@ We corrected the inline citation to standard parenthetical format: \emph{``Stran
 \end{revcomment}
 
 \begin{response}
-Section~3.2.5 now defines the complete amplification matrix $G=K(\Delta t/2)D(\Delta t)K(\Delta t/2)$. It gives the block matrix for the half-step Kick and the physical-space expression for the modal Drift, with the modal transition matrices defined earlier.
+Section~3.2.5 now defines the complete amplification matrix $G=K(\Delta t/2)D(\Delta t)K(\Delta t/2)$ and gives explicit formulas for both operators. The half-step Kick is
+\[
+K\!\left(\frac{\Delta t}{2}\right)=
+\begin{bmatrix}
+I & 0\\
+\frac{\Delta t}{2}c^2C_{\mathrm{res}} & I+\frac{\Delta t}{2}\nu C_{\mathrm{res}}
+\end{bmatrix}.
+\]
+The physical-space Drift is $D(\Delta t)=\mathcal P^T S(\Delta t)\mathcal P$, where $S(\Delta t)=\operatorname{diag}_m(S_m)$ collects the exact modal transition matrices and $\mathcal P=\operatorname{diag}(\Phi,\Phi)$ is the orthogonal discrete cosine transform.
 \end{response}
 
 \vspace{0.8cm}
