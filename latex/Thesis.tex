@@ -110,6 +110,11 @@
         #2%
     \fi
 }
+\DeclareRobustCommand{\thesischangecolor}[1]{%
+    \ifshowthesischanges
+        \color{#1}%
+    \fi
+}
 \pdfstringdefDisableCommands{%
     \def\thesischange#1#2{#2}%
 }
@@ -2571,7 +2576,7 @@ which is an identity by Euler's formula. Consequently, every harmonic mode is pr
 When telegrapher or viscoelastic damping is present, the modal equations remain uncoupled but we need to develop a different exact time integration scheme. This construction will be discussed in the following section.
 
 \subsection{State Space Form}
-	extcolor{blue}{For convenience, we introduce the orthonormal DCT-II change-of-basis matrix $\Phi \in \mathbb{R}^{N \times N}$, whose $(i,m)$-th entry is given by the discrete basis functions in \eqref{eq:dct_basis}:
+\thesischange{blue}{For convenience, we introduce the orthonormal DCT-II change-of-basis matrix $\Phi \in \mathbb{R}^{N \times N}$, whose $(i,m)$-th entry is given by the discrete basis functions in \eqref{eq:dct_basis}:
 \begin{equation}
 \Phi_{i,m} = \phi_m(i) = \sqrt{\frac{2}{N}} \alpha_m \cos\!\left(\frac{m\pi}{N}\left(i + \frac{1}{2}\right)\right), \quad i, m = 0, \dots, N-1,
 \label{eq:phi_matrix_def}
@@ -4013,9 +4018,10 @@ A_u^{(k)}
 
 Denoting the bracketed quantities by
 \[
-F(b) = ik\left(e^{ikb}-e^{-ikb}\right)+\Lambda\left(e^{ikb}+e^{-ikb}\right),
-\; \text{and} \;
-H(a) = -ik\left(e^{ika}-e^{-ika}\right)+\Lambda\left(e^{ika}+e^{-ika}\right),
+\begin{aligned}
+F(b) &= ik\left(e^{ikb}-e^{-ikb}\right)+\Lambda\left(e^{ikb}+e^{-ikb}\right),\\
+H(a) &= -ik\left(e^{ika}-e^{-ika}\right)+\Lambda\left(e^{ika}+e^{-ika}\right).
+\end{aligned}
 \]
 the two equations decouple into a two-step recurrence
 \begin{equation*}
@@ -4149,7 +4155,7 @@ To provide a broader overview of how both damping parameters affect the domain d
     \label{fig:oswr_rho_opt_map}
 \end{figure}
 
-\thesischange{blue}{To further examine the sampled min--max optimization, we plot the selected Robin parameters $(q_{\mathrm{opt}}, r_{\mathrm{opt}})$ over the damping values used in the parameter sweeps (Figure~\ref{fig:swr_qr_mapping_curves}). Figure~\ref{fig:swr_qr_mapping_gamma_curves} holds $\gamma$ fixed at selected levels and varies $\nu$ over the sampled grid; the color of each point indicates $\nu$ on a logarithmic scale. Figure~\ref{fig:swr_qr_mapping_nu_curves} shows the complementary sweeps, holding $\nu$ fixed while sampling $\gamma$. The plots illustrate different trajectories for the two parameter sweeps, but do not establish a general one-to-one or non-degenerate dependence.}
+\thesischange{blue}{To further examine the sampled min--max optimization, we plot the selected Robin parameters $(q_{\mathrm{opt}}, r_{\mathrm{opt}})$ over the damping values used in the parameter sweeps (Figure~\ref{fig:swr_qr_mapping_curves}). Figure~\ref{fig:swr_qr_mapping_gamma_curves} holds $\gamma$ fixed at selected levels and varies $\nu$ over the sampled grid; the color of each point indicates $\nu$ on a logarithmic scale. Figure~\ref{fig:swr_qr_mapping_nu_curves} shows the complementary sweeps, holding $\nu$ fixed while sampling $\gamma$. The plots illustrate different trajectories for the two parameter sweeps.}
 
 \begin{figure}[H]
     \centering
@@ -4372,18 +4378,16 @@ In the undamped limit ($\nu \to 0$), the velocity flow reduces to $\mathbf v(t+\
 \end{equation}
 Because the forward Euler approximation introduces a $B^2$ contribution with coefficient $1/4$ instead of the exact coefficient $1/2$ at order $\Delta t^2$, the composition with forward Euler Kick substeps is formally first-order accurate in time for the damped interface operator.}
 
-\thesischange{red}{For the isolated viscous half-kick, a homogeneous velocity perturbation is updated by $\delta\mathbf{v}^{n+1} = (I + \tau\nu C_{\mathrm{res}})\delta\mathbf{v}^{n}$. The usual forward-Euler parabolic stability estimate requires $C_{\mathrm{res}}$ to have real non-positive eigenvalues. We tested the actual matrices returned by \texttt{get\_residue\_matrix} for interface orders $2,4,6,8$ and grid sizes $N_x=20,40,80,160,320,640,800$ by computing their full spectra; the reproducible script is provided in the accompanying code. All tested eigenvalues were real to numerical precision (maximum imaginary part zero at the reported precision), but non-positivity held only for order 2. For orders 4, 6, and 8, the largest eigenvalues were approximately $1.04\times10^{-2}$, $8.30\times10^{-3}$, and $2.91\times10^{-3}$, respectively, independent of the tested $N_x$. Hence the isolated viscous kick is not dissipative for these higher-order residual stencils, and the conditional Gershgorin argument does not establish a general parabolic stability bound for the implemented method. Stability of the full split step must instead be assessed from its complete amplification matrix; the numerical CFL study below addresses that combined update for the configurations tested.}
+\thesischange{red}{For the isolated viscous half-kick, a homogeneous velocity perturbation is updated by $\delta\mathbf{v}^{n+1} = (I + \tau\nu C_{\mathrm{res}})\delta\mathbf{v}^{n}$. We computed the full spectra of the matrices returned by \texttt{get\_residue\_matrix} for interface orders $2,4,6,8$ and grid sizes $N_x=20,40,80,160,320,640,800$; the reproducible script is provided in the accompanying code. All tested eigenvalues were real to numerical precision (maximum imaginary part zero at the reported precision), but non-positivity held only for order 2. For orders 4, 6, and 8, the largest eigenvalues were approximately $1.04\times10^{-2}$, $8.30\times10^{-3}$, and $2.91\times10^{-3}$, respectively, independent of the tested $N_x$. Thus, the tested higher-order residual stencils are not dissipative for the isolated viscous kick. The whole step stability sweep is reported under the heading \emph{Stability} in Section~\ref{sec:ard_stability_numerical}.}
 
 \subsection{FDTD Context and Scope}
 
-For context, the undamped FDTD leapfrog update can be written in the staggered-velocity form used by velocity Verlet. This equivalence illustrates a possible connection to the splitting framework; it is not a developed or implemented FDTD-based ARD solver. A complete FDTD particularization would also need a local Drift step that enforces the subdomain boundary conditions and is compatible with the Kick state updates.
+For context, the undamped FDTD leapfrog update can be written in the staggered-velocity form used by velocity Verlet. This single-domain identity does not define a complete FDTD-based ARD solver. A decomposed method would also need a local Drift step that enforces the subdomain boundary conditions and is compatible with the Kick state updates.
 
-{\color{red}
-For the purely undamped wave equation, the standard explicit leapfrog
+\thesischange{red}{For the purely undamped wave equation, the standard explicit leapfrog
 FDTD scheme \citep[cfr.][]{bilbao_numerical_2009} is algebraically equivalent to the staggered-velocity
 formulation of the second-order Velocity Verlet integrator
-\citep{swope1982computer}, making the Strang-split ARD integration straightforward. Indeed, after spatial
-discretization, the wave equation can be written as
+\citep{swope1982computer}. After spatial discretization, the wave equation can be written as
 \begin{equation}
 	\ddot{\mathbf{u}}_h = \mathcal{L}_h \mathbf{u}_h,
 \end{equation}
@@ -4441,7 +4445,7 @@ The ARD coupling uses a localized finite-difference approximation to the residua
 
 For each subdomain, the solution is expanded in the DCT basis, yielding the uncoupled modal state vectors $\mathbf Z_{1,m}$ and $\mathbf Z_{2,m}$. The local Drift operator is simply the exact state-transition matrix $S_m(\Delta t)$ derived in the previous section \eqref{eq:modal_general_update}, incorporating the analytical propagation of the damped modal oscillators and the external physical forcing via the $T_m$ matrix.
 
-{\color{red}
+\thesischange{red}{
 \paragraph{Initialization ($n=0$).}
 The time-stepping scheme is initialized from the prescribed physical initial displacement $\mathbf{u}_0$ and velocity $\mathbf{v}_0$ sampled on the discrete grid. The initial modal states $\mathbf{U}_m^0$ and $\mathbf{V}_m^0$ on each subdomain are obtained directly by applying the forward DCT:
 \begin{equation*}
@@ -4504,7 +4508,7 @@ The local modal propagator and localized explicit Kick combine the independent s
 
 \subsection{Stability Considerations}
 
-The uncoupled PSTD modal propagator has no exponentially growing modes, subject to the neutral constant-mode drift described in Proposition~\ref{prop:stability}. This fact alone gives no stability bound for the ARD-PSTD product, which also includes the explicit interface correction. A CFL-type restriction is observed in the finite-dimensional stability sweeps below, but a general bound for the implemented method is not established.
+The uncoupled PSTD modal propagator has no exponentially growing modes, subject to the neutral constant-mode drift described in Proposition~\ref{prop:stability}. The ARD-PSTD update also includes the explicit interface correction. The finite-dimensional sweeps below show a CFL-type restriction for the tested configurations.
 
 The ARD update is organized as a Kick--Drift--Kick composition. In the
 undamped case, the Kick flow is exact because its state matrix is nilpotent,
@@ -4529,7 +4533,7 @@ L_h^{(\mathrm N)}
 \]
 is supported only on a small neighborhood of the artificial interfaces. This locality does not make the stability depend only on the spectrum of $C_{\mathrm{res}}$: the full amplification matrix also depends on the modal Drift and on the non-commuting interaction between the two operators.
 
-Because the exact modal propagator is diagonal in the modal basis whereas the interface correction is sparse in the physical basis, the two operators cannot in general be simultaneously diagonalized. No general scalar formula for the stability threshold is therefore available. For the numerical estimates below, we construct the complete one-step amplification matrix
+Because the exact modal propagator is diagonal in the modal basis whereas the interface correction is sparse in the physical basis, the two operators cannot in general be simultaneously diagonalized. For the numerical estimates below, we construct the complete one-step amplification matrix
 \[
 G
 =
@@ -4539,7 +4543,7 @@ K\!\left(\frac{\Delta t}{2}\right),
 \]
 \thesischange{red}{where $K(\Delta t/2)$ denotes the half-step localized interface correction matrix obtained from Equation~\eqref{eq:kick_flow} with $\tau = \Delta t/2$,}
 \begin{equation*}
-{\color{red}K\!\left(\frac{\Delta t}{2}\right) = \begin{bmatrix} I & 0 \\ \frac{\Delta t}{2} c^2 C_{\mathrm{res}} & I + \frac{\Delta t}{2} \nu C_{\mathrm{res}} \end{bmatrix},}
+    {\thesischangecolor{red}K\!\left(\frac{\Delta t}{2}\right) = \begin{bmatrix} I & 0 \\ \frac{\Delta t}{2} c^2 C_{\mathrm{res}} & I + \frac{\Delta t}{2} \nu C_{\mathrm{res}} \end{bmatrix},}
 \end{equation*}
 \thesischange{red}{and $D(\Delta t) = \mathcal{P}^T S(\Delta t) \mathcal{P}$ represents the uncoupled modal Drift propagator in physical space, with $\mathcal{P} = \operatorname{diag}(\Phi, \Phi)$ denoting the orthogonal Discrete Cosine Transform and $S(\Delta t) = \operatorname{diag}_{m}(S_m)$ the block-diagonal collection of exact modal transition matrices $S_m = e^{A_m \Delta t}$ defined in \eqref{eq:Sm_def}.} In the numerical study below, a threshold estimate is obtained from the spectral-radius condition
 \[
@@ -4547,129 +4551,13 @@ K\!\left(\frac{\Delta t}{2}\right),
 \]
 This condition is used as a numerical indicator; by itself it does not rule
 out defective unit-modulus eigenvalues or transient growth of a non-normal
-matrix. The analytic result in Proposition~\ref{prop:ard_order2_stability}
-establishes power boundedness only for the stated undamped order-2 case and
-the sufficient CFL range given there.
-
-For the undamped second-order interface stencil, a restricted analytic
-sufficient condition can nevertheless be proved.
-\begin{proposition}[Sufficient stability condition for the undamped order-2 Kick-Drift-Kick scheme]
-\label{prop:ard_order2_stability}
-Consider the one-dimensional, cell-centered ARD-PSTD discretization on
-$[0,L]$, divided into two equal Neumann subdomains with $N_x/2$ nodes each,
-where $N_x$ is even and $\Delta x=L/N_x$. Let $\gamma=\nu=0$ and take zero
-external forcing. Use the second-order residual
-\[
-C_{\mathrm{res}}
-=\frac{1}{\Delta x^2}
-\begin{bmatrix}
--1&1\\
-1&-1
-\end{bmatrix}
-\]
-on the two nodes adjacent to the interface (and zero elsewhere), and use
-exact modal Drift with the Kick--Drift--Kick update. If
-\[
-0<\sigma=\frac{c\Delta t}{\Delta x}\le\frac12,
-\]
-then the full homogeneous Kick-Drift-Kick amplification is power bounded on the invariant
-subspace orthogonal to the spatially constant displacement and velocity
-states. In that two-dimensional constant-in-space subspace, displacement is
-neutral when the mean velocity is zero; a nonzero mean velocity produces the
-physical linear drift of the spatial mean.
-\end{proposition}
-
-\begin{proof}
-Let $A\succeq0$ be the block-diagonal squared-frequency operator of the
-uncoupled Neumann subdomains, $\Omega=A^{1/2}$, and
-$B=c^2C_{\mathrm{res}}\preceq0$. Write $h=\Delta t$ and define
-$P=\cos(h\Omega)$ and $Q=q(\Omega)$, where
-$q(\omega)=\sin(h\omega)/\omega$ for $\omega>0$ and $q(0)=h$. The exact
-Drift is
-\[
-D(h)=
-\begin{bmatrix}
-P&Q\\
--\Omega\sin(h\Omega)&P
-\end{bmatrix},
-\]
-and the half-Kick is
-\[
-K(h/2)=
-\begin{bmatrix}
-I&0\\
-hB/2&I
-\end{bmatrix}.
-\]
-Since the largest local modal frequency is
-$\Omega_{\max}=c\pi(N_x-2)/L$, the CFL assumption implies
-$h\Omega_{\max}<\pi/2$. Thus $Q\succ0$ and $P\succeq0$.
-
-Let $R=-\Omega\sin(h\Omega)$ be the lower-left block of $D(h)$. The first
-half-Kick and Drift give
-\[
-\mathbf u^{n+1}=M\mathbf u^n+Q\mathbf v^n,
-\qquad
-M=P+\frac h2 QB.
-\]
-The second half-Kick gives
-\[
-\mathbf v^{n+1}
-=\left(R+\frac h2PB+\frac h2BM\right)\mathbf u^n
-+\left(P+\frac h2BQ\right)\mathbf v^n.
-\]
-Substituting the velocity update into the next displacement equation gives
-\begin{align*}
-\mathbf u^{n+2}
-&=M\mathbf u^{n+1}+Q\mathbf v^{n+1}\\
-&=\left(M^2+QR+\frac h2QPB+\frac h2QBM\right)\mathbf u^n
-+\left(MQ+QP+\frac h2QBQ\right)\mathbf v^n\\
-&=2M\left(M\mathbf u^n+Q\mathbf v^n\right)-\mathbf u^n
-=2M\mathbf u^{n+1}-\mathbf u^n.
-\end{align*}
-For the last equality, $P$ and $Q$ commute and $QR=P^2-I$, since all three
-are functions of $\Omega$. Thus the displacement satisfies
-\[
-\mathbf u^{n+1}-2M\mathbf u^n+\mathbf u^{n-1}=0.
-\]
-The matrix $M$ is similar to the symmetric matrix
-\[
-\widetilde M=Q^{-1/2}MQ^{1/2}
-=P+\frac h2Q^{1/2}BQ^{1/2}.
-\]
-Consequently, its eigenvalues are real. Since $B\preceq0$,
-$\lambda_{\max}(\widetilde M)\le1$. Also
-$\|Q\|\le h$ and
-$\|B\|=2c^2/\Delta x^2$, so
-\[
-\lambda_{\min}(\widetilde M)
-\ge \cos(h\Omega_{\max})-\frac{h^2}{2}\|B\|
-\ge \cos(\pi\sigma)-\sigma^2
-\ge -\frac14>-1.
-\]
-If $\widetilde Mx=x$, then
-$x^T(I-P)x=\frac h2x^TQ^{1/2}BQ^{1/2}x$. The left side is non-negative and
-the right side is non-positive, so both vanish. Hence $x$ lies in the
-zero-frequency subspace of the two local Neumann blocks and
-$BQ^{1/2}x=0$. On that subspace the order-2 interface block annihilates only
-the equal-constant combination, so $\mu=1$ is the global constant mode alone.
-For an eigenvalue $\mu$ of $\widetilde M$, the recurrence has characteristic
-polynomial $z^2-2\mu z+1$. Hence all roots lie on the unit circle and are
-distinct for $-1<\mu<1$, giving bounded oscillations. Since $Q\succ0$, the
-top row of the Kick-Drift-Kick update gives
-\[
-\mathbf v^n=Q^{-1}(\mathbf u^{n+1}-M\mathbf u^n),
-\]
-so bounded displacement sequences also give bounded velocities. The sole
-$\mu=1$ eigenvector is the global constant mode, for which the recurrence has
-the double root $z=1$ and permits linear mean drift when the mean velocity is
-nonzero. Thus the complementary phase-space subspace is power bounded, while
-the constant-in-space phase subspace has only the stated physical drift.
-\end{proof}
+matrix. The numerical sweeps below provide threshold estimates for the tested
+configurations.
 
 \subsection{Numerical Experiments}
 
 \subsubsection{Stability}
+\label{sec:ard_stability_numerical}
 
 The numerical sweep of the complete one-step amplification matrix suggests that the localized interface correction imposes a modest time-step restriction for the tested cases. Because the explicit correction projects global spectral modes onto a local interface stencil\footnote{\thesischange{red}{In finite-difference methods, a computational stencil refers to the geometric arrangement of neighboring grid points sampled to approximate a differential operator. Here, an \emph{interface stencil} specifically denotes the local finite-difference operator straddling the artificial boundary between adjacent subdomains to evaluate the coupling correction $C_{\text{res}}$.}}, the estimated threshold varies somewhat with grid resolution $N$, consistent with possible discrete resonances between global modes and the interface stencil. \thesischange{red}{We numerically swept the amplification matrix $G$ (the single-step transition combining the modal propagator and interface correction) for grid resolutions up to $N=800$. The estimated maximum Courant numbers for second-, fourth-, sixth-, and eighth-order interface operators (the spatial order of $C_{\text{res}}$) are}
 \[
@@ -4681,13 +4569,13 @@ The numerical sweep of the complete one-step amplification matrix suggests that 
 1.017,\;
 0.991,
 \]
-respectively. The estimates decrease with stencil order over the tested configurations. For the eighth-order stencil, the estimate at the largest tested resolution is approximately $0.991$; the finite sweep does not establish an asymptotic worst-case limit. Courant numbers slightly greater than $1$ can occur because the CFL number is normalized by the standard explicit FDTD limit, whereas the analytical modal propagator has no such intrinsic limit.
+respectively. The estimates decrease with stencil order over the tested configurations. For the eighth-order stencil, the estimate at the largest tested resolution is approximately $0.991$. Courant numbers slightly greater than $1$ can occur because the CFL number is normalized by the standard explicit FDTD limit, whereas the analytical modal propagator has no such intrinsic limit.
 
 For the full split update with viscoelastic damping ($\nu > 0$), we also examine the dimensionless number
 \[
 S = \frac{\nu \Delta t}{\Delta x^2}.
 \]
-A finite-dimensional numerical search of the full amplification matrix estimates the stable range in $S$ for a specified grid and parameter set. The tested residue matrices have positive eigenvalues for orders 4, 6, and 8, so the isolated forward-Euler diffusion argument does not supply a general bound for those stencils. At $N=200$, $L=c=\nu=1$, and $\gamma=0$, the numerical search returns the following estimates:
+A finite-dimensional numerical search of the full amplification matrix estimates the stable range in $S$ for a specified grid and parameter set. The tested residue matrices have positive eigenvalues for orders 4, 6, and 8. At $N=200$, $L=c=\nu=1$, and $\gamma=0$, the numerical search returns the following estimates:
 \[
 S_{\max} =
 2.000,\;
@@ -4695,16 +4583,16 @@ S_{\max} =
 1.318,\;
 1.233,
 \]
-respectively. The second-order estimate agrees with the classical explicit-diffusion value in this setup; the remaining values are numerical results for this grid and parameter choice, not rigorous or mesh-independent bounds.
+respectively. These values are numerical estimates for this grid and parameter choice.
 
 To compare the undamped hyperbolic CFL estimates with long-run behavior, we simulate a one-dimensional Gaussian pulse with $\nu=\gamma=0$. The domain length is $L=1$, the wave speed is $c=1$, and we use $N=100$ grid points split into two non-overlapping subdomains of $N_{\mathrm{sub}}=50$ points each. The simulation runs to $T=250$ to expose mild exponential growth.
 
 For each spatial order, the script uses its amplification-matrix estimate for $N=100$ and runs one simulation with $\Delta t=(\mathrm{CFL}_{N=100}\mp\epsilon)\Delta x/c$, using $\epsilon=0.05$. We inspect the maximum global wavefield amplitude at the end of each run.
 
-For the tested higher-order cases, the runs below the estimated threshold remain bounded over $T=250$; the second-order case exhibits delayed growth even slightly below its estimate. These finite-duration tests support the undamped threshold estimates for this grid but do not prove stability at arbitrary resolutions or validate the damped $S$ estimates.
+For the tested higher-order cases, the runs below the estimated threshold remain bounded over $T=250$; the second-order case exhibits delayed growth even slightly below its estimate. These finite-duration tests support the undamped threshold estimates for this grid.
 
 % The following empirical divergence amplitudes at T=250 are computed using code/pstd/scripts/verify_cfl_empirical.m
-For the runs above the estimated undamped threshold, amplitudes grow substantially over this long interval, reaching floating-point overflow for the sixth- and eighth-order cases. This comparison is numerical evidence for the tested setup, not a proof of a general stability boundary.
+For the runs above the estimated undamped threshold, amplitudes grow substantially over this long interval, reaching floating-point overflow for the sixth- and eighth-order cases. This comparison provides additional numerical evidence for the tested setup.
 
 \subsubsection{Convergence of the Interface Correction Operator}
 \label{sec:accuracy_analysis}
@@ -4813,7 +4701,7 @@ To demonstrate the capability of the proposed ARD solver in higher dimensions, w
 \begin{table}[H]
 \centering
 \small
-\color{red}
+{\thesischangecolor{red}
 \resizebox{\textwidth}{!}{%
 \begin{tabular}{lll}
 \toprule
@@ -4866,6 +4754,7 @@ To demonstrate the capability of the proposed ARD solver in higher dimensions, w
 \bottomrule
 \end{tabular}%
 }
+}
 \caption[\thesischange{red}{Comprehensive parameter specifications for the 3D comparative solvers}]{\thesischange{red}{Comprehensive parameter specifications for the 3D multi-subdomain numerical benchmark across coarse and fine mesh configurations for multi-subdomain ARD-PSTD, 3D Acoustic TD-FEM, and global 3D FDTD.}}
 \label{tab:ard_3d_simulation_parameters}
 \end{table}
@@ -4909,7 +4798,7 @@ Because the homogeneous Neumann boundary condition is the natural boundary condi
 \begin{itemize}
     \item \thesischange{red}{\textbf{Global 3D FDTD (Figures~\ref{subfig:3d_fdtd_coarse} and~\ref{subfig:3d_fdtd_fine}):} On the coarse grid ($\Delta h = 0.20$\,m, subfigure~(a)), the 7-point Cartesian stencil shows visible phase lag and trailing ripples behind the primary wavefront. These artifacts are less apparent on the refined $\Delta h = 0.10$\,m grid (subfigure~(b)); this is a qualitative visual comparison and does not measure a factor-of-four error reduction.}
     \item \thesischange{red}{\textbf{3D Acoustic TD-FEM (Figures~\ref{subfig:3d_fem_coarse} and~\ref{subfig:3d_fem_fine}):} The 27-point stencil couples each node to its 26 neighbors and is designed to reduce directional bias. In these snapshots, the coarse-grid TD-FEM field appears less directionally biased than coarse FDTD; the fine-grid pattern is smoother. These visual observations do not quantify isotropy or error.}
-    \item \thesischange{red}{\textbf{Multi-Subdomain ARD-PSTD (Figure~\ref{subfig:3d_ard_coarse}):} On the coarse grid ($\Delta h = 0.20$\,m, subfigure~(e)), ARD-PSTD produces sharp wavefronts that visually resemble those in the fine-grid reference snapshots. This qualitative comparison is consistent with reduced spatial dispersion for resolved modes in the tested configuration, but does not establish absolute accuracy or isolate the effect of the spectral spatial derivative.}
+    \item \thesischange{red}{\textbf{Multi-Subdomain ARD-PSTD (Figure~\ref{subfig:3d_ard_coarse}):} On the coarse grid ($\Delta h = 0.20$\,m, subfigure~(e)), ARD-PSTD produces sharp wavefronts that visually resemble those in the fine-grid reference snapshots. This qualitative comparison is consistent with reduced spatial dispersion for resolved modes in the tested configuration.}
 \end{itemize}
 
 \thesischange{red}{Regarding computational performance, a clear distinction must be drawn between per-step algebraic complexity and global resolution efficiency. In our empirical benchmarks executed on an Intel CPU with AVX2 vectorization, the execution times for $T = 0.24$\,s are measured as follows:}
@@ -5421,7 +5310,7 @@ Quantitative results are reported in Table~\ref{tab:dpnn_ablation}.}
 
 \thesischange{red}{In the ablation using two profiles and the selected penalty weights, the tested Sobolev $H^1$ terms increase reconstruction errors and yield very small viscosity estimates. Unregularized data fitting gives the better overall trade-off among the configurations tested, although $L_1$ lowers the initial-condition NMSE for the Gaussian profile. These results do not rule out benefits from other regularizers, weights, or different inverse-problem settings.}
 
-\thesischange{red}{Parameter recovery varies with the initial profile. In the multimodal standing-wave case, PSTD-DPNN estimates $\gamma$ with an 86\% relative error, while its errors for $\gamma$ and $\nu$ are below 5\% for the Gaussian and triangular profiles. In the separate Gaussian disentangling experiment, joint inversion recovers both parameters accurately in the tested run; it does not show greater error than the parameter-only run. The results therefore identify profile-dependent parameter recovery as a limitation, but do not by themselves establish source--damping compensation as its cause. Broader tests over sensor layouts, noise realizations, and initializations are needed to characterize that effect.}
+\thesischange{red}{Parameter recovery varies with the initial profile. In the multimodal standing-wave case, PSTD-DPNN estimates $\gamma$ with an 86\% relative error, while its errors for $\gamma$ and $\nu$ are below 5\% for the Gaussian and triangular profiles. In the separate Gaussian disentangling experiment, joint inversion recovers both parameters accurately in the tested run; it does not show greater error than the parameter-only run. The results therefore identify profile-dependent parameter recovery as a limitation.}
 
 \chapter{Conclusion and Future Perspectives}
 \label{ch:conclusion}
@@ -5432,7 +5321,7 @@ Quantitative results are reported in Table~\ref{tab:dpnn_ablation}.}
 
 The first major contribution of this work was the derivation and analysis of a fully uncoupled Pseudo-Spectral Time-Domain (PSTD) solver (introduced in Chapter~\ref{ch:introduction}). By projecting the damped wave equation onto its normal modes, we obtained exact analytic state-transition matrices governing the temporal evolution of the retained spectral modes. \thesischange{red}{This formulation eliminates temporal time-stepping errors within each rectangular subdomain and removes the explicit time-integration restrictions associated with the local mixed spatial-temporal damping operator. The remaining numerical errors are therefore primarily associated with spatial representation, modal truncation, and, in the domain-decomposed setting, interface coupling.}
 
-To investigate spatial decomposition and parallelizable formulations, we considered two distinct domain decomposition paradigms. First, we derived the Optimized Schwarz Waveform Relaxation (OSWR; see Section~\ref{sec:oswr}) method for the damped wave equation. We obtained a frequency-dependent convergence-factor expression and used a sampled-frequency min--max search to select Robin transmission parameters, then examined their dependence on physical and geometrical parameters. \thesischange{red}{The numerical experiments showed improved predicted factors on the sampled sets and faster error reduction in the tested configurations, with the measured acceleration depending on the damping regime and setup.} Subsequently, we investigated the Adaptive Rectangular Decomposition (ARD; see Section~\ref{sec:ard}) framework for wave propagation in partitioned domains. \thesischange{red}{The algorithmic formulation and numerical implementation were developed for PSTD, using localized explicit interface corrections to couple independently propagated rectangular subdomains without iterative global interface solves. For the unforced, undamped one-dimensional, cell-centered configuration with two equal Neumann subdomains and the order-2 Kick-Drift-Kick update introduced in Section~\ref{subsec:ard_strang_splitting} and analyzed in Proposition~\ref{prop:ard_order2_stability}, we prove a sufficient power-boundedness condition under the Courant--Friedrichs--Lewy (CFL) condition (see Chapter~\ref{ch:introduction}) with $\mathrm{CFL}\le1/2$, apart from physical mean drift. Stability of the damped and higher-order updates remains outside this proof; their reported thresholds are numerical estimates.}
+To investigate spatial decomposition and parallelizable formulations, we considered two distinct domain decomposition paradigms. First, we derived the Optimized Schwarz Waveform Relaxation (OSWR; see Section~\ref{sec:oswr}) method for the damped wave equation. We obtained a frequency-dependent convergence-factor expression and used a sampled-frequency min--max search to select Robin transmission parameters, then examined their dependence on physical and geometrical parameters. \thesischange{red}{The numerical experiments showed improved predicted factors on the sampled sets and faster error reduction in the tested configurations, with the measured acceleration depending on the damping regime and setup.} Subsequently, we investigated the Adaptive Rectangular Decomposition (ARD; see Section~\ref{sec:ard}) framework for wave propagation in partitioned domains. \thesischange{red}{The algorithmic formulation and numerical implementation were developed for PSTD, using localized explicit interface corrections to couple independently propagated rectangular subdomains without iterative global interface solves. Numerical sweeps provide threshold estimates for the tested configurations.}
 
 Finally, we introduced a Differentiable Physics Neural Network (DPNN; see Section~\ref{sec:dpnn}) architecture to bridge forward numerical modelling and inverse problem solving. By embedding the differentiable PSTD propagator into the training loop of a Sinusoidal Representation Network (SIREN; see Section~\ref{subsec:dpnn_arch}), we investigated the joint reconstruction of unknown initial pressure fields and the estimation of macroscopic viscoelastic damping parameters from sparse, noisy sensor measurements. \thesischange{red}{The one-dimensional experiments demonstrate feasibility on the tested smooth and non-smooth profiles. PSTD-DPNN produces lower source and field errors than the DPNN using the finite-difference time-domain (FDTD) solver (FDTD-DPNN; see Chapter~\ref{ch:introduction}) in the three reported benchmarks, but its parameter-estimation accuracy depends on the initial profile: recovery is accurate for the Gaussian and triangular pulses and substantially less accurate for $\gamma$ in the multimodal standing-wave case. The single Gaussian disentangling study does not show joint estimation to be consistently more difficult than parameter-only estimation.}
 
@@ -5444,9 +5333,9 @@ Finally, we introduced a Differentiable Physics Neural Network (DPNN; see Sectio
 
 \thesischange{red}{In terms of geometric and physical modelling, the three-dimensional ARD comparison is a numerical demonstration on an axis-aligned stepped enclosure with rigid homogeneous Neumann exterior walls, with cross-solver spectral comparisons focused below $200$\,Hz. It does not test curved or non-orthogonal boundaries or continuous spatial heterogeneities. A separate undamped ARD-PSTD experiment run with WASAbi, the C++ software implementation of ARD \citep{wasabi_software_repository}, which uses FFTW3 for its discrete cosine transforms \citep{fftw_user_manual} (see Section~\ref{subsubsec:ard_pml_coupling}), compares two interface-coupling settings for the perfectly matched layer (PML; introduced in Chapter~\ref{ch:introduction}) using qualitative snapshots; it does not characterize frequency-dependent reflection or establish quantitative reverberation times. Real room boundaries have frequency-dependent absorption and reflection phase that these tests do not characterize.}
 
-\thesischange{red}{Concerning domain decomposition, the ARD interface correction was assessed on a finite set of spatial stencils and resolutions. The reported CFL thresholds are numerical estimates for the tested uniform grids, up to $N=800$, rather than mesh-independent stability bounds; a long simulation also showed delayed growth for the second-order stencil slightly below its estimated threshold. For OSWR, the continuous-frequency convergence-factor expression is minimized numerically over sampled frequencies. The resulting parameter choices improve the predicted factor on the sampled set, but the computation does not exclude a larger peak between samples. Measured acceleration was modest in the one-dimensional low-viscosity baselines and more pronounced in the tested higher-damping and two-dimensional cases.}
+\thesischange{red}{Concerning domain decomposition, the ARD interface correction was assessed on a finite set of spatial stencils and resolutions. The reported CFL thresholds are numerical estimates for the tested uniform grids, up to $N=800$; a long simulation also showed delayed growth for the second-order stencil slightly below its estimated threshold. For OSWR, the continuous-frequency convergence-factor expression is minimized numerically over sampled frequencies. The resulting parameter choices improve the predicted factor on the sampled set, but the computation does not exclude a larger peak between samples. Measured acceleration was modest in the one-dimensional low-viscosity baselines and more pronounced in the tested higher-damping and two-dimensional cases.}
 
-\thesischange{red}{Finally, the PyTorch-based DPNN experiments \citep{pytorch_documentation} used one-dimensional profiles, ten sensors, and a fixed 30\,dB noise level, without an ensemble over sensor layouts or random initializations. In the Gaussian parameter-only run, the recovered errors were 3.0\% for $\nu$ and 10.8\% for $\gamma$; the Gaussian joint run had errors of 2.0\% and 3.5\%, respectively. Across profiles, recovery was less reliable for $\gamma$ in the multimodal standing-wave case. These results establish profile dependence in the tested cases, but do not establish a general sensitivity law with respect to sensor sparsity or prove a source--damping compensation mechanism. The regularization ablation covered two profiles and selected penalty weights: $L_1$ reduced the Gaussian initial-condition normalized mean squared error (NMSE; see Table~\ref{tab:dpnn_ablation}) but worsened its field error, while the tested $H^1$ configurations produced large errors and very small viscosity estimates. The data-only objective gave the better combined field-and-parameter results among the evaluated configurations; this is not a general comparison against all possible regularizers.}
+\thesischange{red}{Finally, the PyTorch-based DPNN experiments \citep{pytorch_documentation} used one-dimensional profiles, ten sensors, and a fixed 30\,dB noise level, without an ensemble over sensor layouts or random initializations. In the Gaussian parameter-only run, the recovered errors were 3.0\% for $\nu$ and 10.8\% for $\gamma$; the Gaussian joint run had errors of 2.0\% and 3.5\%, respectively. Across profiles, recovery was less reliable for $\gamma$ in the multimodal standing-wave case. These results establish profile dependence in the tested cases, but do not establish a general sensitivity law with respect to sensor sparsity. The regularization ablation covered two profiles and selected penalty weights: $L_1$ reduced the Gaussian initial-condition normalized mean squared error (NMSE; see Table~\ref{tab:dpnn_ablation}) but worsened its field error, while the tested $H^1$ configurations produced large errors and very small viscosity estimates. The data-only objective gave the better combined field-and-parameter results among the evaluated configurations; this is not a general comparison against all possible regularizers.}
 
 \section{Future Research Directions}
 
@@ -5458,9 +5347,9 @@ Finally, we introduced a Differentiable Physics Neural Network (DPNN; see Sectio
 
 \thesischange{red}{For non-grid-aligned geometries, voxelizing curved or oblique boundaries can introduce localized diffraction and phase errors, particularly at higher modal densities or for grazing incidence; these effects were not quantified in this thesis. A systematic error analysis as a function of angle and frequency is therefore needed. To reduce such geometric approximation while retaining a Discrete Cosine Transform (DCT)-based treatment in the regular interior (see Chapter~\ref{ch:introduction}), future work could investigate embedded-boundary methods \citep{alsalem_embedded_2018,appelo_fourth_2012}, high-order Cartesian cut-cell techniques \citep{popescu_finite_2008}, and boundary-conforming curvilinear coordinates \citep{cerimele_numerical_2008,yuan_perfectly_2014}. Since these approaches modify the spatial operator near physical boundaries, preserving global modal decoupling is not guaranteed; a suitable interior--boundary coupling strategy, together with its stability and cost, remains an open problem.}
 
-\subsection{\thesischange{red}{Energy Stability and Higher-Order Time Integration for ARD}}
+\subsection{\thesischange{red}{Kick Integration for Damped ARD}}
 
-\thesischange{red}{For the unforced, undamped one-dimensional, cell-centered configuration with two equal Neumann subdomains and the order-2 interface operator specified in Proposition~\ref{prop:ard_order2_stability}, we prove a sufficient power-boundedness condition for the full Kick-Drift-Kick update (see Section~\ref{subsec:ard_strang_splitting}) when $\mathrm{CFL}\le1/2$, apart from the physical mean drift. This bound is conservative and does not cover the higher-order stencils or damped scheme. For $\nu>0$, the implemented viscous interface Kick is advanced with forward Euler, and the tested residual matrices have positive eigenvalues for orders 4, 6, and 8; the scalar parabolic argument therefore does not establish a general $\Delta t\propto\Delta x^2/\nu$ bound. A mesh-independent energy-stability result for the damped and higher-order full updates remains open. Future work should extend the analysis and develop Kick integrators and interface operators for which accuracy and stability can be proved.}
+\thesischange{red}{For $\nu>0$, the implemented viscous interface Kick is advanced with forward Euler, and the tested residual matrices have positive eigenvalues for orders 4, 6, and 8. These results motivate future investigation of alternative Kick integrators and interface operators for the damped, higher-order configurations.}
 
 \thesischange{red}{In parallel, future research should decouple the spatial interface discretization error from the temporal splitting error to target the derivation of higher-order, dispersion-aware interface correction operators. Promising formulations include Hermite-based local interface reconstructions, potentially combined with overset-grid formulations that retain Cartesian grids in the domain interior \citep{appelo_hermite_2018,beznosov_hermite_2021}, localized approximations of Dirichlet-to-Neumann (DtN; see Chapter~\ref{ch:model_problem}) transmission operators via high-order Pad\'e approximations \citep{caudron_optimized_2020}, and discontinuous Galerkin (DG) formulations with penalty-based coupling across non-conforming interfaces \citep{heinz_nonconforming_dg_2023,appelo_energy_2019}. Related high-order finite-difference approaches based on interpolation, projection, and penalty operators have already demonstrated energy-stable coupling for wave equations across non-conforming grids with disparate spatial resolutions \citep{wang_virta_kreiss_2016,wang_improved_2018,eriksson_nonconforming_2023}.}
 
@@ -5552,7 +5441,7 @@ Since the Laplace operator possesses a single zero eigenvalue corresponding to t
 
 This classification unifies all damping regimes into only two derivations. Within the non-constant modes, the underdamped, critically damped and overdamped cases are recovered automatically from a single closed-form expression.
 
-\section{Constant mode (\(\lambda_m=0\))}
+\section{Constant mode (\texorpdfstring{$\lambda_m=0$}{lambda m = 0})}
 
 For the constant mode,
 \begin{equation*}
@@ -5711,7 +5600,7 @@ T_m=
 
 Thus, the undamped constant mode is obtained simply as the limit \(d_m\rightarrow0\), showing that the damped and undamped cases are described by the same closed-form expressions.
 
-\section{Non-constant modes (\(\lambda_m<0\))}
+\section{Non-constant modes (\texorpdfstring{$\lambda_m<0$}{lambda m < 0})}
 
 For every non-constant mode,
 \begin{equation*}

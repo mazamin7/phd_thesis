@@ -13,11 +13,11 @@
 
 Dear Dr. Antoine Deleforge,
 
-We would like to express our sincere gratitude for the time, rigor, and depth with which you reviewed this doctoral thesis. Your insightful and constructive feedback has been immensely valuable in identifying critical areas where the exposition, mathematical precision, experimental analysis, and balance of claims required substantial improvement.
+Thank you for reviewing the thesis and for identifying issues with its exposition, mathematical precision, experimental analysis, and claims.
 
-In response to your review, we have thoroughly revised the thesis. All modifications directly addressing your comments have been highlighted in **red** (`\textcolor{red}{...}`) in the updated manuscript. 
+We revised the thesis in response to your comments. Changes in the updated manuscript are highlighted in **red**.
 
-Below, we first provide a comprehensive response to your **General Assessment**, outlining the overarching changes made across the thesis. Following that, we address every single **Major Comment (R2C1 to R2C17)** and **Minor Comment / Typo (R2m1 to R2m11)** in detail.
+The responses below cover the **General Assessment**, the 17 **Major Comments (R2C1 to R2C17)**, and the 11 **Minor Comments / Typos (R2m1 to R2m11)**.
 
 ---
 
@@ -25,7 +25,7 @@ Below, we first provide a comprehensive response to your **General Assessment**,
 
 ### 1. Scope, Applicative Impact, and 3D Experimental Validation
 > **Reviewer's remark:**  
-> *"From the perspective of the audio and acoustic signal processing community, I think this work is relevant. (...) However, the fact that only one qualitative experiment in 3D is presented limits the thesis' potential applicative impact."*
+> *"However, the fact that only one qualitative experiment in 3D is presented limits the thesis' potential applicative impact. (...) From the perspective of the audio and acoustic signal processing community, I think this work is relevant. Indeed, a lot remains to be explored in terms of improving and accelerating commonly used simulators."*
 
 **Response:**  
 We agree that presenting a single qualitative 3D snapshot comparison limited the practical evaluation of the proposed solvers. In the revised dissertation, we significantly expanded Section 3.2.6 (3D ARD) and Section 4.2 (Limitations):
@@ -41,26 +41,16 @@ We agree that presenting a single qualitative 3D snapshot comparison limited the
 > *"Numerical results on the 6 benchmarks are presented. Unfortunately, there is very little comments or analysis of the results by the author, beyond presenting them. (...) For the two damped scenarios (the most novel contributions), there is in fact no comments at all by the author, which is a problematic omission. No conclusion is offered for this chapter."*
 
 **Response:**  
-We resolved this omission. In Chapter 2 (Sections 2.3.2 and 2.3.4) and Chapter 3 (Section 3.3), we added thorough physical and mathematical discussions:
-1. **Viscoelastic Regularization of FDTD (Table 2.2):** In Experiment 4 (damped non-smooth pulse), FDTD achieves a convergence rate of $\approx 2.22$, which exceeds its undamped rate of $1.03$ (Experiment 2). We explained that physical viscosity $\nu > 0$ introduces modal decay scaling as $s_- \sim -\nu k_m^2$, acting as a natural parabolic low-pass filter that smooths sharp corners over time and restores second-order algebraic convergence.
-2. **Low-Frequency Attenuation Expansion (Section 1.3.1):** We derived the exact low-frequency attenuation $\alpha(\omega) \sim \frac{\nu}{2c^3}\omega^2$ for pure viscoelastic damping ($\gamma = 0$), capturing thermoviscous dissipation. For combined models ($\gamma > 0$), we derived the diffusive root $\alpha(\omega) \sim \sqrt{\frac{\gamma\omega}{2c^2}}$ and the weak-damping asymptotic $\alpha(\omega) \sim \frac{\gamma}{2c} + \frac{\nu}{2c^3}\omega^2$.
-3. **High-Frequency Modal Asymptotics (Section 2.3.1):** We corrected the modal root scaling for $k_m \to \infty$: rather than uniform $\nu k_m^2$ decay across both branches, the system becomes overdamped with two distinct branches: $s_+ \sim -c^2/\nu$ and $s_- \sim -\nu k_m^2$.
+In Chapter 2, Section 2.6, we added result-focused commentary on the two damped FDTD/PSTD benchmarks, comparing their measured errors and convergence rates with the corresponding wavefield plots (Table 2.1 and Figures 2.5--2.8). Section 2.6 also includes a comparative synthesis of the six numerical benchmarks.
 
 ---
 
 ### 3. Chapter 4 Conclusion and Balance of Scientific Claims
 > **Reviewer's remark:**  
-> *"Chapter 4 offers a one-page conclusion for the 100-page thesis. (...) the conclusion only praises the work, sometimes overly so, and makes a number of exaggerated claims without mentioning any limitation. Three possible directions for future work are outlined in one sentence (...). Finally, the claim 'achieve unprecedented computational efficiency and spatial accuracy' has not been validated (...). Likewise, the claim 'significantly outperforming purely data-driven black-box inversions' is made with no evidence."*
+> *"Chapter 4 offers a one-page conclusion for the 100-page thesis. Unfortunately, except for the last three lines, the conclusion only praises the work, sometimes overly so, and makes a number of exaggerated claims without mentioning any limitation. Three possible directions for future work are outlined in one sentence, spanning the last 3 lines, which seems too limited for a research work of this extent."*
 
 **Response:**  
-Chapter 4 was completely rewritten from the ground up:
-1. **Summary of Main Contributions (Section 4.1):** Structured as continuous academic prose (free of bulleted lists and em dashes), synthesizing FDTD vs. PSTD analysis, OSWR domain decomposition, ARD for viscoelastic media, and differentiable physics inversion.
-2. **Critical Limitations of the Present Study (Section 4.2):** Organized around four explicit pillars: geometric staircasing on curved boundaries, ARD time-splitting temporal accuracy, physical scope of synthetic DPNN inversions, and high-frequency computational scaling.
-3. **Expanded Future Research Directions (Section 4.3):** Expanded from 3 lines to over 4 pages of rigorous technical prose across five subfields: geometric discretization (4.3.1), energy stability and exact exponential Kick splitting for ARD (4.3.2), analytical OSWR min-max theory (4.3.3), scaling DPNN to 3D and advanced inversion formulations (4.3.4), and frequency-dependent digital impedance boundary conditions and CPML (4.3.5).
-4. **Retraction of Unsubstantiated Claims:**  
-   - Retracted *"achieve unprecedented computational efficiency and spatial accuracy"*.
-   - Retracted *"significantly outperforming purely data-driven black-box inversions"*.
-   - Retracted the claim that ARD was extended to FDTD.
+Chapter 4 now includes a summary of the main contributions, a section on the limitations of the present study, and a discussion of possible future research directions.
 
 ---
 
@@ -68,7 +58,7 @@ Chapter 4 was completely rewritten from the ground up:
 
 ### Comment R2C1: Definition of Specialized Technical Terms
 > **Reviewer's remark:**  
-> *Sec. 1.3 and 1.4: Highly specialized terms are repeatedly used without defining or explaining them (e.g., "Runge-Kutta scheme"). Even though the presented material is of a textbook nature, someone outside of the field of numerical schemes could not easily decipher it due to its density.*
+> *Major Comment 1: "There are many occurrences of highly technical terms that are used in the thesis without being properly defined, introduced or backed by any reference. Here are a few examples, but the list is far from exhaustive: (...) P10: 'Runge-Kutta scheme'."*
 
 **Response:**  
 In Sections 1.3 and 1.4, we added introductory explanations for all specialized numerical terminology upon first mention, including Runge-Kutta multistage integrators, Courant-Friedrichs-Lewy (CFL) stability bounds, Butcher tableaus, Krylov subspace methods, and spectral projection operators, citing standard treatises (Trefethen, 2000; Canuto et al., 2006; Hairer et al., 1993; Butcher, 2016).
@@ -77,18 +67,20 @@ In Sections 1.3 and 1.4, we added introductory explanations for all specialized 
 
 ### Comment R2C2: Numerical Results on Damped Benchmarks (Pages 66--67)
 > **Reviewer's remark:**  
-> *For the two damped scenarios (the most novel contributions), there is in fact no comments at all by the author, which is a problematic omission.*
+> *Major Comment 2: "The damped numerical results on pages 66 and 67 are shown without any comments by the author. This is a serious issue that should be fixed. More generally, as mentioned above, the author does not provide sufficient explanations, insights or critical views on the obtained results, which are generally just factually presented."*
 
 **Response:**  
-We added in-depth discussions for Experiments 4 and 6 in Section 2.3.4:
-- *Experiment 4 (Viscoelastic non-smooth pulse):* FDTD convergence increases from order $1.03$ (undamped) to $2.22$, demonstrating that physical viscosity $\nu > 0$ rapidly attenuates high-frequency corner singularities ($s_- \sim -\nu k_m^2$), regularizing the wavefield and restoring nominal algebraic convergence.
-- *Experiment 6 (Damped boundary reflection):* We clarified that PSTD achieves a $42.2\times$ reduction in error ($1.63$ orders of magnitude) over FDTD at $N=800$, with PSTD errors localized strictly to boundary stencils while FDTD suffers from grid dispersion throughout the domain.
+In Section 2.6, we added comments on the numerical results for the two damped standing-wave benchmarks, comparing FDTD and PSTD:
+- *Experiment 3 (smooth damped standing wave):* Table 2.1 reports an FDTD convergence rate of approximately $1.92$ and an error of $2.89\times10^{-7}$ at $N=800$; the PSTD errors remain around $10^{-14}$. Figures 2.5 and 2.6 show the corresponding snapshots and space-time fields.
+- *Experiment 4 (non-smooth damped standing wave):* Table 2.1 reports an FDTD rate of approximately $2.22$ with error $5.97\times10^{-7}$ at $N=800$, and a PSTD rate of approximately $1.58$ with error $4.55\times10^{-7}$. Figures 2.7 and 2.8 show the corresponding snapshots and space-time fields.
+
+These comments describe the observed results for the tested configurations.
 
 ---
 
 ### Comment R2C3: Motivation for Two Overlapping Subdomains in Sec. 3.1.4
 > **Reviewer's remark:**  
-> *Sec. 3.1.4: What is the motivation of using only 2 overlapping subdomains in 1D? Why not 3 or more, and why not non-overlapping?*
+> *Sec. 3.1.4: "the domain is partitioned along the x-axis into two overlapping subdomains": Why is it partitioned into two overlapping subdomain? This is never motivated or justified.*
 
 **Response:**  
 In Section 3.1.4, we clarified that two overlapping subdomains $\Omega_1 = (0, b)$ and $\Omega_2 = (a, L)$ with $0 < a < b < L$ represent the canonical theoretical archetype in Schwarz Waveform Relaxation analysis (Gander et al., 2007; Dolean et al., 2015; Quarteroni and Valli, 1999). It isolates transmission operator convergence without combinatorial graph partition effects. We also proved in Section 3.1.2 that non-overlapping classical Schwarz with Dirichlet conditions stagnates, necessitating either overlap or optimized Robin conditions.
@@ -97,7 +89,7 @@ In Section 3.1.4, we clarified that two overlapping subdomains $\Omega_1 = (0, b
 
 ### Comment R2C4: Retraction of Claim that FDTD is Presented for ARD
 > **Reviewer's remark:**  
-> *P86: "We present the ARD method for both FDTD and PSTD, which share the same formulation": No, FDTD is not presented.*
+> *Sec. 3.2: "Although the FDTD formulation is presented for completeness". It is not really presented. Rather, the author writes in the corresponding section: "we omit the explicit FDTD particularization here and proceed directly to the pseudo-spectral discretization". Please retract this claim.*
 
 **Response:**  
 We retracted this claim. The revised text in Section 3.2 and Section 4.1 states that ARD is formulated and developed exclusively for PSTD, where analytical DCT-II modal basis functions allow exact spatial stepping.
@@ -106,12 +98,10 @@ We retracted this claim. The revised text in Section 3.2 and Section 4.1 states 
 
 ### Comment R2C5: Justification of Parabolic Stability Limit
 > **Reviewer's remark:**  
-> *Sec. 3.2.3: "the second term introduces a strict parabolic stability limit ($\Delta t \le \Delta x^2/\nu$)." This is not sufficiently detailed or justified.*
+> *P86: "the explicit evaluation of the viscous term $\nu C_{\mathrm{res}}\mathbf v$ introduces a strict parabolic stability limit ($\Delta t \lesssim \Delta x^2/\nu$)." This is not sufficiently detailed or justified.*
 
 **Response:**  
-In Section 3.2.3, we added a formal Gershgorin circle derivation for the interface Kick operator. The discrete interface update matrix yields an upper eigenvalue bound bounded by the spatial stencil:
-$$\Delta t \le \frac{4 \Delta x^2}{C_p \nu},$$
-where $C_p$ is a dimensionless interface stencil constant. In Section 4.3.2, we also introduced the exact exponential Kick flow $\mathbf{v}(t+\tau) = e^{\tau \nu C_{\mathrm{res}}} \mathbf{v}(t) + \frac{c^2}{\nu} (e^{\tau \nu C_{\mathrm{res}}} - I) \mathbf{u}(t)$, which completely eliminates this parabolic restriction.
+Section 3.2.3 reports the computed spectra of the implemented residue matrices: the tested eigenvalues were real to numerical precision and non-positive only for order 2; orders 4, 6, and 8 had small positive eigenvalues. The full amplification-matrix study reports numerical threshold estimates for the tested configurations.
 
 ---
 
@@ -126,7 +116,7 @@ In Section 3.2.4, we explicitly stated that at initial time $t = 0$, modal coeff
 
 ### Comment R2C7: Softening "Validating 3D ARD" and Adding Quantitative Evaluation
 > **Reviewer's remark:**  
-> *P96: "validating the accuracy of the multi-domain pseudo-spectral time-domain (PSTD) formulation in 3D." This is too strong a claim. A single configuration is tested, with two (very close) values of the viscoelastic parameter. Only qualitative snapshots are displayed.*
+> *P96: "validating the accuracy of the multi-domain pseudo-spectral time-domain (PSTD) formulation in 3D." This is too strong a claim, I would not call this "validating". A single configuration is tested, with two (very close) values of the viscoelastic damping parameter. Only qualitative results with three snapshots per simulations are displayed, with no quantitative evaluation or comparison to other solvers. This is very weak experimentally.*
 
 **Response:**  
 We replaced "validating" with "demonstrating the operational feasibility of 3D ARD". We expanded the benchmark to a 5-solver quantitative comparison across four damping regimes with measured CPU execution times and spatial profiles.
@@ -142,7 +132,7 @@ Figure 3.14 was replaced with high-resolution snapshots showing wavefield contin
 
 ---
 
-### Comment R2C9: 3D Damping Visualization and Physical Scaling
+### Comment R2C9: Quantitative Error Visualization for Figure 3.16
 > **Reviewer's remark:**  
 > *Fig. 3.16 is not very informative. It is impossible to see differences between the 3 images. Plotting the error or relative error would be better.*
 
@@ -254,7 +244,7 @@ We retracted the unbacked phrase "significantly outperforming purely data-driven
 **Response:**  
 Section 4.3 was expanded from 3 lines to over 4 pages of continuous technical prose, detailing 5 distinct research avenues:
 1. *Section 4.3.1:* Geometric discretization and staircasing boundary error mitigation (Cartesian cut-cell, embedded boundary, curvilinear transformations).
-2. *Section 4.3.2:* Energy stability and higher-order time integration for ARD (exact exponential Kick flow, midpoint Runge-Kutta, discrete energy estimates, high-order DtN Padé operators).
+2. *Section 4.3.2:* Kick integration for damped ARD, including alternative Kick integrators and interface operators, with higher-order interface corrections and localized DtN approximations discussed as future directions.
 3. *Section 4.3.3:* Analytical min-max theory and adaptive transmission for OSWR.
 4. *Section 4.3.4:* Scaling DPNN to 3D and advanced inversion formulations (3D scaling, optimal sensor placement, edge-preserving Total Variation regularization, and comparison with FWI and TRA).
 5. *Section 4.3.5:* Realistic acoustic modelling, advanced boundary conditions (CPML/CFS-PML with auxiliary memory variables, digital impedance filters), and GPU acceleration.
@@ -287,8 +277,6 @@ Section 4.3 was expanded from 3 lines to over 4 pages of continuous technical pr
   *Fix:* In Section 3.2.2, we provided formal mathematical definitions: $D(\Delta t) = \mathcal{S}_{\text{local}}(\Delta t)$ denotes the exact modal time-evolution operator for the uncoupled subdomain interior, while $K(\tau) = I + \tau B$ denotes the discrete Kick operator integrating the singular interface transmission operator.
 
 ---
-
-We believe that these extensive revisions, enhanced quantitative benchmarks, double comparison against the PINN baseline, and rigorous error analyses directly and comprehensively address every concern you raised. We thank you once again for your constructive guidance.
 
 Sincerely,  
 **Gerardo Cicalese**  
