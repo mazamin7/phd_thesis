@@ -302,10 +302,10 @@ P108: 3 lines on future work is an order of magnitude less than what one would t
 Section~4.3 was expanded from 3 lines to over 4 pages of continuous technical prose, detailing 5 distinct research avenues:
 \begin{enumerate}
     \item \emph{Section~4.3.1:} Geometric discretization and staircasing boundary error mitigation (Cartesian cut-cell, embedded boundary, curvilinear transformations).
-    \item \emph{Section~4.3.2:} Kick integration for damped ARD (alternative Kick integrators, interface operators, and higher-order interface corrections, including localized DtN approximations).
+    \item \emph{Section~4.3.2:} Damped ARD Kick integration and higher-order interface corrections. The text distinguishes candidates to adapt within the physical-space Kick from Pad\'e DtN and DG methods, which would require new time-domain, hybrid, or replacement formulations and a separate stability analysis.
     \item \emph{Section~4.3.3:} Analytical min-max theory and adaptive transmission for OSWR.
     \item \emph{Section~4.3.4:} Scaling DPNN to 3D and advanced inversion formulations (3D scaling, optimal sensor placement, edge-preserving Total Variation regularization, and comparison with FWI and TRA).
-    \item \emph{Section~4.3.5:} Realistic acoustic modelling, advanced boundary conditions (CPML/CFS-PML with auxiliary memory variables, digital impedance filters), and GPU acceleration.
+    \item \emph{Section~4.3.5:} Realistic acoustic modelling, advanced boundary conditions (CPML/CFS-PML with auxiliary memory variables and digital impedance filters), and GPU/MPI implementation, noting that cuFFT would require an FFT-based realization of the DCT-II.
 \end{enumerate}
 \end{response}
 

@@ -244,10 +244,10 @@ We retracted the unbacked phrase "significantly outperforming purely data-driven
 **Response:**  
 Section 4.3 was expanded from 3 lines to over 4 pages of continuous technical prose, detailing 5 distinct research avenues:
 1. *Section 4.3.1:* Geometric discretization and staircasing boundary error mitigation (Cartesian cut-cell, embedded boundary, curvilinear transformations).
-2. *Section 4.3.2:* Kick integration for damped ARD, including alternative Kick integrators and interface operators, with higher-order interface corrections and localized DtN approximations discussed as future directions.
+2. *Section 4.3.2:* Damped ARD Kick integration and higher-order interface corrections. The text distinguishes candidates to adapt within the physical-space Kick from Padé DtN and DG methods, which would require new time-domain, hybrid, or replacement formulations and a separate stability analysis.
 3. *Section 4.3.3:* Analytical min-max theory and adaptive transmission for OSWR.
 4. *Section 4.3.4:* Scaling DPNN to 3D and advanced inversion formulations (3D scaling, optimal sensor placement, edge-preserving Total Variation regularization, and comparison with FWI and TRA).
-5. *Section 4.3.5:* Realistic acoustic modelling, advanced boundary conditions (CPML/CFS-PML with auxiliary memory variables, digital impedance filters), and GPU acceleration.
+5. *Section 4.3.5:* Realistic acoustic modelling, advanced boundary conditions (CPML/CFS-PML with auxiliary memory variables and digital impedance filters), and GPU/MPI implementation, noting that cuFFT would require an FFT-based realization of the DCT-II.
 
 ---
 
