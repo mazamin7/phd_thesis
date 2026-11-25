@@ -1,0 +1,148 @@
+\documentclass[10pt]{article}
+\usepackage[margin=22mm]{geometry}
+\usepackage{amsmath,amssymb,booktabs}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\title{An Exact Interface Kick for ARD Time Splitting}
+\author{Technical note}
+\date{25 November 2026}
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The interface correction in the current one-dimensional Arbitrary-order
+Domain Decomposition (ARD) solver is advanced by forward Euler inside a
+Kick--Drift--Kick (KDK) composition. This note derives an exact update for
+the linear kick, exploits the correction matrix's small active row set, and
+reports a reproducible temporal-convergence check. The experiments show
+second-order convergence of the exact-kick KDK solver for the tested
+interface orders and both zero and positive viscosity. These are finite
+dimensional numerical results, not a general stability proof.
+\end{abstract}
+
+\section{Problem and current ARD update}
+The solver stores displacement and velocity on two nonoverlapping
+subdomains. Each subdomain's drift is propagated exactly in its DCT modal
+basis. If $L_0$ is the block-diagonal subdomain Laplacian and $C$ is the
+interface residual matrix, the coupled semidiscrete problem is
+\begin{align}
+  u_t &= v,\\
+  v_t &= c^2(L_0+\Delta x^{-2}C)u
+       -\gamma v+\nu(L_0+\Delta x^{-2}C)v.
+\end{align}
+The drift contains $L_0$ and the damping $-\gamma v+\nu L_0v$. The kick
+holds $u$ fixed and applies
+\begin{equation}
+  u_t=0,\qquad v_t=aCv+bCu,\qquad
+  a=\nu/\Delta x^2,\quad b=c^2/\Delta x^2.
+\end{equation}
+The existing Euler solver approximates a kick of duration $\tau$ by
+\begin{equation}
+  v^+=v+\tau(aCv+bCu).
+\end{equation}
+For $a\ne0$, this is only a first-order approximation to the kick flow.
+Consequently, its KDK composition need not retain Strang's second-order
+accuracy when viscosity is positive.
+
+\section{Exact kick derivation}
+Since $u$ is constant during the kick, the velocity equation is affine and
+linear. Its variation-of-constants solution is
+\begin{equation}\label{eq:full}
+  v^+=e^{\tau aC}v+\tau b\,\varphi_1(\tau aC)Cu,
+  \qquad \varphi_1(X)=\int_0^1 e^{sX}\,ds.
+\end{equation}
+This formula is well-defined at $a=0$ and gives
+$v^+=v+\tau bCu$ in the undamped limit.
+
+For the implemented one-dimensional residual stencil, only $r=p$ rows of
+$C$ are nonzero, where $p$ is the interface order. Let $U\in\mathbb R^{N\times r}$
+insert a vector at those rows and let $V=C_{\mathcal I,:}$ select the active
+rows. Then $C=UV$, and $M=VU=C_{\mathcal I,\mathcal I}$ is only $r\times r$.
+The reduced update equivalent to (\ref{eq:full}) is
+\begin{equation}\label{eq:reduced}
+ v^+=v+U\left[z\varphi_1(zM)Vv+
+      \tau b\varphi_1(zM)Vu\right],\qquad z=\tau a.
+\end{equation}
+The implementation evaluates $\varphi_1$ from the upper-right block of
+\begin{equation}
+ \exp\!\begin{pmatrix}zM&I\\0&0\end{pmatrix}
+ =\begin{pmatrix}e^{zM}&\varphi_1(zM)\\0&I\end{pmatrix},
+\end{equation}
+so it does not invert $M$ and handles singular matrices and $\nu=0$.
+For the order-eight stencil, $M$ and $\varphi_1(zM)$ are $8\times8$;
+the block exponential used to evaluate $\varphi_1$ is $16\times16$.
+Its result is computed once per time step size. Applying a kick
+then requires sparse products with the active interface rows and DCT/IDCT
+transforms.
+
+\section{Composition and expected accuracy}
+We compose an exact half-kick, an exact modal drift, and a second exact
+half-kick. For an autonomous split system, symmetric composition of the two
+exact subflows is second order globally. For a smooth time-dependent source,
+the implementation samples the source at the midpoint in the drift. This
+order statement concerns temporal splitting; it does not remove spatial or
+interface-model error.
+
+\section{Numerical verification}
+The reproducible script is \texttt{scripts/verify\_exact\_kick\_extended.m}.
+It uses $N=32$, $T=0.1$, $c=1$, $\gamma=0.03$, interface orders
+$p\in\{2,4,6,8\}$, and $\nu\in\{0,0.05\}$. The reference is
+$\exp(TA)y_0$, where $A$ is the full $2N\times2N$ matrix of the same
+semidiscrete ARD operator. Thus the measured displacement error isolates
+time-integration error for that semidiscrete problem. The prior order-two
+and order-four runs give the following representative data:
+\begin{center}
+\begin{tabular}{ccrrr}
+\toprule
+$p$ & method & $E_{\infty}(0.01)$ & $E_{\infty}(0.005)$ & observed rates\\
+\midrule
+2 & Euler kick & $3.253\,10^{-3}$ & $2.332\,10^{-3}$ & $0.48,\ 0.82,\ 0.92$\\
+2 & exact kick & $2.743\,10^{-3}$ & $6.907\,10^{-4}$ & $1.99,\ 2.00,\ 2.00$\\
+4 & Euler kick & $2.322\,10^{-3}$ & $2.376\,10^{-3}$ & $-0.03,\ 0.73,\ 0.89$\\
+4 & exact kick & $4.056\,10^{-3}$ & $1.026\,10^{-3}$ & $1.98,\ 2.00,\ 2.00$\\
+\bottomrule
+\end{tabular}
+\end{center}
+At $\Delta t=0.0025$, exact-kick errors are $1.730\,10^{-4}$ and
+$2.573\,10^{-4}$ for $p=2$ and $p=4$, respectively, versus Euler errors
+$1.323\,10^{-3}$ and $1.435\,10^{-3}$. At the coarsest tested step,
+however, the exact-kick method is not uniformly more accurate: for $p=4$
+its error exceeds Euler's. The evidence supports higher asymptotic order,
+not a guarantee of smaller error at every finite step.
+
+The extended script was executed in GNU Octave 11.3 with the Signal
+package, using the same MATLAB-compatible solver files. The observed rates
+for successive halvings from $\Delta t=0.005$ to $0.00125$ were:
+\begin{center}
+\begin{tabular}{crrr}
+\toprule
+$\nu$ & $p$ & displacement errors & observed rates\\
+\midrule
+0 & 2 & $2.065\,10^{-4},\ 5.148\,10^{-5},\ 1.286\,10^{-5}$ & $2.004,\ 2.001$\\
+0 & 4 & $2.656\,10^{-4},\ 6.621\,10^{-5},\ 1.654\,10^{-5}$ & $2.004,\ 2.001$\\
+0 & 6 & $2.942\,10^{-4},\ 7.335\,10^{-5},\ 1.833\,10^{-5}$ & $2.004,\ 2.001$\\
+0 & 8 & $3.097\,10^{-4},\ 7.722\,10^{-5},\ 1.929\,10^{-5}$ & $2.004,\ 2.001$\\
+0.05 & 2 & $6.907\,10^{-4},\ 1.730\,10^{-4},\ 4.327\,10^{-5}$ & $1.997,\ 1.999$\\
+0.05 & 4 & $1.026\,10^{-3},\ 2.573\,10^{-4},\ 6.436\,10^{-5}$ & $1.996,\ 1.999$\\
+0.05 & 6 & $1.215\,10^{-3},\ 3.050\,10^{-4},\ 7.633\,10^{-5}$ & $1.994,\ 1.999$\\
+0.05 & 8 & $1.333\,10^{-3},\ 3.348\,10^{-4},\ 8.381\,10^{-5}$ & $1.993,\ 1.998$\\
+\bottomrule
+\end{tabular}
+\end{center}
+MATLAB batch startup in this environment failed with MathWorks service
+error 5201; MATLAB itself has therefore not been used for these runs.
+
+\section{Scope and next checks}
+The exact update is implemented as a separate prototype,
+\texttt{ard\_solver\_exact\_kick}; it has not replaced the current Euler
+solver. It is algebraically exact for the implemented linear kick and
+reduces its matrix-function calculation to the active interface block. The
+reported convergence check covers one grid size and one smooth initial
+condition. It does not establish unconditional stability, robustness for
+all interface matrices, or superior cost. Further work should compare the
+full state (both $u$ and $v$), vary grid size and initial data, test
+nonzero forcing, and measure runtime against Euler and Crank--Nicolson
+kicks. Extension to multiple interfaces should use a block factorization
+of their combined active rows.
+
+\end{document}
